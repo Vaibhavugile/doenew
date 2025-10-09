@@ -1,0 +1,1558 @@
+
+/* Base Styles */
+.home-page {
+    min-height: 100vh;
+    background-color: #fafafa; /* neutral-50 */
+    font-family: 'Inter', sans-serif;
+    color: #374151; /* gray-800 */
+    overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+}
+
+/* Container for consistent width */
+.container {
+    max-width: 1280px; /* Equivalent to max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem; /* px-4 */
+}
+
+/* --- Existing Animations (keep them) --- */
+@keyframes slow-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.animate-slow-spin {
+    animation: slow-spin 10s linear infinite;
+}
+
+@keyframes pulse-custom {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}
+.animate-pulse-custom {
+    animation: pulse-custom 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+
+/* --- NEW & ENHANCED ANIMATIONS --- */
+
+/* 1. Scroll Reveal (Fade In Up) */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(32px); /* 2rem * 16px/rem = 32px */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-fade-in-up {
+    /* Set initial state for the element before it becomes visible */
+    opacity: 0;
+    transform: translateY(32px);
+    /* Animation applied by JS hook when visible */
+    animation: fadeInUp 0.8s ease-out forwards;
+    /* transition needed if JS removes/adds class, or for sequential delays */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* 2. Scroll Reveal (Fade In) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-fade-in {
+    opacity: 0; /* Initial state */
+    animation: fadeIn 0.8s ease-out forwards;
+    transition: opacity 0.8s ease-out; /* For sequential delays if needed */
+}
+
+/* 3. Pop In (for cards) */
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.animate-pop-in {
+    opacity: 0; /* Initial state */
+    transform: scale(0.9); /* Initial state */
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* Cubic-bezier for a bouncy feel */
+}
+
+/* 4. Button Press Feedback (already good) */
+@keyframes buttonPress {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+}
+.animate-button-press {
+    transition: transform 0.15s ease-out; /* Smoother initial press */
+}
+.animate-button-press:active {
+    animation: buttonPress 0.2s ease-out; /* Apply on active state */
+}
+
+/* 5. Social Icon Pop/Jiggle (already good) */
+@keyframes socialPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+.animate-social-pop {
+    transition: transform 0.2s ease-out;
+}
+.animate-social-pop:hover {
+    animation: socialPop 0.3s ease-out;
+}
+
+/* 6. Footer Link Hover (Slide and Fade) (already good) */
+.animate-footer-link-hover {
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+.animate-footer-link-hover:hover {
+    transform: translateX(5px);
+    opacity: 0.8;
+}
+
+/* --- New Button Hover Animation (Lift and Shadow) --- */
+.btn {
+    /* ... existing styles ... */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.btn:hover {
+    /* ... existing styles ... */
+    background-color: #be185d; /* pink-700 */
+    box-shadow: 0 8px 10px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 15px rgba(219, 39, 119, 0.4); /* Added soft glow */
+    transform: translateY(-2px); /* Slight lift */
+}
+
+/* --- Header --- */
+/* HomePage.css */
+
+/* --- Header --- */
+.header {
+    /* Updated background with gradient */
+    background: linear-gradient(to right, #f8f8f8, #f0f0f0);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08); /* shadow-md initially */
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: all 0.3s ease-in-out; /* Smooth transition for all changes */
+    border-bottom: 1px solid #eee; /* Subtle bottom border */
+    border-radius: 0 0 0.5rem 0.5rem; /* Soften bottom corners */
+}
+
+/* Styles for header when scrolled */
+.header.scrolled {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg on scroll */
+    background: linear-gradient(to right, #fdfdfd, #f9f9f9); /* Slightly lighter gradient */
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem; /* py-4 */
+    padding-bottom: 1rem; /* py-4 */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    transition: all 0.3s ease-in-out; /* Smooth transition for padding changes */
+}
+
+.header.scrolled .header-container {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.header-logo {
+    font-size: 1.8rem; /* text-3xl for prominence */
+    font-weight: 700; /* font-bold */
+    color: #171717; /* neutral-900 */
+    text-decoration: none;
+    transition: transform 0.2s ease, font-size 0.3s ease; /* Added font-size transition */
+    letter-spacing: -0.025em; /* Tighten tracking slightly */
+}
+.header-logo span { /* For accentuating 'Dress' */
+    color: #db2777; /* pink-700 */
+    margin-left: 0.1rem; /* Space after 'RentMy' */
+    letter-spacing: 0; /* Reset tracking for 'Dress' if needed */
+}
+.header-logo:hover {
+    transform: scale(1.02); /* Subtle scale on hover */
+}
+.header.scrolled .header-logo {
+    font-size: 1.6rem; /* Slightly smaller on scroll */
+}
+
+
+.header-nav-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Space between desktop nav and CTA/mobile button */
+}
+
+.desktop-nav {
+    display: none; /* hidden by default on mobile */
+    gap: 1.75rem; /* space-x-7 - adjusted for more breathing room */
+}
+
+/* Show desktop nav on medium screens and up */
+@media (min-width: 768px) {
+    .desktop-nav {
+        display: flex;
+    }
+    .mobile-menu-button {
+        display: none; /* Hide mobile button on desktop */
+    }
+}
+
+
+.nav-link {
+    position: relative;
+    color: #4b5563; /* gray-600 */
+    padding: 0.25rem 0.5rem; /* Added padding for better click area */
+    transition: color 0.3s ease, font-weight 0.3s ease; /* Added font-weight transition */
+    text-decoration: none;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.nav-link:hover {
+    color: #db2777; /* pink-700 */
+    font-weight: 600; /* Make text semi-bold on hover */
+}
+
+.nav-link-underline {
+    content: '';
+    position: absolute;
+    bottom: 0px; /* Adjusted to be right at the bottom */
+    left: 0.5rem; /* Align with padding */
+    right: 0.5rem; /* Align with padding */
+    width: auto; /* Will be managed by transform scale */
+    height: 2px;
+    background-color: #db2777; /* pink-700 */
+    transform: scaleX(0); /* Start scaled to 0 */
+    transform-origin: center; /* Scale from center */
+    transition: transform 0.3s ease;
+}
+
+/* Apply underline on group hover */
+.nav-link:hover .nav-link-underline {
+    transform: scaleX(1); /* Scale to 100% on hover */
+}
+
+/* New CTA Button styles */
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem; /* space-x-2 */
+    background-color: #ec4899; /* pink-500 */
+    color: #fff;
+    padding: 0.6rem 1.25rem; /* py-2.5 px-5 */
+    border-radius: 0.75rem; /* rounded-xl */
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+}
+.cta-button:hover {
+    background-color: #db2777; /* pink-700 */
+    transform: translateY(-2px); /* Lift effect */
+    box-shadow: 0 5px 10px rgba(219, 39, 119, 0.4); /* Glow effect */
+}
+.cta-button:active {
+    transform: translateY(0); /* Press down effect */
+    box-shadow: none;
+}
+.cta-button .icon-right {
+    margin-left: 0.25rem; /* Adjust icon spacing */
+}
+
+
+.mobile-menu-button {
+    background: none;
+    border: none;
+    padding: 0.5rem; /* Add padding for easier tapping */
+    cursor: pointer;
+    color: #4b5563; /* gray-600 */
+    transition: transform 0.3s ease, color 0.3s ease;
+    font-size: 1.5rem; /* for SVG icon sizing */
+    display: block; /* always visible on mobile */
+}
+
+.mobile-menu-button:hover {
+    color: #db2777; /* pink-700 */
+    transform: scale(1.1); /* Subtle pop on hover */
+}
+
+.mobile-menu-button:focus {
+    outline: none;
+}
+
+.mobile-menu-button .icon-size {
+    width: 1.75rem; /* Larger icon */
+    height: 1.75rem; /* Larger icon */
+}
+
+.mobile-menu-button.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.mobile-nav {
+    background-color: #f5f5f5; /* neutral-100 */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+    padding: 1rem; /* py-4 px-4 */
+    display: block; /* always block on mobile when open */
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.mobile-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* space-y-4 */
+}
+
+.mobile-nav-item {
+    display: block;
+    color: #374151; /* gray-700 */
+    text-decoration: none;
+    padding: 0.5rem 0; /* Added padding */
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.mobile-nav-item:hover {
+    color: #db2777; /* pink-700 */
+    transform: translateX(5px); /* Slide effect on hover */
+}
+
+/* --- Sections Common Styles --- */
+
+
+/* --- Sections Common Styles --- */
+/* Global Reset for Box-Sizing - Highly Recommended */
+html {
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* --- Sections Common Styles --- */
+.section {
+    padding-top: 4rem; /* py-16 */
+    padding-bottom: 4rem; /* py-16 */
+    border-radius: 1.5rem; /* rounded-3xl */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    margin-top: 2rem; /* mt-8 */
+    position: relative;
+    z-index: 20;
+    /* Ensure elements are initially off-screen or transparent for scroll animations */
+    /* Handled by animate-fade-in-up/animate-fade-in classes now */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* Default transition for elements managed by isVisible */
+
+    /* ADDED: Max-width and margin for the section itself */
+    max-width: 90rem; /* Adjust this value as needed, common for larger containers like max-w-7xl */
+    margin-left: auto; /* Center the section */
+    margin-right: auto; /* Center the section */
+    padding-left: 1rem; /* Add some horizontal padding to prevent content from touching edges on small screens */
+    padding-right: 1rem; /* Add some horizontal padding */
+}
+
+.section-title {
+    font-size: 2.25rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    text-align: center;
+    margin-bottom: 3rem; /* mb-12 */
+    color: #171717; /* gray-900 */
+    /* Add for sequential reveal within the section */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease-out 0.2s, transform 0.7s ease-out 0.2s; /* Delayed fade in */
+}
+
+.section.animate-fade-in-up .section-title,
+.section.animate-fade-in .section-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+.section.animate-fade-in-up .section-description,
+.section.animate-fade-in .section-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-description-sub { /* for Style Advisor/About Us sections */
+    text-align: center;
+    font-size: 1.125rem; /* text-lg */
+    color: #4b5563; /* gray-700 */
+    margin-bottom: 1.5rem; /* mb-6 */
+    max-width: 42rem; /* max-w-2xl */
+    margin-left: auto;
+    margin-right: auto;
+    /* Add for sequential reveal within the section */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease-out 0.35s, transform 0.7s ease-out 0.35s; /* More delayed fade in */
+}
+.section-description-sub:last-of-type { /* Remove bottom margin from last paragraph if within same container */
+    margin-bottom: 0;
+}
+.section.animate-fade-in-up .section-description-sub,
+.section.animate-fade-in .section-description-sub {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --- Grid Layouts --- */
+.grid-3-col {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column for mobile */
+    gap: 2rem; /* gap-8 */
+    /* ADDED: Ensure the grid itself fits within its parent */
+    width: 100%;
+}
+/* Medium screens (e.g., tablets) */
+@media (min-width: 768px) {
+    .grid-3-col {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens and up */
+    }
+}
+
+.grid-4-col {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column for mobile */
+    gap: 2rem; /* gap-8 */
+    width: 100%; /* Ensure grid takes full width of its parent */
+}
+/* Small-medium screens (e.g., larger phones, small tablets) */
+@media (min-width: 640px) { /* Tailwind's sm breakpoint */
+    .grid-4-col {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    }
+}
+/* Medium screens (e.g., tablets) */
+@media (min-width: 768px) { /* Tailwind's md breakpoint */
+    .grid-4-col {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    }
+}
+/* Large screens (e.g., desktops) */
+@media (min-width: 1024px) { /* Tailwind's lg breakpoint */
+    .grid-4-col {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens and up */
+    }
+}
+
+.grid-5-col {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column for mobile */
+    gap: 2rem; /* gap-8 */
+    width: 100%; /* Ensure grid takes full width of its parent */
+}
+/* Small-medium screens */
+@media (min-width: 640px) {
+    .grid-5-col {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    }
+}
+/* Medium screens */
+@media (min-width: 768px) {
+    .grid-5-col {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    }
+}
+/* Large screens */
+@media (min-width: 1024px) {
+    .grid-5-col {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    }
+}
+/* Extra large screens */
+@media (min-width: 1280px) { /* Tailwind's xl breakpoint */
+    .grid-5-col {
+        grid-template-columns: repeat(5, 1fr); /* 5 columns on extra large screens and up */
+    }
+}
+
+/* --- Ensure Content Within Grid Items is Responsive --- */
+/* This selects any direct child of your grid (which would be your individual grid items) */
+.grid-3-col > *,
+.grid-4-col > *,
+.grid-5-col > * {
+    /* Set a minimum width on grid items, but allow them to shrink */
+    min-width: 0; /* Important for flex/grid items to shrink if content is too wide */
+    overflow: hidden; /* Helps contain content that might exceed the item's bounds */
+}
+
+/* Ensure images inside grid items are responsive */
+.grid-3-col img,
+.grid-4-col img,
+.grid-5-col img {
+    max-width: 100%; /* Images will scale down to fit their parent grid cell */
+    height: auto;    /* Maintain aspect ratio */
+    display: block;  /* Removes extra space below images */
+}
+
+/* For long text content within grid items */
+.grid-3-col p,
+.grid-4-col p,
+.grid-5-col p {
+    word-wrap: break-word;   /* Breaks long words that might overflow */
+    overflow-wrap: break-word; /* Newer syntax for word-wrap */
+}
+
+/* You might want to apply this to all text within grid items if it's overflowing */
+.grid-3-col h1, .grid-3-col h2, .grid-3-col h3, .grid-3-col h4, .grid-3-col h5, .grid-3-col h6,
+.grid-3-col span, .grid-3-col a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+/* --- Store Card styles --- */
+.store-card {
+    background-color: #fafafa; /* neutral-50 */
+    padding: 1rem; /* p-6 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow transition */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.store-card:hover {
+    transform: scale(1.03); /* Slightly reduced scale for combined effect */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 20px rgba(219, 39, 119, 0.2); /* Enhanced shadow with subtle glow */
+}
+.store-card-image {
+    width: 100%;
+    height: 8rem; /* h-32 */
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0.375rem; /* rounded-md */
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+.card-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: #171717; /* gray-900 */
+    margin-bottom: 0.5rem; /* mb-2 */
+}
+/* --- Image Slider --- */
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 80rem; /* max-w-5xl */
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 0.75rem; /* rounded-xl */
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+    height: 24rem; /* Fix for absolute positioned images */
+    transition: box-shadow 0.3s ease; /* Added for subtle effect */
+}
+.slider-container:hover {
+    box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Slightly deeper shadow on hover */
+}
+.slider-image {
+    width: 100%;
+    height: 100%; /* Take full height of parent */
+    object-fit: cover;
+    object-position: center;
+    transition: opacity 0.7s ease-in-out;
+    position: absolute; /* Stack images for transition */
+    top: 0;
+    left: 0;
+}
+.slider-image.active-slide {
+    opacity: 1;
+    z-index: 1; /* Bring active slide to front */
+}
+.slider-image.hidden-slide {
+    opacity: 0;
+    z-index: 0;
+}
+.slider-dots {
+    position: absolute;
+    bottom: 1rem; /* bottom-4 */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem; /* space-x-2 */
+    z-index: 2; /* Ensure dots are above images */
+}
+.dot {
+    width: 0.75rem; /* w-3 */
+    height: 0.75rem; /* h-3 */
+    border-radius: 9999px; /* rounded-full */
+    background-color: #d1d5db; /* gray-300 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for hover */
+    cursor: pointer;
+    border: none;
+    padding: 0;
+}
+.dot:hover {
+    background-color: #9ca3af; /* gray-400 */
+    transform: scale(1.2); /* Dots pop on hover */
+}
+.dot.active-dot {
+    background-color: #db2777; /* pink-700 */
+    transform: scale(1.1); /* Active dot slightly larger */
+}
+
+/* --- Category Cards (Men/Women) --- */
+/* --- Styles for Men's and Women's Subcategory Cards (category-card) --- */
+/* --- Existing .section-description styles (if any) --- */
+/* --- Existing .section-description styles (if any) --- */
+.section-description {
+    max-width: 800px; /* Limit width for better readability */
+    margin-left: auto; /* Center the text block */
+    margin-right: auto; /* Center the text block */
+    text-align: center; /* Ensure text is centered within its block */
+    font-size: 1.05em; /* Slightly increase font size for readability */
+    line-height: 1.7; /* Improve line spacing for better readability */
+    color: #4a5568; /* A slightly softer dark gray for main text */
+    margin-bottom: 40px; /* More space below the description */
+}
+
+/* --- Responsive adjustments for .section-description --- */
+@media (max-width: 1024px) {
+    .section-description {
+        font-size: 1em;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-description {
+        font-size: 0.95em;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        padding: 0 15px; /* Add some horizontal padding on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .section-description {
+        font-size: 0.9em;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+}
+
+/* --- Responsive adjustments for .section-description --- */
+@media (max-width: 1024px) {
+    .section-description {
+        font-size: 1em;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-description {
+        font-size: 0.95em;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        padding: 0 15px; /* Add some horizontal padding on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .section-description {
+        font-size: 0.9em;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+}
+.category-card {
+    background-color: #1f2937; /* Solid white background */
+    border-radius: 12px; /* Rounded corners for the entire card */
+    overflow: hidden; /* Ensures content respects border-radius */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    display: flex; /* Use flexbox to stack image and content */
+    flex-direction: column; /* Stack items vertically */
+    text-decoration: none; /* Remove underline from the Link component */
+    color: inherit; /* Inherit text color */
+}
+
+.category-card:hover {
+    transform: translateY(-5px); /* Lifts the card slightly on hover */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 20px rgba(219, 39, 119, 0.3); /* Enhanced shadow with strong glow */}
+
+/* --- Image Styling within Category Cards --- */
+.category-card-image {
+    width: 100%; /* Image takes full width of the card */
+    height: 200px; /* Fixed height for consistent image size */
+    object-fit: cover; /* Crops image to cover the area without distortion */
+    /* Only apply border-radius to the top corners, as bottom corners will be covered by content */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* --- Content Styling within Category Cards (for title and subtitle) --- */
+.category-card-content {
+    padding: 15px; /* Padding around the text content */
+    text-align: center; /* Center the text */
+    flex-grow: 1; /* Allows content to take up available space, pushing it to bottom if needed */
+    display: flex; /* Use flex to align title and subtitle */
+    flex-direction: column;
+    justify-content: center; /* Center content vertically if flex-grow isn't needed */
+}
+
+.category-card-content .card-title {
+    font-size: 1.15em; /* Slightly larger font size for the main title */
+    margin-bottom: 5px; /* Small space below the title */
+    color: #fff; /* Dark gray for the title text */
+    font-weight: 600; /* Semi-bold font weight */
+}
+
+.category-card-content .card-subtitle {
+    font-size: 0.9em; /* Smaller font size for the subtitle */
+    color: #ec4899; /* Lighter gray for the subtitle text */
+}
+
+/* --- Grid Layout Adjustments (ensure proper spacing and responsiveness) --- */
+/* (Assuming these grid classes are already defined or will be added) */
+.grid-4-col { /* For Men's section */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px; /* Spacing between cards */
+    justify-content: center;
+}
+
+.grid-5-col { /* For Women's section */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 25px; /* Spacing between cards */
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .grid-4-col {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .grid-5-col {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .category-card-image {
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-4-col, .grid-5-col {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 20px;
+    }
+    .category-card-image {
+        height: 150px;
+    }
+    .category-card-content {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-4-col, .grid-5-col {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+        gap: 15px;
+    }
+    .category-card-image {
+        height: 120px;
+    }
+    .category-card-content {
+        padding: 10px;
+    }
+}
+/* --- How It Works Section --- */
+.how-it-works-step-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem; /* p-6 */
+    background-color: #fafafa; /* neutral-50 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow transition */
+}
+.how-it-works-step-card:hover {
+    transform: translateY(-0.5rem); /* Lift on hover */
+    box-shadow: 0 8px 10px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 15px rgba(219, 39, 119, 0.25); /* Enhanced shadow with glow */
+}
+.how-it-works-icon-wrapper {
+    background-color: #fce7f3; /* pink-100 */
+    color: #be185d; /* pink-700 */
+    padding: 1rem; /* p-4 */
+    border-radius: 9999px; /* rounded-full */
+    margin-bottom: 1rem; /* mb-4 */
+    transition: transform 0.3s ease; /* Added for icon hover */
+}
+.how-it-works-step-card:hover .how-it-works-icon-wrapper {
+    transform: rotate(10deg) scale(1.1); /* Icon slightly rotates and scales on card hover */
+}
+.how-it-works-icon {
+    width: 2.25rem; /* size={36} */
+    height: 2.25rem; /* size={36} */
+}
+.step-description {
+    color: #4b5563; /* Keep the original color or adjust for contrast */
+    text-align: left; /* *** Changed from center to left *** */
+    font-size: 1rem; /* Standard font size */
+    line-height: 1.6; /* Good line spacing for readability */
+    /* Remove max-width and margin: auto to allow it to take full available width */
+    margin-top: 0.75rem; /* Add some space between the title and description */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+    padding: 0 0; /* Resetting padding to ensure it's not overriding */
+}
+
+/* Important: Adjust the padding on the .how-it-works-step-card to control the text's inset */
+.how-it-works-step-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This centers items like the icon and title */
+    padding: 1.5rem; /* This is the card's internal padding. Keep it for overall spacing. */
+    background-color: #fafafa;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Override the align-items for the description specifically within the card */
+.how-it-works-step-card .step-description {
+    align-self: stretch; /* This makes the description span the full width available to it */
+    text-align: left; /* Ensure it's left-aligned */
+    padding-left: 0; /* Reset any unwanted padding */
+    padding-right: 0; /* Reset any unwanted padding */
+}
+
+
+/* Ensure the strong tags within the description are styled as desired */
+
+
+/* Adjust the card-title if needed for alignment with left-aligned text */
+.card-title {
+    text-align: center; /* Keep title centered or align left with description */
+    margin-bottom: 0.5rem; /* Space below title */
+}
+
+/* --- Style Advisor Section --- */
+.max-width-3xl {
+    max-width: 48rem; /* max-w-3xl */
+}
+.style-advisor-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem; /* space-y-4 */
+}
+.style-advisor-textarea {
+    width: 80%;
+    padding: 1rem; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    border: 2px solid #d1d5db; /* border-2 border-gray-300 */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Enhanced transition */
+    color: #171717; /* gray-900 */
+    resize: vertical; /* resize-y */
+    min-height: 100px;
+}
+.style-advisor-textarea:focus {
+    border-color: #ec4899; /* pink-500 */
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.4); /* Stronger focus ring */
+    outline: none;
+}
+.btn-lg {
+    padding: 0.75rem 2rem; /* px-8 py-3 */
+}
+.style-advisor-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.style-advisor-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+}
+.spinner-icon {
+    animation: spinner 1s linear infinite;
+    -webkit-animation: spinner 1s linear infinite;
+    -moz-animation: spinner 1s linear infinite;
+    -ms-animation: spinner 1s linear infinite;
+    -o-animation: spinner 1s linear infinite;
+    width: 1.25rem; /* h-5 */
+    height: 1.25rem; /* w-5 */
+    margin-right: 0.75rem; /* mr-3 */
+    margin-left: -0.25rem; /* -ml-1 */
+    color: #fff;
+}
+.spinner-path-1 { opacity: 0.25; }
+.spinner-path-2 { opacity: 0.75; }
+
+.error-message {
+    color: #dc2626; /* red-600 */
+    font-size: 0.875rem; /* text-sm */
+    margin-top: 0.5rem; /* mt-2 */
+}
+
+/* New animation for style advice output */
+@keyframes fadeInSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.style-advice-output {
+    background-color: #fff; /* bg-white */
+    padding: 1.5rem; /* p-6 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); /* shadow-inner */
+    text-align: left;
+    width: 100%;
+    margin-top: 1.5rem; /* mt-6 */
+    border: 1px solid #fbcfe8; /* border border-pink-200 */
+    animation: fadeInSlideIn 0.6s ease-out forwards; /* Apply animation on render */
+}
+.output-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: #171717; /* gray-900 */
+    margin-bottom: 0.75rem; /* mb-3 */
+}
+/* Testimonials Section */
+.testimonial-card {
+    background-color: #fdf2f8; /* pink-50 */
+    padding: 2rem; /* p-8 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow transition */
+}
+.testimonial-card:hover {
+    transform: translateY(-0.5rem); /* Lift on hover */
+    box-shadow: 0 8px 10px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 15px rgba(219, 39, 119, 0.2); /* Enhanced shadow with glow */
+}
+.testimonial-quote {
+    font-size: 1.125rem; /* text-lg */
+    font-style: italic;
+    color: #374151; /* gray-700 */
+    margin-bottom: 1rem; /* mb-4 */
+}
+.testimonial-rating { /* New class for star ratings */
+    margin-bottom: 0.5rem; /* Space below stars */
+    display: flex; /* To align stars horizontally */
+    justify-content: center; /* Center stars if needed */
+    gap: 0.2rem; /* Small gap between stars */
+}
+.testimonial-author {
+    font-weight: 600; /* font-semibold */
+    color: #be185d; /* pink-700 */
+}
+.testimonial-city {
+    font-size: 0.875rem; /* text-sm */
+    color: #4b5563; /* gray-600 */
+}
+
+/* Styles for the "Read More Reviews on Google" button */
+.btn-primary { /* Reusing existing button styles but adjusting if needed */
+    display: inline-flex;
+    align-items: center;
+    background-color: #db2777; /* pink-700 */
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #be185d; /* pink-800 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+/* --- About Us Section - Values Grid --- */
+/* --- About Us Section - Split Layout --- */
+.about-us-split-container {
+    display: flex;
+    flex-direction: column; /* Mobile first: image on top of text */
+    align-items: center;
+    gap: 2rem; /* gap-8 */
+}
+
+.about-us-split-image-wrapper {
+    width: 100%;
+    max-width: 480px; /* Adjust as needed */
+    border-radius: 0.75rem; /* rounded-xl */
+    overflow: hidden;
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.07); /* shadow-xl variant */
+
+    /* --- KEY CHANGES FOR STACKED IMAGES --- */
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack children vertically */
+    gap: 0.5rem; /* Small gap between the two stacked images */
+    /* SEO Change: Added a fixed height for the wrapper to make child height:50% effective */
+    /* This ensures consistent image sizing across devices. Adjust as needed. */
+    height: 400px; /* Example height: 2 images * 200px each = 400px, plus gap */
+    /* --- END KEY CHANGES --- */
+
+    align-items: stretch; /* Ensure images stretch to fill width */
+}
+
+.about-us-split-image {
+    width: 100%; /* Each image takes full width of its parent */
+    height: 50%; /* Each image takes 50% of the wrapper's height */
+    object-fit: cover; /* Covers the area, might crop */
+    display: block;
+    /* SEO Change: Ensure images don't shrink unexpectedly */
+    flex-shrink: 0;
+}
+
+.about-us-split-content-wrapper {
+    width: 100%;
+    max-width: 640px; /* text content max width */
+    text-align: center; /* Mobile: centered text */
+}
+
+.about-us-split-content-wrapper .section-title {
+    font-size: 2rem; /* text-3xl for internal title to differentiate */
+    color: #111827; /* gray-900 */
+    text-align: center; /* Override global section-title for mobile */
+}
+
+.about-us-split-text {
+    font-size: 1rem; /* text-base */
+    line-height: 1.75; /* leading-relaxed */
+    color: #374151; /* gray-700 */
+    margin-bottom: 1.5rem; /* mb-6 */
+}
+
+.about-us-split-highlights {
+    margin-top: 2.5rem; /* mt-10 */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* space-y-6 */
+}
+
+.highlight-item {
+    display: flex;
+    align-items: flex-start; /* Align icon with top of text */
+    gap: 1rem; /* space-x-4 */
+    text-align: left; /* Ensure highlight text is left-aligned */
+}
+
+.highlight-icon {
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    margin-top: 0.25rem; /* Adjust vertical alignment if needed */
+}
+
+.highlight-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* semibold */
+    color: #1f2937; /* gray-800 */
+    margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.highlight-text {
+    font-size: 0.95rem; /* text-sm */
+    color: #4b5563; /* gray-600 */
+    line-height: 1.6;
+}
+
+/* Desktop layout for split screen */
+@media (min-width: 992px) { /* lg breakpoint or your preferred one */
+    .about-us-split-container {
+        flex-direction: row; /* Side-by-side layout */
+        justify-content: space-between;
+        align-items: stretch; /* Crucial: Make sure items stretch to fill height */
+        gap: 4rem; /* More gap on larger screens */
+    }
+
+    .about-us-split-image-wrapper {
+        width: 45%; /* Image section takes up less than half */
+        max-width: none; /* Remove mobile max-width */
+        order: 1; /* Place image section on the left */
+        /* SEO Change: Adjust height for desktop if needed, or remove if flex-grow handles it */
+        height: auto; /* Allow height to adjust based on content/flex context */
+    }
+
+    .about-us-split-content-wrapper {
+        width: 50%; /* Text takes up more than half */
+        text-align: left; /* Left-align text on desktop */
+        order: 2; /* Place text on the right */
+    }
+
+    .about-us-split-content-wrapper .section-title {
+        text-align: left; /* Explicitly left for section title on desktop */
+    }
+}
+/* --- Footer --- */
+.footer {
+    background-color: #1f2937; /* gray-800 */
+    color: #d1d5db; /* gray-300 */
+    padding-top: 3rem; /* py-12 */
+    margin-top: 2rem; /* mt-8 */
+}
+.footer-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column */
+    gap: 2rem; /* gap-8 */
+}
+.footer-heading {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700; /* font-bold */
+    color: #fff;
+    margin-bottom: 1rem; /* mb-4 */
+}
+.footer-text {
+    font-size: 0.875rem; /* text-sm */
+}
+.social-links {
+    display: flex;
+    gap: 1rem; /* space-x-4 */
+    margin-top: 1.5rem; /* mt-6 */
+}
+.social-icon {
+    color: #9ca3af; /* gray-400 */
+    transition: color 0.3s ease;
+}
+.social-icon:hover {
+    color: #f472b6; /* pink-400 */
+}
+.footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.5rem; /* space-y-2 */
+    display: flex; /* make it flex column for gap */
+    flex-direction: column;
+}
+.footer-link {
+    color: #d1d5db; /* gray-300 */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.footer-link:hover {
+    color: #f472b6; /* pink-400 */
+}
+.contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem; /* text-sm */
+}
+.contact-item .icon-mr {
+    margin-right: 0.5rem; /* mr-2 */
+}
+.contact-item.align-start {
+    align-items: flex-start;
+}
+.contact-item.align-start .icon-mr {
+    margin-top: 0.25rem; /* mt-1 */
+}
+address.address-text {
+    font-style: normal; /* not-italic */
+}
+.copyright {
+    text-align: center;
+    color: #6b7280; /* gray-500 */
+    font-size: 0.875rem; /* text-sm */
+    margin-top: 2.5rem; /* mt-10 */
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+/* Medium devices (md: screens) - approx 768px */
+@media (min-width: 768px) {
+    .desktop-nav {
+        display: flex; /* md:flex */
+    }
+    .mobile-menu-button {
+        display: none; /* md:hidden */
+    }
+    .mobile-nav {
+        display: none; /* md:hidden */
+    }
+
+    .section {
+        padding-top: 6rem; /* md:py-24 */
+        padding-bottom: 6rem; /* md:py-24 */
+        margin-left: 2rem; /* md:mx-8 */
+        margin-right: 2rem; /* md:mx-8 */
+    }
+    .section-title {
+        font-size: 2.5rem; /* md:text-4xl */
+    }
+
+    .grid-3-col {
+        grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
+    }
+
+    .footer-container {
+        grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
+    }
+}
+
+/* Large devices (lg: screens) - approx 1024px */
+@media (min-width: 1024px) {
+    .grid-4-col {
+        grid-template-columns: repeat(4, 1fr); /* lg:grid-cols-4 */
+    }
+    .grid-5-col {
+        grid-template-columns: repeat(5, 1fr); /* lg:grid-cols-5 */
+    }
+}
+
+/* Modal Overlay Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top of everything */
+    backdrop-filter: blur(5px); /* Optional: blur the background */
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Modal Content Styles */
+.modal-content {
+    background-color: #fff; /* White background for the modal */
+    padding: 2.5rem; /* Increased padding */
+    border-radius: 1rem; /* Rounded corners */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+    text-align: center;
+    max-width: 90%; /* Max width for responsiveness */
+    width: 500px; /* Specific width for larger screens */
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* Bouncy animation */
+}
+
+.modal-title {
+    font-size: 2rem; /* Larger title */
+    font-weight: 700;
+    color: #171717; /* gray-900 */
+    margin-bottom: 1rem;
+}
+
+.modal-description {
+    font-size: 1.125rem; /* Slightly larger description */
+    color: #4b5563; /* gray-600 */
+    margin-bottom: 2rem; /* More space below description */
+}
+
+.modal-store-options {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    gap: 1rem; /* Space between buttons */
+    margin-bottom: 1.5rem;
+}
+
+.modal-store-button {
+    width: 100%; /* Full width buttons */
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background-color: #db2777; /* pink-700 */
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    /* Added for icon background positioning */
+    position: relative; /* Establish positioning context for children */
+    overflow: hidden; /* Hide overflowing icon parts */
+    display: flex; /* Use flexbox to center content */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: 80px; /* Ensure enough height for the background icon */
+}
+
+.modal-store-button:hover {
+    background-color: #be185d; /* pink-800 */
+    transform: translateY(-2px); /* Slight lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the icon as background */
+/* Styles for the icon as background */
+/* Styles for the icon as background */
+.modal-button-icon-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.4; /* Increased opacity to make the icon more visible */
+    transition: opacity 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.modal-store-button:hover .modal-button-icon-bg {
+    opacity: 0.5; /* Slightly more visible on hover */
+}
+
+.modal-button-icon {
+    color: #fce7f3; /* Changed icon color to light pink (pink-100) for a transparent-like blend */
+    /* Icon size is set in JS: size={64} */
+}
+
+/* Styles for the text overlay */
+.modal-button-text {
+    position: relative; /* Keep text above the absolute icon */
+    z-index: 10; /* Ensure text is on top */
+    color: #fff; /* Text color */
+    font-weight: 700; /* Bold text */
+    font-size: 1.25rem; /* Larger font size */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3); /* Subtle shadow for readability */
+}
+
+
+.modal-close-button {
+    background: none;
+    border: 2px solid #db2777; /* pink-700 border */
+    color: #db2777; /* pink-700 text */
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    margin-top: 1rem; /* Space above the close button */
+}
+
+.modal-close-button:hover {
+    background-color: #fce7f3; /* light pink background */
+    color: #be185d; /* darker pink text */
+    transform: translateY(-2px);
+}
+/* --- Hero Section Styles --- */
+/* --- Hero Section Alternative Styles --- */
+/* --- Hero Section - Ultimate Design with Background Image Styles --- */
+.hero-section-ultimate {
+    position: relative;
+    width: 100%;
+    min-height: 95vh; /* Make it almost full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #ffffff; /* Default text color for contrast */
+}
+
+.hero-ultimate-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(to right, #00000066, rgba(0, 0, 0, 0.2)), /* Darker gradient overlay from left */
+        url('C:/Users/vaibh/Downloads/Dorr-main/Dorr-main/src/assets/Gemini_Generated_Image_licw8xlicw8xlicw.png') center center / cover no-repeat;
+    /* IMPORTANT: REPLACE THE URL ABOVE with your actual high-resolution hero image URL! */
+    /* Local paths like 'C:/Users/...' won't work on a live website. */
+    z-index: 1; /* Behind content */
+    transform: scale(1.05); /* Slightly scale up for a subtle zoom effect */
+    animation: background-pan-zoom 60s linear infinite alternate; /* Slow pan/zoom effect */
+}
+
+@keyframes background-pan-zoom {
+    0% {
+        transform: scale(1.05) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.15) translate(5%, 5%);
+    }
+}
+
+.hero-ultimate-content {
+    position: relative;
+    z-index: 2; /* Above background */
+    max-width: 60rem; /* max-w-6xl */
+    text-align: center;
+    padding-left: 1.5rem; /* px-6 */
+    padding-right: 1.5rem; /* px-6 */
+    color: #ffffff; /* Ensure text is white against the dark overlay */
+}
+
+.hero-ultimate-title {
+    font-size: 5.5rem; /* Even larger, text-9xl */
+    font-weight: 900; /* font-black */
+    line-height: 1;
+    letter-spacing: -0.07em; /* tracking-tighter */
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Stronger shadow for readability */
+}
+
+.hero-ultimate-description {
+    font-size: 1.625rem; /* text-3xl */
+    font-weight: 400; /* Regular weight */
+    color: #e2e8f0; /* gray-200 */
+    margin-bottom: 5rem;
+    line-height: 1.5;
+    max-width: 50rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-ultimate-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem; /* space-x-8 */
+    flex-wrap: wrap;
+}
+
+.hero-ultimate-button-women,
+.hero-ultimate-button-men {
+    padding: 1.25rem 3rem; /* py-5 px-12 */
+    border-radius: 0.5rem; /* rounded-lg */
+    font-weight: 700; /* font-bold */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    font-size: 1.25rem; /* text-xl */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-ultimate-button-women {
+    background-color: #ec4899; /* pink-500 */
+    color: #fff;
+}
+
+.hero-ultimate-button-women:hover {
+    background-color: #db2777; /* pink-600 */
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(236, 72, 153, 0.5);
+}
+
+.hero-ultimate-button-men {
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff; /* White border */
+}
+
+.hero-ultimate-button-men:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Slight white fill on hover */
+    color: #ffffff;
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+}
+
+.hero-ultimate-button-women .icon-right,
+.hero-ultimate-button-men .icon-right {
+    margin-left: 0.75rem;
+}
+
+/* Responsive adjustments for Ultimate Hero Section */
+@media (max-width: 1024px) {
+    .hero-ultimate-title {
+        font-size: 4.5rem; /* text-8xl */
+    }
+    .hero-ultimate-description {
+        font-size: 1.375rem; /* text-2xl */
+    }
+    .hero-section-ultimate {
+        min-height: 80vh;
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-ultimate-title {
+        font-size: 3rem; /* text-5xl */
+    }
+    .hero-ultimate-description {
+        font-size: 1.125rem; /* text-lg */
+        margin-bottom: 2rem;
+    }
+    .hero-ultimate-buttons {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    .hero-ultimate-button-women,
+    .hero-ultimate-button-men {
+        width: 85%;
+        max-width: 320px;
+        padding: 1rem 2rem;
+        font-size: 1.125rem;
+    }
+    .hero-section-ultimate {
+        min-height: auto;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-ultimate-title {
+        font-size: 2.25rem; /* text-4xl */
+        letter-spacing: -0.05em;
+    }
+    .hero-ultimate-description {
+        font-size: 0.95rem; /* slightly smaller for small screens */
+    }
+}
+/* Media query for larger screens to arrange buttons side-by-side */
+@media (min-width: 640px) { /* sm breakpoint or similar */
+    .modal-store-options {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .modal-store-button {
+        width: auto; /* Auto width for side-by-side */
+        flex: 1; /* Distribute space evenly */
+        max-width: 180px; /* Max width per button */
+    }
+}

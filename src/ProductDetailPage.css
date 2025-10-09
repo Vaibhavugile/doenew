@@ -1,0 +1,1090 @@
+/* ProductDetailPage.css - Enhanced Layout & UI */
+
+/* Add these new/modified classes to your existing ProductDetailPage.css */
+
+:root {
+    /* Colors from HomePage.css */
+    --color-neutral-50: #fafafa;
+    --color-neutral-100: #f5f5f5;
+    --color-neutral-900: #171717; /* Used for strong text/logo */
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280; /* Added for original price */
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151; /* Primary text color */
+    --color-gray-800: #374151; /* Matches HomePage.css main color */
+    --color-pink-100: #fce7f3;
+    --color-pink-400: #f472b6;
+    --color-pink-500: #ec4899;
+    --color-pink-700: #db2777; /* Accent color */
+    --color-pink-800: #be185d; /* Darker pink for hover */
+    --color-red-600: #dc2626; /* For errors */
+    --color-white: #ffffff; /* Explicitly define white */
+
+    /* Shadows from HomePage.css */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+
+    /* Border Radii from HomePage.css */
+    --border-radius-sm: 0.375rem; /* rounded-md */
+    --border-radius-md: 0.75rem; /* rounded-xl */
+    --border-radius-lg: 1.5rem; /* rounded-3xl - for sections */
+    --border-radius-full: 9999px; /* rounded-full */
+
+    /* General Styling */
+    --font-family-inter: 'Inter', sans-serif;
+    --transition-ease-out: all 0.3s ease-out; /* Standard transition */
+}
+
+/* General Layout & Structure */
+.product-detail-page.new-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--color-neutral-50);
+}
+/* ProductDetailPage.css - Pincode Check Block */
+
+/* New block container */
+.pincode-check-block {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-gray-300);
+}
+
+.pincode-check-block .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--color-gray-700);
+}
+
+/* Input and Button Group */
+.pincode-input-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.pincode-input {
+    flex-grow: 1; /* Take up most of the space */
+    padding: 12px 15px;
+    border: 1px solid var(--color-gray-400);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--color-neutral-900);
+    /* Remove default number input arrows */
+    -moz-appearance: textfield; /* Firefox */
+}
+.pincode-input::-webkit-outer-spin-button,
+.pincode-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Chrome, Safari, Edge */
+    margin: 0;
+}
+.pincode-input:focus {
+    border-color: var(--color-pink-700);
+    box-shadow: 0 0 0 3px var(--color-pink-100);
+    outline: none;
+}
+
+.check-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--color-pink-500);
+    color: var(--color-white);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.check-button:hover:not(:disabled) {
+    background-color: var(--color-pink-700);
+}
+.check-button:disabled {
+    background-color: var(--color-gray-400);
+    cursor: not-allowed;
+}
+
+/* Status Messages */
+.pincode-message {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.pincode-message.success {
+    background-color: #dcfce7; /* Light green */
+    color: #16a34a; /* Dark green text */
+    border: 1px solid #4ade80;
+}
+
+.pincode-message.error {
+    background-color: #fee2e2; /* Light red */
+    color: var(--color-red-600); /* Dark red text */
+    border: 1px solid var(--color-red-600);
+}
+
+/* Spinner for button */
+.spin-icon {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive Adjustments for mobile */
+@media (max-width: 768px) {
+    .pincode-input-group {
+        flex-direction: column;
+    }
+    .check-button {
+        width: 100%;
+        padding: 10px 20px;
+    }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+/* ProductDetailPage.css */
+
+/* Spinner Loader */
+.loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px; /* Adjust as needed to provide space for the spinner */
+    width: 100%;
+}
+
+.loading-spinner {
+    border: 4px solid var(--color-gray-300); /* Light gray border */
+    border-top: 4px solid var(--color-pink-700); /* Accent color for the spinner part */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite; /* Animation definition */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+/* Header Section */
+.page-header-section {
+    background-color: var(--color-neutral-100);
+    padding: 30px 0;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 30px;
+    position: sticky;
+}
+
+.breadcrumb-nav {
+    font-size: 0.9rem;
+    color: var(--color-gray-600);
+    margin-bottom: 10px;
+}
+
+.breadcrumb-link {
+    color: var(--color-gray-700);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.breadcrumb-link:hover {
+    color: var(--color-pink-700);
+}
+.breadcrumb-separator {
+    margin: 0 5px;
+    color: var(--color-gray-400);
+}
+
+.product-main-title {
+    font-size: 2.5rem;
+    color: var(--color-neutral-900);
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: 700;
+}
+
+/* Main Product Section */
+.product-main-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 50px;
+    align-items: flex-start;
+}
+
+/* Product Gallery Column */
+.product-gallery-column {
+    position: sticky;
+    top: 30px;
+    align-self: flex-start;
+    padding-bottom: 20px;
+}
+
+.main-image-display {
+    position: relative;
+    width: 100%;
+    padding-bottom: 120%; /* Aspect ratio (e.g., 4:3, 16:9, etc.) */
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-white);
+    display: flex; /* For centering placeholder text */
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-in; /* Indicate clickable for zoom */
+}
+
+.main-product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensures the image fits within the container */
+    transition: transform 0.3s ease; /* Smooth transition for potential hover effects */
+}
+
+/* Click to Zoom Indicator */
+.click-to-zoom-indicator {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--color-white);
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    pointer-events: none; /* Allows click through to the image */
+    opacity: 0.9;
+}
+
+
+/* Navigation Arrows (reused from existing CSS but ensures they are positioned correctly) */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    color: var(--color-gray-700);
+}
+
+.nav-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.left-arrow {
+    left: 15px;
+}
+
+.right-arrow {
+    right: 15px;
+}
+
+
+/* Thumbnail Strip */
+.thumbnail-strip {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling for many thumbnails */
+    gap: 15px;
+    padding: 15px 0;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    margin-top: 15px;
+}
+
+/* Hide scrollbar for Webkit browsers */
+.thumbnail-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.thumbnail-image {
+    width: 90px; /* Larger thumbnails */
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent; /* Default transparent border */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.thumbnail-image:hover {
+    opacity: 1;
+    transform: translateY(-3px); /* Subtle lift on hover */
+}
+
+.thumbnail-image.active-thumbnail {
+    opacity: 1;
+    border-color: var(--color-pink-700); /* Highlight active thumbnail */
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* Product Details Column */
+.product-details-column {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+}
+
+/* Product Titles/Codes within details column */
+.product-secondary-title { /* Shown on desktop only */
+    font-size: 2rem;
+    color: var(--color-neutral-900);
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+.product-code-display {
+    font-size: 0.95rem;
+    color: var(--color-gray-600);
+    margin-bottom: 20px;
+}
+
+/* Price Block */
+.product-price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-gray-300); /* Separator */
+}
+.rent-price-large {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-pink-700); /* Highlight rent price */
+    display: flex;
+    align-items: center;
+}
+.rent-price-large .inline-icon {
+    margin-right: 5px;
+}
+.price-term {
+    font-size: 1.1rem;
+    color: var(--color-gray-700);
+    font-weight: 500;
+}
+.original-price-strike {
+    font-size: 1rem;
+    color: var(--color-gray-500);
+    text-decoration: line-through;
+    display: flex;
+    align-items: center;
+}
+.original-price-strike .inline-icon {
+    margin-right: 3px;
+}
+
+/* Description Block */
+.product-description-block {
+    margin-bottom: 30px;
+}
+.product-description-block p {
+    line-height: 1.7;
+    color: var(--color-gray-700);
+}
+
+/* Options (Size/Color Selectors) */
+.product-options {
+    margin-bottom: 30px;
+}
+.option-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.option-label {
+    font-size: 1rem;
+    color: var(--color-gray-800);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+.option-label .icon-mr {
+    margin-right: 8px;
+    color: var(--color-pink-500); /* Icon color */
+}
+
+.option-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--color-gray-400);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--color-neutral-900);
+    background-color: var(--color-white);
+    appearance: none; /* Remove default arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); /* Custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.option-select:focus {
+    border-color: var(--color-pink-700);
+    box-shadow: 0 0 0 3px var(--color-pink-100);
+    outline: none;
+}
+.size-chart-link {
+    font-size: 0.9rem;
+    color: var(--color-pink-700);
+    text-decoration: none;
+    align-self: flex-end; /* Aligns to the right */
+    transition: color 0.3s ease;
+}
+.size-chart-link:hover {
+    text-decoration: underline;
+    color: var(--color-pink-800);
+}
+.product-color-display {
+    font-size: 1rem;
+    color: var(--color-gray-800);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Action Area */
+.action-area {
+    margin-bottom: 30px;
+}
+.enquire-button {
+    width: 100%;
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--color-pink-700);
+    color: var(--color-white);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.enquire-button:hover {
+    background-color: var(--color-pink-800);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(219, 39, 119, 0.2);
+}
+.enquire-button:disabled {
+    background-color: var(--color-gray-400);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Additional Info Block */
+.additional-info-block {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-gray-300);
+}
+.section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-neutral-900);
+    margin-bottom: 15px;
+}
+.additional-info-block ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.additional-info-block li {
+    font-size: 0.95rem;
+    color: var(--color-gray-700);
+    margin-bottom: 8px;
+}
+.additional-info-block li strong {
+    color: var(--color-neutral-900);
+}
+
+
+/* Modal for Inquiry/Error messages (existing) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    animation: fadeInScale 0.3s ease-out forwards;
+}
+/* --- Pincode Check Block Styles --- */
+.pincode-check-block {
+    /* Container for the whole block */
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+}
+
+/* Section Heading */
+.section-heading {
+    /* Style for the 'Check Delivery Serviceability' heading */
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.icon-mr {
+    /* Style for the MapPin icon */
+    margin-right: 8px;
+    color: #007bff; /* Primary color for the icon */
+}
+
+/* Input Group: Input + Button */
+.pincode-input-group {
+    /* Flex container for the input and button to sit side-by-side */
+    display: flex;
+    gap: 8px; /* Space between input and button */
+    align-items: stretch; /* Make items the same height */
+}
+
+.pincode-input {
+    /* Style for the text input field */
+    flex-grow: 1; /* Allows input to take up available space */
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    max-width: 250px; /* Limit max width on large screens */
+}
+
+.pincode-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Button (Base and Specific) */
+.btn {
+    /* Base button styling (assuming you have a global .btn) */
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    white-space: nowrap; /* Prevents button text from wrapping */
+}
+
+.btn-secondary.check-pincode-button {
+    /* Specific style for the Check button */
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+.btn-secondary.check-pincode-button:hover:not(:disabled) {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.btn-secondary.check-pincode-button:disabled {
+    /* Disabled state for the button */
+    background-color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* --- Serviceability Message Styles --- */
+.serviceability-message {
+    /* Container for success/error messages */
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start; /* Align icon and text to the top */
+}
+
+.serviceability-message p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.serviceability-message.success {
+    /* Style for success messages */
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.serviceability-message.error {
+    /* Style for error messages */
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Inline Icons for Status */
+.inline-icon {
+    margin-right: 8px;
+    min-width: 20px; /* Ensure icon doesn't shrink */
+    margin-top: 2px; /* Slight adjustment for vertical alignment */
+}
+
+/* Loading Spinner (LUCIDE Loader2 icon) */
+.loading-spinner {
+    /* Animation for the spinner */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Optional: Mobile adjustments */
+@media (max-width: 600px) {
+    .pincode-input-group {
+        /* Allow input to take full width on small screens */
+        flex-direction: column; 
+    }
+
+    .pincode-input {
+        max-width: none;
+    }
+
+    .check-pincode-button {
+        width: 100%; /* Make button full width */
+    }
+}
+.modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-gray-500);
+    transition: color 0.2s ease;
+}
+.modal-close-button:hover {
+    color: var(--color-gray-700);
+}
+
+.modal-icon {
+    margin-bottom: 20px;
+}
+.modal-icon.success-icon {
+    color: #22c55e; /* Green for success */
+}
+.modal-icon.error-icon {
+    color: var(--color-red-600); /* Red for error */
+}
+
+.modal-message {
+    font-size: 1.1rem;
+    color: var(--color-gray-700);
+    margin-bottom: 30px;
+}
+
+.modal-ok-button {
+    background-color: var(--color-pink-700);
+    color: var(--color-white);
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+.modal-ok-button:hover {
+    background-color: var(--color-pink-800);
+}
+
+/* Animations for modal */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* --- New Styles for Zoom Image Modal --- */
+.zoom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9); /* Darker overlay for zoom */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001; /* Higher z-index than inquiry modal */
+    overflow: hidden; /* Prevent scrolling inside overlay */
+}
+
+.zoom-modal-content {
+    background-color: transparent; /* Transparent background */
+    max-width: 90vw; /* Max width relative to viewport */
+    max-height: 90vh; /* Max height relative to viewport */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.zoomed-image-wrapper {
+    width: 100%;
+    height: calc(100% - 60px); /* Adjust height for controls below */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Crucial for clipping zoomed image */
+    cursor: grab;
+    position: relative; /* For pan effect */
+}
+
+.zoomed-image-wrapper.panning {
+    cursor: grabbing;
+}
+
+
+.zoomed-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ensure full image is initially visible */
+    user-select: none; /* Prevent image dragging behavior */
+    pointer-events: auto; /* Allow mouse events on image */
+    /* Transform is handled by inline style in JS for zoom and pan */
+}
+
+.zoom-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 8px;
+    align-items: center;
+    color: var(--color-white);
+}
+
+.zoom-button {
+    background-color: var(--color-pink-700);
+    color: var(--color-white);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.zoom-button:hover:not(:disabled) {
+    background-color: var(--color-pink-800);
+}
+
+.zoom-button:disabled {
+    background-color: var(--color-gray-600);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.zoom-level-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 60px; /* Ensure space for percentage */
+    text-align: center;
+}
+
+.reset-zoom-button {
+    background-color: var(--color-gray-700);
+    margin-left: 10px;
+    font-size: 0.9rem;
+    padding: 8px 15px;
+}
+.reset-zoom-button:hover:not(:disabled) {
+    background-color: var(--color-gray-800);
+}
+
+
+/* --- Related Products Section Styles --- */
+.related-products-section {
+    padding: 50px 20px;
+    background-color: var(--color-neutral-100);
+    margin-top: 30px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.related-products-section .section-heading {
+    font-size: 2rem;
+    margin-bottom: 40px;
+    color: var(--color-neutral-900);
+}
+
+.related-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.related-product-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure cards stretch to fill grid cell */
+}
+
+.related-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.related-product-image {
+    width: 100%;
+    height: 280px; /* Fixed height for consistent image size */
+    object-fit: cover;
+    border-bottom: 1px solid var(--color-neutral-100);
+}
+
+.related-product-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-neutral-900);
+    margin: 15px 15px 5px;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.related-product-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-pink-700);
+    margin: 0 15px 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-align: left;
+}
+.related-product-price .inline-icon {
+    margin-right: 0; /* Override default inline-icon margin if needed */
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 992px) { /* Tablet and smaller */
+    .product-main-section {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .product-gallery-column {
+        position: static;
+        top: auto;
+        align-self: auto;
+    }
+    .product-details-column {
+        padding: 20px;
+    }
+    .product-main-title {
+        font-size: 2.2rem;
+    }
+    .product-secondary-title {
+        display: none;
+    }
+    .click-to-zoom-indicator {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+    }
+    .related-products-section {
+        padding: 30px 20px;
+    }
+    .related-products-section .section-heading {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+    }
+    .related-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    .related-product-image {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) { /* Mobile */
+    .page-header-section {
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+    .product-main-title {
+        font-size: 1.8rem;
+    }
+    .product-main-section {
+        padding: 0 15px 30px;
+    }
+    .main-image-display {
+        padding-bottom: 100%;
+    }
+    .nav-arrow {
+        width: 40px;
+        height: 40px;
+        padding: 5px;
+        left: 10px;
+        right: 10px;
+    }
+    .thumbnail-strip {
+        padding: 10px 0;
+        gap: 10px;
+    }
+    .thumbnail-image {
+        width: 70px;
+        height: 70px;
+    }
+    .product-price-block {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .rent-price-large {
+        font-size: 2rem;
+    }
+    .price-term {
+        font-size: 1rem;
+    }
+    .original-price-strike {
+        font-size: 0.9rem;
+    }
+    .enquire-button {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+    .option-select {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+
+    /* Zoom Modal on mobile */
+    .zoom-modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+    .zoom-controls {
+        gap: 10px;
+        padding: 8px 15px;
+    }
+    .zoom-button {
+        padding: 6px 10px;
+    }
+    .zoom-level-text {
+        font-size: 1rem;
+        min-width: 50px;
+    }
+    .reset-zoom-button {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Related Products on mobile */
+    .related-products-section {
+        padding: 20px 15px;
+        margin-top: 20px;
+    }
+    .related-products-section .section-heading {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+    }
+    .related-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .related-product-image {
+        height: 180px;
+    }
+    .related-product-name {
+        font-size: 1rem;
+        margin: 10px 10px 5px;
+    }
+    .related-product-price {
+        font-size: 0.9rem;
+        margin: 0 10px 10px;
+    }
+}
