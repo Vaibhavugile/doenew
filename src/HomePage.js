@@ -12,6 +12,7 @@ import { db } from './firebaseConfig';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import aboutus1 from "../src/assets/Gemini_Generated_Image_jprw1njprw1njprw.png";
 import aboutus2 from "../src/assets/Gemini_Generated_Image_mjcef7mjcef7mjce.png";
+import logo1 from "../src/assets/DOR white.png"
 // Import Helmet for SEO meta tags
 import { Helmet } from 'react-helmet-async';
 function HomePage() {
@@ -352,8 +353,13 @@ function HomePage() {
           {/* The <h1> tag signifies this as the most important heading on the page for SEO. */}
           {/* Using <Link to="/"> ensures client-side routing and clean URL for homepage. */}
           <a href="#" className="header-logo animate-pulse-custom">
-            Dress On<span> Rent</span> {/* Added span for accent color */}
+            <img
+              src={logo1}
+              alt="Dress On Rent"
+              className="logo-image"
+            />
           </a>
+
           <div className="header-nav-wrapper">
             <nav className="desktop-nav">
               {/* Navigation links are already descriptive, which is good for SEO. */}
@@ -429,9 +435,9 @@ function HomePage() {
           {/* This is crucial for search engines to understand the main topic of your page. */}
           {/* The styling for this H1 is handled in the CSS section below. */}
 
-          <p className="hero-ultimate-description animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          {/* <p className="hero-ultimate-description animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             Step into elegance without compromise. Rent the finest designer wear for your unforgettable moments . Look stunning for every occasion with our premium lehengas, sherwanis, gowns, and suits. Explore hassle-free and affordable dress rental options near you.
-          </p>
+          </p> */}
           <div className="hero-ultimate-buttons animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <Link to="/#women" className="cta-button hero-ultimate-button-women">
               Explore Women's Rental Styles
@@ -712,8 +718,8 @@ function HomePage() {
             )}
           </div>
         </div>
-      </section>               
-       <section
+      </section>
+      <section
         id="testimonials"
         ref={testimonialsRef}
         className={`section bg-white ${testimonialsIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}
@@ -889,62 +895,62 @@ function HomePage() {
 
       {/* Footer */}
       <footer id="contact" className="footer">
-  <div className="footer-container">
-    <div className="footer-col">
-      {/* SEO Change 1: Enhanced H3 heading with keywords */}
-      <h3 className="footer-heading">DOR - Dress On Rent | Luxury Outfit Rentals in Pune & Nagpur</h3>
-      <p className="footer-text">
-        Your premier destination for high-quality lehenga on rent, sherwani on rent, gown on rent, and suit rentals in Pune and Nagpur. Elevate your style sustainably and affordably for any event with DOR Dress On Rent. We offer a convenient, hassle-free way to rent vs buy ethnic wear, ensuring you save money on wedding dress and other special occasion outfits.
-      </p>
-      <div className="social-links">
-        {/* SEO Change 2: Updated social media links with actual URLs and rel attributes */}
-        <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Instagram"><Instagram size={24} /></a> {/* REPLACE with actual Instagram URL */}
-        <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Facebook"><Facebook size={24} /></a> {/* REPLACE with actual Facebook URL */}
-        <a href="https://www.twitter.com/yourdortwitter" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Twitter"><Twitter size={24} /></a> {/* REPLACE with actual Twitter URL */}
-      </div>
-    </div>
+        <div className="footer-container">
+          <div className="footer-col">
+            {/* SEO Change 1: Enhanced H3 heading with keywords */}
+            <h3 className="footer-heading">DOR - Dress On Rent | Luxury Outfit Rentals in Pune & Nagpur</h3>
+            <p className="footer-text">
+              Your premier destination for high-quality lehenga on rent, sherwani on rent, gown on rent, and suit rentals in Pune and Nagpur. Elevate your style sustainably and affordably for any event with DOR Dress On Rent. We offer a convenient, hassle-free way to rent vs buy ethnic wear, ensuring you save money on wedding dress and other special occasion outfits.
+            </p>
+            <div className="social-links">
+              {/* SEO Change 2: Updated social media links with actual URLs and rel attributes */}
+              <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Instagram"><Instagram size={24} /></a> {/* REPLACE with actual Instagram URL */}
+              <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Facebook"><Facebook size={24} /></a> {/* REPLACE with actual Facebook URL */}
+              <a href="https://www.twitter.com/yourdortwitter" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Twitter"><Twitter size={24} /></a> {/* REPLACE with actual Twitter URL */}
+            </div>
+          </div>
 
-    <div className="footer-col">
-      <h3 className="footer-heading">Quick Links for Dress Rentals</h3>
-      <ul className="footer-list">
-        {/* SEO Change 3: Ensure anchor links are descriptive */}
-        <li><a href="#men" className="footer-link animate-footer-link-hover">Men's Rental Collection</a></li>
-        <li><a href="#women" className="footer-link animate-footer-link-hover">Women's Rental Collection</a></li>
-        <li><a href="#how-it-works" className="footer-link animate-footer-link-hover">How Dress Rental Works</a></li>
-        <li><a href="#about-us" className="footer-link animate-footer-link-hover">About DOR Dress On Rent</a></li>
-        <li><Link to="/faq" className="footer-link animate-footer-link-hover">FAQ for Dress Rentals</Link></li> {/* Assuming /faq is a separate page */}
-      </ul>
-    </div>
+          <div className="footer-col">
+            <h3 className="footer-heading">Quick Links for Dress Rentals</h3>
+            <ul className="footer-list">
+              {/* SEO Change 3: Ensure anchor links are descriptive */}
+              <li><a href="#men" className="footer-link animate-footer-link-hover">Men's Rental Collection</a></li>
+              <li><a href="#women" className="footer-link animate-footer-link-hover">Women's Rental Collection</a></li>
+              <li><a href="#how-it-works" className="footer-link animate-footer-link-hover">How Dress Rental Works</a></li>
+              <li><a href="#about-us" className="footer-link animate-footer-link-hover">About DOR Dress On Rent</a></li>
+              <li><Link to="/faq" className="footer-link animate-footer-link-hover">FAQ for Dress Rentals</Link></li> {/* Assuming /faq is a separate page */}
+            </ul>
+          </div>
 
-    <div className="footer-col">
-      <h3 className="footer-heading">Contact DOR - Dress On Rent</h3>
-      <ul className="footer-list">
-        <li className="contact-item"><Mail size={18} className="icon-mr" /> info@DOR.com</li> {/* REPLACE with actual email */}
-        <li className="contact-item"><Phone size={18} className="icon-mr" /> +91 98765 43210</li> {/* REPLACE with actual phone number */}
-        <li className="contact-item align-start"><MapPin size={18} className="icon-mr mt-1" />
-          <address className="address-text">
-            Our Stores:<br />
-            {/* SEO Change 4: Display full store names and addresses for local SEO */}
-            {loadingStores ? 'Loading...' : storeError ? 'Error loading stores' :
-              storeLocations.map(store => (
-                <span key={store.id}>
-                  {store.name}: [Your full address for {store.name} store, e.g., Shop No 5, ABC Towers, Wakad, Pune, Maharashtra 411057]<br />
-                </span>
-              ))
-            }
-            {/* Add specific addresses for Pune and Nagpur if available statically or fetched dynamically */}
-            {/* Example static addresses: */}
-            {/* Pune Store: Shop No. 101, XYZ Building, MG Road, Camp, Pune, Maharashtra 411001<br/> */}
-            {/* Nagpur Store: 2nd Floor, PQR Plaza, Civil Lines, Nagpur, Maharashtra 440001<br/> */}
-          </address>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div className="copyright">
-    &copy; {new Date().getFullYear()} DOR. All rights reserved.
-  </div>
-</footer>
+          <div className="footer-col">
+            <h3 className="footer-heading">Contact DOR - Dress On Rent</h3>
+            <ul className="footer-list">
+              <li className="contact-item"><Mail size={18} className="icon-mr" /> info@DOR.com</li> {/* REPLACE with actual email */}
+              <li className="contact-item"><Phone size={18} className="icon-mr" /> +91 98765 43210</li> {/* REPLACE with actual phone number */}
+              <li className="contact-item align-start"><MapPin size={18} className="icon-mr mt-1" />
+                <address className="address-text">
+                  Our Stores:<br />
+                  {/* SEO Change 4: Display full store names and addresses for local SEO */}
+                  {loadingStores ? 'Loading...' : storeError ? 'Error loading stores' :
+                    storeLocations.map(store => (
+                      <span key={store.id}>
+                        {store.name}: [Your full address for {store.name} store, e.g., Shop No 5, ABC Towers, Wakad, Pune, Maharashtra 411057]<br />
+                      </span>
+                    ))
+                  }
+                  {/* Add specific addresses for Pune and Nagpur if available statically or fetched dynamically */}
+                  {/* Example static addresses: */}
+                  {/* Pune Store: Shop No. 101, XYZ Building, MG Road, Camp, Pune, Maharashtra 411001<br/> */}
+                  {/* Nagpur Store: 2nd Floor, PQR Plaza, Civil Lines, Nagpur, Maharashtra 440001<br/> */}
+                </address>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="copyright">
+          &copy; {new Date().getFullYear()} DOR. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 }
