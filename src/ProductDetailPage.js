@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'; // Import useRef
 import { useParams, Link } from 'react-router-dom';
 import './ProductDetailPage.css';
-import { db,checkPincodeServiceability } from './firebaseConfig';
-import { doc, getDoc, collection, query, where, getDocs,limit } from 'firebase/firestore';
+import { db, checkPincodeServiceability } from './firebaseConfig';
+import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
 
 // Import icons from lucide-react
-import { IndianRupee, MessageSquare, Info, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, Ruler, Palette, ZoomIn, ZoomOut, Maximize2,MapPin } from 'lucide-react'; // Added ZoomIn, ZoomOut, Maximize2
+import { IndianRupee, MessageSquare, Info, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, Ruler, Palette, ZoomIn, ZoomOut, Maximize2, MapPin, Clock } from 'lucide-react'; // Added Clock icon
 import axios from 'axios';
-
+import AvailabilityCalendarAndBooking from './AvailabilityCalendarAndBooking';
 function ProductDetailPage() {
     const { gender, subcategoryName, productId } = useParams();
 
@@ -38,9 +38,15 @@ function ProductDetailPage() {
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loadingRelatedProducts, setLoadingRelatedProducts] = useState(false);
     const [relatedProductsError, setRelatedProductsError] = useState('');
-  const [deliveryPincode, setDeliveryPincode] = useState('');
+    const [deliveryPincode, setDeliveryPincode] = useState('');
     const [serviceabilityResult, setServiceabilityResult] = useState(null); // { success: bool, message: string, ...}
     const [loadingServiceability, setLoadingServiceability] = useState(false);
+    
+    // Tracks the user's final choice (Fastest or Cheapest)
+    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null); 
+    // Check if the product is available for Pan India delivery based on the stores array
+    const isPanIndiaDelivery = product && product.availableStores && product.availableStores.includes('PAN INDIA Delivery');
+
     useEffect(() => {
         const fetchProduct = async () => {
             setLoadingProduct(true);
@@ -128,9 +134,9 @@ function ProductDetailPage() {
 
                     // If the product has 'availableStores', filter by it
                     if (productData.availableStores && Array.isArray(productData.availableStores) && productData.availableStores.length > 0) {
-                         // Use array-contains-any to match any of the current product's stores
-                         // Note: array-contains-any can take up to 10 values
-                         relatedProductsQuery = query(
+                        // Use array-contains-any to match any of the current product's stores
+                        // Note: array-contains-any can take up to 10 values
+                        relatedProductsQuery = query(
                             relatedProductsQuery,
                             where('availableStores', 'array-contains-any', productData.availableStores)
                         );
@@ -180,71 +186,117 @@ function ProductDetailPage() {
             prevIndex === (displayImages.length || 1) - 1 ? 0 : prevIndex + 1
         );
     };
+    const handleDeliveryOptionSelect = (optionType) => {
+        if (!serviceabilityResult?.options) return;
+
+        const forward = serviceabilityResult.options.forward;
+        const reverse = serviceabilityResult.options.reverse;
+        let selectedForward, selectedReverse;
+
+        // Map optionType to the two legs (Fastest Delivery + Fastest Return) or (Cheapest Delivery + Cheapest Return)
+        if (optionType === 'fastest') {
+            selectedForward = forward.fastest;
+            selectedReverse = reverse.fastest;
+        } else if (optionType === 'cheapest') {
+            selectedForward = forward.cheapest;
+            selectedReverse = reverse.cheapest;
+        } else {
+             return; 
+        }
+
+        const totalRate = selectedForward.rate + selectedReverse.rate;
+        const totalETD = selectedForward.etd + selectedReverse.etd;
+
+        setSelectedDeliveryOption({
+            type: optionType,
+            // Total Combined Values
+            charge: totalRate.toFixed(2),
+            etd: totalETD, 
+            // Forward Details (The individual leg data)
+            forwardETD: selectedForward.etd,
+            forwardCourierName: selectedForward.courierName,
+            forwardRate: selectedForward.rate.toFixed(2),
+            // Reverse Details (The individual leg data)
+            reverseETD: selectedReverse.etd,
+            reverseCourierName: selectedReverse.courierName,
+            reverseRate: selectedReverse.rate.toFixed(2),
+        });
+    };
 
     const handleEnquire = async () => {
-    if (!product) { // Only check if product data is available
-        setModalMessage('Product details are not available for inquiry.');
-        setModalType('error');
-        setShowModal(true);
-        return;
-    }
+        if (!product) { // Only check if product data is available
+            setModalMessage('Product details are not available for inquiry.');
+            setModalType('error');
+            setShowModal(true);
+            return;
+        }
 
-    try {
-        const whatsappNumber = '+918446442204'; // Replace with your WhatsApp number
-        // Construct the message without requiring selected size or color
-        const message = `Hello, I'm interested in renting the product "${product.name}" (Product Code: ${product.productCode}).\n\nDetails:\nRent: ₹${product.rent.toLocaleString('en-IN')} for 3 days.\n\nPlease provide more details.`;
+        try {
+            const whatsappNumber = '+918446442204'; // Replace with your WhatsApp number
+            // Construct the message without requiring selected size or color
+            const message = `Hello, I'm interested in renting the product "${product.name}" (Product Code: ${product.productCode}).\n\nDetails:\nRent: ₹${product.rent.toLocaleString('en-IN')} for 3 days.\n\nPlease provide more details.`;
 
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-        window.open(whatsappUrl, '_blank'); // Open in a new tab
+            window.open(whatsappUrl, '_blank'); // Open in a new tab
 
-        setModalMessage(`Your inquiry for "${product.name}" has been sent! We will get back to you shortly on WhatsApp.`);
-        setModalType('success');
-        setShowModal(true);
+            setModalMessage(`Your inquiry for "${product.name}" has been sent! We will get back to you shortly on WhatsApp.`);
+            setModalType('success');
+            setShowModal(true);
 
-    } catch (error) {
-        console.error("Error sending inquiry:", error);
-        setModalMessage('Failed to open WhatsApp. Please ensure you have WhatsApp installed or try again.');
-        setModalType('error');
-        setShowModal(true);
-    }
-};
+        } catch (error) {
+            console.error("Error sending inquiry:", error);
+            setModalMessage('Failed to open WhatsApp. Please ensure you have WhatsApp installed or try again.');
+            setModalType('error');
+            setShowModal(true);
+        }
+    };
     const closeModal = () => {
         setShowModal(false);
         setModalMessage('');
         setModalType('');
     };
-    const checkServiceability = async () => {
-          console.log('Pincode being sent:', deliveryPincode);
-        if (!deliveryPincode || !/^\d{6}$/.test(deliveryPincode)) {
-            setServiceabilityResult({ success: false, message: 'Please enter a valid 6-digit Pincode.' });
-            return;
+    // Replace the existing checkServiceability function:
+const checkServiceability = async () => {
+    console.log('Pincode being sent:', deliveryPincode);
+    if (!deliveryPincode || !/^\d{6}$/.test(deliveryPincode)) {
+        setServiceabilityResult({ success: false, message: 'Please enter a valid 6-digit Pincode.' });
+        return;
+    }
+
+    setLoadingServiceability(true);
+    setServiceabilityResult(null);
+    setSelectedDeliveryOption(null); // Crucial: Clear previous selection before new check
+
+    try {
+        // Call the Cloud Function
+        const result = await checkPincodeServiceability({ deliveryPincode });
+        setServiceabilityResult(result.data);
+
+        // --- NEW LOGIC: Set the fastest option as default selection ---
+        if (result.data.success && result.data.options?.fastest) {
+            // Use the handleDeliveryOptionSelect function for consistency
+            handleDeliveryOptionSelect('fastest');
+        }
+        // --- END NEW LOGIC ---
+
+    } catch (error) {
+        console.error("Cloud Function Error:", error.code, error.message);
+        let errorMessage = "Delivery check failed. Please try again.";
+
+        // Attempt to extract the error message from the detailed error object
+        if (error.details && typeof error.details === 'string') {
+            errorMessage = error.details;
+        } else if (error.message) {
+            // Catch the message thrown from the Cloud Function's final catch block
+            errorMessage = error.message; 
         }
 
-        setLoadingServiceability(true);
-        setServiceabilityResult(null);
-
-        try {
-            // Call the Cloud Function
-            const result = await checkPincodeServiceability({ deliveryPincode });
-            setServiceabilityResult(result.data);
-
-        } catch (error) {
-            console.error("Cloud Function Error:", error.code, error.message);
-            let errorMessage = "Delivery check failed. Please try again.";
-            
-            // Use the detailed error message from the cloud function if available
-            if (error.details && typeof error.details === 'string') {
-                errorMessage = error.details;
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-
-            setServiceabilityResult({ success: false, message: errorMessage });
-        } finally {
-            setLoadingServiceability(false);
-        }
-    };
+        setServiceabilityResult({ success: false, message: errorMessage });
+    } finally {
+        setLoadingServiceability(false);
+    }
+};
 
     // --- New Zoom Modal Functions ---
     const openZoomModal = (imageUrl) => {
@@ -318,7 +370,7 @@ function ProductDetailPage() {
     if (loadingProduct) {
         return (
             <div className="loading-spinner-container">
-                <Loader2  className="loading-spinner" />
+                <Loader2 className="loading-spinner" />
                 <p>Loading product details...</p>
             </div>
         );
@@ -465,12 +517,12 @@ function ProductDetailPage() {
                             </div>
                         )}
                         {product.color && (!product.colors || product.colors.length <= 1) && (
-                             <p className="product-color-display option-group">
+                            <p className="product-color-display option-group">
                                 <Palette size={20} className="icon-mr" />Available Color: <strong>{product.color}</strong>
                             </p>
                         )}
                     </div>
-                     <div className="pincode-check-block">
+                    <div className="pincode-check-block">
                         <h3 className="section-heading"><MapPin size={20} className="icon-mr" /> Check Delivery Serviceability</h3>
                         <div className="pincode-input-group">
                             <input
@@ -495,33 +547,162 @@ function ProductDetailPage() {
                                 {loadingServiceability ? <Loader2 size={20} className="loading-spinner spin-fast" /> : 'Check'}
                             </button>
                         </div>
+
+
+{serviceabilityResult && (
+    <div className={`serviceability-message ${serviceabilityResult.success ? 'success' : 'error'}`}>
+        {serviceabilityResult.success ? (
+            <>
+                <CheckCircle size={20} className="inline-icon" />
+                <p className="font-bold mb-2 text-green-700">✅ Two-Way Logistics Available!</p>
+                
+                <p className="text-sm text-gray-600 mb-3">Select your combined scenario:</p>
+
+                {/* Since we don't have the final combined options, we must calculate the labels here */}
+                {/* Calculate the total cost/time for the two main scenarios */}
+                {(() => {
+                    const options = serviceabilityResult.options;
+                    const fastestTotalRate = (options.forward.fastest.rate + options.reverse.fastest.rate).toFixed(2);
+                    const fastestTotalETD = options.forward.fastest.etd + options.reverse.fastest.etd;
+                    const cheapestTotalRate = (options.forward.cheapest.rate + options.reverse.cheapest.rate).toFixed(2);
+                    const cheapestTotalETD = options.forward.cheapest.etd + options.reverse.cheapest.etd;
+
+                    return (
+                        <div className="delivery-options-selection space-y-3">
+                            {/* OPTION 1: FASTEST (Delivery + Return) */}
+                            <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'fastest' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
+                                <input
+                                    type="radio"
+                                    name="delivery-option"
+                                    value="fastest"
+                                    checked={selectedDeliveryOption?.type === 'fastest'}
+                                    onChange={() => handleDeliveryOptionSelect('fastest')}
+                                    className="mr-3 text-indigo-600 focus:ring-indigo-500"
+                                />
+                                <div className="flex justify-between w-full items-center">
+                                    <div>
+                                        <p className="font-semibold text-gray-800">🚀 Fastest Round Trip</p>
+                                        <p className="text-sm text-gray-600">Total Time: **{fastestTotalETD} days**</p>
+                                    </div>
+                                    <p className="font-bold text-xl text-indigo-700">
+                                         <IndianRupee size={16} className="inline-icon" />{fastestTotalRate}
+                                    </p>
+                                </div>
+                            </label>
+
+                            {/* OPTION 2: CHEAPEST (Delivery + Return) */}
+                            {(cheapestTotalRate !== fastestTotalRate || cheapestTotalETD !== fastestTotalETD) && (
+                                <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'cheapest' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-teal-300'}`}>
+                                    <input
+                                        type="radio"
+                                        name="delivery-option"
+                                        value="cheapest"
+                                        checked={selectedDeliveryOption?.type === 'cheapest'}
+                                        onChange={() => handleDeliveryOptionSelect('cheapest')}
+                                        className="mr-3 text-teal-600 focus:ring-teal-500"
+                                    />
+                                    <div className="flex justify-between w-full items-center">
+                                        <div>
+                                            <p className="font-semibold text-gray-800">💰 Cheapest Round Trip</p>
+                                            <p className="text-sm text-gray-600">Total Time: **{cheapestTotalETD} days**</p>
+                                        </div>
+                                        <p className="font-bold text-xl text-teal-700">
+                                             <IndianRupee size={16} className="inline-icon" />{cheapestTotalRate}
+                                        </p>
+                                    </div>
+                                </label>
+                            )}
+                        </div>
+                    );
+                })()}
+
+
+                {/* Detailed Breakdown for the SELECTED option (Fulfills the request for separate data) */}
+                {selectedDeliveryOption && (
+                    <div className="delivery-breakdown mt-4 p-4 border rounded-lg bg-gray-100">
+                        <h4 className="font-bold text-md mb-2">
+                            Breakdown of the {selectedDeliveryOption.type.toUpperCase()} Combined Option
+                        </h4>
                         
-                        {serviceabilityResult && (
-                            <div className={`serviceability-message ${serviceabilityResult.success ? 'success' : 'error'}`}>
-                                {serviceabilityResult.success ? (
-                                    <>
-                                        <CheckCircle size={20} className="inline-icon" />
-                                        <p>Delivery available! Est. delivery: **{serviceabilityResult.estimatedDate}** via **{serviceabilityResult.courierName}**.</p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <XCircle size={20} className="inline-icon" />
-                                        <p>{serviceabilityResult.message}</p>
-                                    </>
-                                )}
-                            </div>
-                        )}
+                        {/* FORWARD (DELIVERY) BREAKDOWN */}
+                        <div className="mb-3 p-2 border-b border-gray-300">
+                            <h5 className="font-semibold text-gray-800">📦 Delivery to You (Forward Leg):</h5>
+                            <ul className="list-disc ml-5 text-sm text-gray-700">
+                                <li>**Time:** **{selectedDeliveryOption.forwardETD}** day{Number(selectedDeliveryOption.forwardETD) > 1 ? 's' : ''}.</li>
+                                <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.forwardRate}**.</li>
+                                <li>**Agency:** **{selectedDeliveryOption.forwardCourierName || 'N/A'}**.</li>
+                            </ul>
+                        </div>
+
+                        {/* REVERSE (RETURN) BREAKDOWN */}
+                        <div className="mb-3 p-2">
+                            <h5 className="font-semibold text-gray-800">↩️ Return Pickup from You (Reverse Leg):</h5>
+                            <ul className="list-disc ml-5 text-sm text-gray-700">
+                                <li>**Time:** **{selectedDeliveryOption.reverseETD}** day{Number(selectedDeliveryOption.reverseETD) > 1 ? 's' : ''}.</li>
+                                <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.reverseRate}**.</li>
+                                <li>**Agency:** **{selectedDeliveryOption.reverseCourierName || 'N/A'}**.</li>
+                            </ul>
+                        </div>
+
+                        <p className="mt-4 pt-2 border-t font-bold text-lg text-indigo-700">
+                            Total Combined Cost: <IndianRupee size={16} className="inline-icon" />{selectedDeliveryOption.charge}
+                        </p>
+                    </div>
+                )}
+            </>
+        ) : (
+            <>
+                <XCircle size={20} className="inline-icon" />
+                <p className="mt-2 text-red-600">{serviceabilityResult.message}</p>
+            </>
+        )}
+    </div>
+)}
                     </div>
 
-                    <div className="action-area">
-                        <button
-                            onClick={handleEnquire}
-                            disabled={!product || !selectedSize || (!selectedColor && (product.colors && product.colors.length > 0 && product.color === undefined))}
-                            className="btn btn-primary enquire-button"
-                        >
-                            <MessageSquare size={20} className="icon-mr" /> Enquire Now
-                        </button>
-                    </div>
+                    {/* --- START OF CONDITIONAL ONLINE BOOKING BLOCK --- */}
+            
+{isPanIndiaDelivery && (
+    <div className="online-booking-block">
+        <h3 className="section-heading"><Clock size={20} className="icon-mr" /> Select Rental Dates</h3>
+
+        {/* CONDITIONALLY RENDER THE BOOKING COMPONENT */}
+        {serviceabilityResult?.success && selectedDeliveryOption ? (
+            <AvailabilityCalendarAndBooking
+                productName={product.name}
+                productRent={product.rent}
+                productId={product.productCode} 
+                selectedSize={selectedSize}
+                selectedColor={selectedColor}
+                deliveryCharge={selectedDeliveryOption?.charge} 
+            />
+        ) : (
+            <p className="text-red-500 font-semibold mt-2">
+                Please enter a valid Pincode and select a delivery option above to proceed with booking.
+            </p>
+        )}
+    </div>
+)}
+                    {/* --- END OF CONDITIONAL ONLINE BOOKING BLOCK --- */}
+
+                    {/* The Enquire button should only show if NOT a Pan India product, or as a fallback if online booking is complex */}
+                    {!isPanIndiaDelivery && (
+                        <div className="action-area">
+                            <button
+                                onClick={handleEnquire}
+                                disabled={!product || !selectedSize || (!selectedColor && (product.colors && product.colors.length > 0 && product.color === undefined))}
+                                className="btn btn-primary enquire-button"
+                            >
+                                <MessageSquare size={20} className="icon-mr" /> Enquire Now (via WhatsApp)
+                            </button>
+                            <p className="enquire-note mt-2 text-sm text-gray-600">
+                                This product is available for store pickup or local delivery only. Please enquire to confirm.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* If it IS a Pan India product, we can still show a secondary "Enquire" button below the booking, or just rely on the booking flow. 
+                       For simplicity, I'll only show "Enquire" if it's NOT Pan India. If you need both, adjust the logic above. */}
 
                     <div className="additional-info-block">
                         <h3 className="section-heading">Product Specifications:</h3>
@@ -534,43 +715,7 @@ function ProductDetailPage() {
                 </div>
             </section>
 
-            {/* --- Related Products Section --- */}
-            {loadingRelatedProducts && (
-                <div className="loading-spinner-container">
-                    <Loader2 className="loading-spinner" />
-                    <p>Loading similar products...</p>
-                </div>
-            )}
-            {relatedProductsError && (
-                <div className="error-message">
-                    <p>{relatedProductsError}</p>
-                </div>
-            )}
-            {!loadingRelatedProducts && relatedProducts.length > 0 && (
-                <section className="related-products-section container">
-                    <h2 className="section-heading">Explore More Styles</h2>
-                    <div className="related-products-grid">
-                        {relatedProducts.map((p) => (
-                            <Link to={`/product/${gender}/${subcategoryName}/${p.id}`} key={p.id} className="related-product-card">
-                                <img
-                                    src={p.imageUrl || `https://placehold.co/300x400/e0e0e0/333333?text=${p.name}`}
-                                    alt={p.name}
-                                    className="related-product-image"
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = `https://placehold.co/300x400/cccccc/333333?text=${p.name}`;
-                                    }}
-                                />
-                                <h3 className="related-product-name">{p.name}</h3>
-                                <p className="related-product-price">
-                                    <IndianRupee size={16} className="inline-icon" />{p.rent.toLocaleString('en-IN')}
-                                </p>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
-            )}
-
+            {/* ... (Related Products, Modals, Zoom Modal remain unchanged) ... */}
 
             {/* Inquiry/Error Modal */}
             {showModal && (

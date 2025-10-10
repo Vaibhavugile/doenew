@@ -533,40 +533,42 @@ function HomePage() {
       {/* Men's Collection Section */}
 
       <section id="men" ref={menRef} className={`section bg-white ${menIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-        <div className="container">
-          {/* H2 tag is appropriate for the section title */}
-          <h2 className="section-title">Men's Collection</h2>
-          {loadingCategories ? (
+  <div className="container">
+    <h2 className="section-title">Men's Collection</h2>
 
-            <p className="text-center text-gray-600">Loading men's rental categories...</p>
-          ) : categoryError ? (
-            <p className="text-center text-red-500">{categoryError}</p>
-          ) : (
-            <div className="grid-4-col">
-              {menCategories.map((category) => (
-                <Link
-                  to={`/collection/men/${category.name}`}
-                  key={category.id}
-                  className="category-card animate-pop-in"
-                  aria-label={`Explore Men's ${category.name} collection for rent`} // Accessibility/SEO improvement
-                >
-                  <img
-                    src={category.imageUrl || category.image}
-                    alt={`DOR Men's ${category.name} collection for rent in Pune and Nagpur, including wedding wear and party wear options`}
-                    className="category-card-image"
-                    loading="lazy"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=Men's ${category.name}`; }}
-                  />
-                  <div className="category-card-content">
-                    <h3 className="card-title">{category.name}</h3>
-                    <p className="card-subtitle">Explore Styles</p>
-                  </div>
-                </Link>
-              ))}
+    {loadingCategories ? (
+      <p className="text-center text-gray-600">Loading men's rental categories...</p>
+    ) : categoryError ? (
+      <p className="text-center text-red-500">{categoryError}</p>
+    ) : (
+      /* ⬇️ add stagger-grid + visibility toggle */
+      <div className={`grid-4-col stagger-grid ${menIsVisible ? 'is-visible' : ''}`}>
+        {menCategories.map((category) => (
+          <Link
+            to={`/collection/men/${category.name}`}
+            key={category.id}
+            /* ⬇️ mark each card as a reveal-item */
+            className="category-card reveal-item"
+            aria-label={`Explore Men's ${category.name} collection for rent`}
+          >
+            <img
+              src={category.imageUrl || category.image}
+              alt={`DOR Men's ${category.name} collection for rent in Pune and Nagpur, including wedding wear and party wear options`}
+              className="category-card-image"
+              loading="lazy"
+              onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=Men's ${category.name}`; }}
+            />
+            <div className="category-card-content">
+              <h3 className="card-title">{category.name}</h3>
+              <p className="card-subtitle">Explore Styles</p>
             </div>
-          )}
-        </div>
-      </section>
+          </Link>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
 
       {/* Women's Collection Section */}
       <section id="women" ref={womenRef} className={`section bg-neutral-100 ${womenIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
@@ -579,28 +581,29 @@ function HomePage() {
           ) : categoryError ? (
             <p className="text-center text-red-500">{categoryError}</p>
           ) : (
-            <div className="grid-4-col"> {/* Keeping grid-4-col for consistency, assuming its responsiveness is handled */}
-              {womenCategories.map((category) => (
-                <Link
-                  to={`/collection/women/${category.name}`}
-                  key={category.id}
-                  className="category-card alt-card animate-pop-in"
-                  aria-label={`Explore Women's ${category.name} collection for rent`} // Accessibility/SEO improvement
-                >
-                  <img
-                    src={category.imageUrl || category.image}
-                    alt={`DOR Women's ${category.name} for rent in Pune and Nagpur, ideal for bridal, pre-wedding, or party wear`}
-                    className="category-card-image"
-                    loading="lazy"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=Women's ${category.name}`; }}
-                  />
-                  <div className="category-card-content">
-                    <h3 className="card-title">{category.name}</h3>
-                    <p className="card-subtitle">Discover More</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <div className={`grid-4-col stagger-grid ${womenIsVisible ? 'is-visible' : ''}`}>
+  {womenCategories.map((category) => (
+    <Link
+      to={`/collection/women/${category.name}`}
+      key={category.id}
+      className="category-card alt-card reveal-item"
+      aria-label={`Explore Women's ${category.name} collection for rent`}
+    >
+      <img
+        src={category.imageUrl || category.image}
+        alt={`DOR Women's ${category.name} for rent in Pune and Nagpur, ideal for bridal, pre-wedding, or party wear`}
+        className="category-card-image"
+        loading="lazy"
+        onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=Women's ${category.name}`; }}
+      />
+      <div className="category-card-content">
+        <h3 className="card-title">{category.name}</h3>
+        <p className="card-subtitle">Discover More</p>
+      </div>
+    </Link>
+  ))}
+</div>
+
           )}
         </div>
       </section>
