@@ -8,6 +8,7 @@ import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/
 import { IndianRupee, MessageSquare, Info, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, Ruler, Palette, ZoomIn, ZoomOut, Maximize2, MapPin, Clock } from 'lucide-react'; // Added Clock icon
 import axios from 'axios';
 import AvailabilityCalendarAndBooking from './AvailabilityCalendarAndBooking';
+
 function ProductDetailPage() {
     const { gender, subcategoryName, productId } = useParams();
 
@@ -41,12 +42,12 @@ function ProductDetailPage() {
     const [deliveryPincode, setDeliveryPincode] = useState('');
     const [serviceabilityResult, setServiceabilityResult] = useState(null); // { success: bool, message: string, ...}
     const [loadingServiceability, setLoadingServiceability] = useState(false);
-    
+
     // Tracks the user's final choice (Fastest or Cheapest)
-    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null); 
+    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null);
     // Check if the product is available for Pan India delivery based on the stores array
     const isPanIndiaDelivery = product && product.availableStores && product.availableStores.includes('PAN INDIA Delivery');
-
+    const [logisticsETDs, setLogisticsETDs] = useState({ forwardETD: 0, reverseETD: 0 });
     useEffect(() => {
         const fetchProduct = async () => {
             setLoadingProduct(true);
@@ -186,6 +187,40 @@ function ProductDetailPage() {
             prevIndex === (displayImages.length || 1) - 1 ? 0 : prevIndex + 1
         );
     };
+const calculateDaysDifference = (etdDateString) => {
+    // 1. Input Validation and Conversion
+    if (!etdDateString) {
+        return 0; // Fallback to 0 days if the date string is missing
+    }
+
+    // Try to parse the date string. This is robust for various formats.
+    const etdDate = new Date(etdDateString);
+
+    // Check if parsing failed (e.g., invalid date string)
+    if (isNaN(etdDate.getTime())) {
+        console.error("Failed to parse ETD date string:", etdDateString);
+        return 0; // Fallback to 0 days if the date is invalid
+    }
+    
+    // 2. Define Today's Date (Start of Day)
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    // 3. Define ETD Date (Start of ETD Day)
+    const etdDayStart = new Date(etdDate.getFullYear(), etdDate.getMonth(), etdDate.getDate());
+
+    // 4. Calculate Difference
+    const diffTime = etdDayStart.getTime() - todayStart.getTime();
+    
+    // Calculate the difference in days. Use Math.ceil to round up, ensuring 
+    // that any part of a day counts as a full delivery day.
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Ensure the result is at least 0 (or 1 if you never want 0 days)
+    // Based on your previous request for 0, we'll use Math.max(0, diffDays)
+    return Math.max(0, diffDays);
+};
+
     const handleDeliveryOptionSelect = (optionType) => {
         if (!serviceabilityResult?.options) return;
 
@@ -201,25 +236,42 @@ function ProductDetailPage() {
             selectedForward = forward.cheapest;
             selectedReverse = reverse.cheapest;
         } else {
-             return; 
+            return;
         }
 
+        // --- NEW LOGIC: Convert ETD day-of-month to buffer days ---
+        const forwardBufferDays = calculateDaysDifference(selectedForward.etd);
+        const reverseBufferDays = calculateDaysDifference(selectedReverse.etd);
+        console.log("--- ProductDetailPage Logistics Check ---");
+console.log("1. Calculated Forward Buffer Days (fETD):", forwardBufferDays); // Expected: 3
+console.log("2. Calculated Reverse Buffer Days (rETD):", reverseBufferDays); // Expected: 4
+console.log("3. Prop Passed to Calendar (forwardETD):", forwardBufferDays); // Expected: 3
+console.log("-----------------------------------------");
+
+        // --- END NEW LOGIC ---
+
         const totalRate = selectedForward.rate + selectedReverse.rate;
-        const totalETD = selectedForward.etd + selectedReverse.etd;
+        const totalETD = forwardBufferDays + reverseBufferDays; // Use the calculated buffer days for total ETD display
 
         setSelectedDeliveryOption({
             type: optionType,
             // Total Combined Values
             charge: totalRate.toFixed(2),
-            etd: totalETD, 
+            etd: totalETD, // This is now correctly the total days
             // Forward Details (The individual leg data)
-            forwardETD: selectedForward.etd,
+            forwardETD: forwardBufferDays, // Pass the calculated days
             forwardCourierName: selectedForward.courierName,
             forwardRate: selectedForward.rate.toFixed(2),
             // Reverse Details (The individual leg data)
-            reverseETD: selectedReverse.etd,
+            reverseETD: reverseBufferDays, // Pass the calculated days
             reverseCourierName: selectedReverse.courierName,
             reverseRate: selectedReverse.rate.toFixed(2),
+        });
+
+        // Set the state to pass the calculated days buffer to the calendar component
+        setLogisticsETDs({
+            forwardETD: forwardBufferDays,
+            reverseETD: reverseBufferDays
         });
     };
 
@@ -257,46 +309,46 @@ function ProductDetailPage() {
         setModalType('');
     };
     // Replace the existing checkServiceability function:
-const checkServiceability = async () => {
-    console.log('Pincode being sent:', deliveryPincode);
-    if (!deliveryPincode || !/^\d{6}$/.test(deliveryPincode)) {
-        setServiceabilityResult({ success: false, message: 'Please enter a valid 6-digit Pincode.' });
-        return;
-    }
-
-    setLoadingServiceability(true);
-    setServiceabilityResult(null);
-    setSelectedDeliveryOption(null); // Crucial: Clear previous selection before new check
-
-    try {
-        // Call the Cloud Function
-        const result = await checkPincodeServiceability({ deliveryPincode });
-        setServiceabilityResult(result.data);
-
-        // --- NEW LOGIC: Set the fastest option as default selection ---
-        if (result.data.success && result.data.options?.fastest) {
-            // Use the handleDeliveryOptionSelect function for consistency
-            handleDeliveryOptionSelect('fastest');
-        }
-        // --- END NEW LOGIC ---
-
-    } catch (error) {
-        console.error("Cloud Function Error:", error.code, error.message);
-        let errorMessage = "Delivery check failed. Please try again.";
-
-        // Attempt to extract the error message from the detailed error object
-        if (error.details && typeof error.details === 'string') {
-            errorMessage = error.details;
-        } else if (error.message) {
-            // Catch the message thrown from the Cloud Function's final catch block
-            errorMessage = error.message; 
+    const checkServiceability = async () => {
+        console.log('Pincode being sent:', deliveryPincode);
+        if (!deliveryPincode || !/^\d{6}$/.test(deliveryPincode)) {
+            setServiceabilityResult({ success: false, message: 'Please enter a valid 6-digit Pincode.' });
+            return;
         }
 
-        setServiceabilityResult({ success: false, message: errorMessage });
-    } finally {
-        setLoadingServiceability(false);
-    }
-};
+        setLoadingServiceability(true);
+        setServiceabilityResult(null);
+        setSelectedDeliveryOption(null); // Crucial: Clear previous selection before new check
+
+        try {
+            // Call the Cloud Function
+            const result = await checkPincodeServiceability({ deliveryPincode });
+            setServiceabilityResult(result.data);
+
+            // --- NEW LOGIC: Set the fastest option as default selection ---
+            if (result.data.success && result.data.options?.fastest) {
+                // Use the handleDeliveryOptionSelect function for consistency
+                handleDeliveryOptionSelect('fastest');
+            }
+            // --- END NEW LOGIC ---
+
+        } catch (error) {
+            console.error("Cloud Function Error:", error.code, error.message);
+            let errorMessage = "Delivery check failed. Please try again.";
+
+            // Attempt to extract the error message from the detailed error object
+            if (error.details && typeof error.details === 'string') {
+                errorMessage = error.details;
+            } else if (error.message) {
+                // Catch the message thrown from the Cloud Function's final catch block
+                errorMessage = error.message;
+            }
+
+            setServiceabilityResult({ success: false, message: errorMessage });
+        } finally {
+            setLoadingServiceability(false);
+        }
+    };
 
     // --- New Zoom Modal Functions ---
     const openZoomModal = (imageUrl) => {
@@ -549,140 +601,152 @@ const checkServiceability = async () => {
                         </div>
 
 
-{serviceabilityResult && (
-    <div className={`serviceability-message ${serviceabilityResult.success ? 'success' : 'error'}`}>
-        {serviceabilityResult.success ? (
-            <>
-                <CheckCircle size={20} className="inline-icon" />
-                <p className="font-bold mb-2 text-green-700">✅ Two-Way Logistics Available!</p>
-                
-                <p className="text-sm text-gray-600 mb-3">Select your combined scenario:</p>
+                        {serviceabilityResult && (
+                            <div className={`serviceability-message ${serviceabilityResult.success ? 'success' : 'error'}`}>
+                                {serviceabilityResult.success ? (
+                                    <>
+                                        <CheckCircle size={20} className="inline-icon" />
+                                        <p className="font-bold mb-2 text-green-700">✅ Two-Way Logistics Available!</p>
 
-                {/* Since we don't have the final combined options, we must calculate the labels here */}
-                {/* Calculate the total cost/time for the two main scenarios */}
-                {(() => {
-                    const options = serviceabilityResult.options;
-                    const fastestTotalRate = (options.forward.fastest.rate + options.reverse.fastest.rate).toFixed(2);
-                    const fastestTotalETD = options.forward.fastest.etd + options.reverse.fastest.etd;
-                    const cheapestTotalRate = (options.forward.cheapest.rate + options.reverse.cheapest.rate).toFixed(2);
-                    const cheapestTotalETD = options.forward.cheapest.etd + options.reverse.cheapest.etd;
+                                        <p className="text-sm text-gray-600 mb-3">Select your combined scenario:</p>
 
-                    return (
-                        <div className="delivery-options-selection space-y-3">
-                            {/* OPTION 1: FASTEST (Delivery + Return) */}
-                            <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'fastest' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
-                                <input
-                                    type="radio"
-                                    name="delivery-option"
-                                    value="fastest"
-                                    checked={selectedDeliveryOption?.type === 'fastest'}
-                                    onChange={() => handleDeliveryOptionSelect('fastest')}
-                                    className="mr-3 text-indigo-600 focus:ring-indigo-500"
-                                />
-                                <div className="flex justify-between w-full items-center">
-                                    <div>
-                                        <p className="font-semibold text-gray-800">🚀 Fastest Round Trip</p>
-                                        <p className="text-sm text-gray-600">Total Time: **{fastestTotalETD} days**</p>
-                                    </div>
-                                    <p className="font-bold text-xl text-indigo-700">
-                                         <IndianRupee size={16} className="inline-icon" />{fastestTotalRate}
-                                    </p>
-                                </div>
-                            </label>
+                                        {/* Since we don't have the final combined options, we must calculate the labels here */}
+                                        {/* Calculate the total cost/time for the two main scenarios */}
+                                        {(() => {
+                                            const options = serviceabilityResult.options;
+                                            const fastestForwardDays = calculateDaysDifference(options.forward.fastest.etd);
+                                            const fastestReverseDays = calculateDaysDifference(options.reverse.fastest.etd);
+                                            const fastestTotalETD = fastestForwardDays + fastestReverseDays;
 
-                            {/* OPTION 2: CHEAPEST (Delivery + Return) */}
-                            {(cheapestTotalRate !== fastestTotalRate || cheapestTotalETD !== fastestTotalETD) && (
-                                <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'cheapest' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-teal-300'}`}>
-                                    <input
-                                        type="radio"
-                                        name="delivery-option"
-                                        value="cheapest"
-                                        checked={selectedDeliveryOption?.type === 'cheapest'}
-                                        onChange={() => handleDeliveryOptionSelect('cheapest')}
-                                        className="mr-3 text-teal-600 focus:ring-teal-500"
-                                    />
-                                    <div className="flex justify-between w-full items-center">
-                                        <div>
-                                            <p className="font-semibold text-gray-800">💰 Cheapest Round Trip</p>
-                                            <p className="text-sm text-gray-600">Total Time: **{cheapestTotalETD} days**</p>
-                                        </div>
-                                        <p className="font-bold text-xl text-teal-700">
-                                             <IndianRupee size={16} className="inline-icon" />{cheapestTotalRate}
-                                        </p>
-                                    </div>
-                                </label>
-                            )}
-                        </div>
-                    );
-                })()}
+                                            const fastestTotalRate = (options.forward.fastest.rate + options.reverse.fastest.rate).toFixed(2);
+                                                                                        const cheapestForwardDays = calculateDaysDifference(options.forward.cheapest.etd);
+                                            const cheapestReverseDays = calculateDaysDifference(options.reverse.cheapest.etd);
+                                            const cheapestTotalETD = cheapestForwardDays + cheapestReverseDays;
+
+                                            const cheapestTotalRate = (options.forward.cheapest.rate + options.reverse.cheapest.rate).toFixed(2);
+                                            // Repeat for cheapest (around line 458)
 
 
-                {/* Detailed Breakdown for the SELECTED option (Fulfills the request for separate data) */}
-                {selectedDeliveryOption && (
-                    <div className="delivery-breakdown mt-4 p-4 border rounded-lg bg-gray-100">
-                        <h4 className="font-bold text-md mb-2">
-                            Breakdown of the {selectedDeliveryOption.type.toUpperCase()} Combined Option
-                        </h4>
-                        
-                        {/* FORWARD (DELIVERY) BREAKDOWN */}
-                        <div className="mb-3 p-2 border-b border-gray-300">
-                            <h5 className="font-semibold text-gray-800">📦 Delivery to You (Forward Leg):</h5>
-                            <ul className="list-disc ml-5 text-sm text-gray-700">
-                                <li>**Time:** **{selectedDeliveryOption.forwardETD}** day{Number(selectedDeliveryOption.forwardETD) > 1 ? 's' : ''}.</li>
-                                <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.forwardRate}**.</li>
-                                <li>**Agency:** **{selectedDeliveryOption.forwardCourierName || 'N/A'}**.</li>
-                            </ul>
-                        </div>
+                                            return (
+                                                <div className="delivery-options-selection space-y-3">
+                                                    {/* OPTION 1: FASTEST (Delivery + Return) */}
+                                                    <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'fastest' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="delivery-option"
+                                                            value="fastest"
+                                                            checked={selectedDeliveryOption?.type === 'fastest'}
+                                                            onChange={() => handleDeliveryOptionSelect('fastest')}
+                                                            className="mr-3 text-indigo-600 focus:ring-indigo-500"
+                                                        />
+                                                        <div className="flex justify-between w-full items-center">
+                                                            <div>
+                                                                <p className="font-semibold text-gray-800">🚀 Fastest Round Trip</p>
+                                                                <p className="text-sm text-gray-600">Total Time: **{fastestTotalETD} days**</p>
+                                                            </div>
+                                                            <p className="font-bold text-xl text-indigo-700">
+                                                                <IndianRupee size={16} className="inline-icon" />{fastestTotalRate}
+                                                            </p>
+                                                        </div>
+                                                    </label>
 
-                        {/* REVERSE (RETURN) BREAKDOWN */}
-                        <div className="mb-3 p-2">
-                            <h5 className="font-semibold text-gray-800">↩️ Return Pickup from You (Reverse Leg):</h5>
-                            <ul className="list-disc ml-5 text-sm text-gray-700">
-                                <li>**Time:** **{selectedDeliveryOption.reverseETD}** day{Number(selectedDeliveryOption.reverseETD) > 1 ? 's' : ''}.</li>
-                                <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.reverseRate}**.</li>
-                                <li>**Agency:** **{selectedDeliveryOption.reverseCourierName || 'N/A'}**.</li>
-                            </ul>
-                        </div>
+                                                    {/* OPTION 2: CHEAPEST (Delivery + Return) */}
+                                                    {(cheapestTotalRate !== fastestTotalRate || cheapestTotalETD !== fastestTotalETD) && (
+                                                        <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'cheapest' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-teal-300'}`}>
+                                                            <input
+                                                                type="radio"
+                                                                name="delivery-option"
+                                                                value="cheapest"
+                                                                checked={selectedDeliveryOption?.type === 'cheapest'}
+                                                                onChange={() => handleDeliveryOptionSelect('cheapest')}
+                                                                className="mr-3 text-teal-600 focus:ring-teal-500"
+                                                            />
+                                                            <div className="flex justify-between w-full items-center">
+                                                                <div>
+                                                                    <p className="font-semibold text-gray-800">💰 Cheapest Round Trip</p>
+                                                                    <p className="text-sm text-gray-600">Total Time: **{cheapestTotalETD} days**</p>
+                                                                </div>
+                                                                <p className="font-bold text-xl text-teal-700">
+                                                                    <IndianRupee size={16} className="inline-icon" />{cheapestTotalRate}
+                                                                </p>
+                                                            </div>
+                                                        </label>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
 
-                        <p className="mt-4 pt-2 border-t font-bold text-lg text-indigo-700">
-                            Total Combined Cost: <IndianRupee size={16} className="inline-icon" />{selectedDeliveryOption.charge}
-                        </p>
-                    </div>
-                )}
-            </>
-        ) : (
-            <>
-                <XCircle size={20} className="inline-icon" />
-                <p className="mt-2 text-red-600">{serviceabilityResult.message}</p>
-            </>
-        )}
-    </div>
-)}
+
+                                        {/* Detailed Breakdown for the SELECTED option (Fulfills the request for separate data) */}
+                                        {selectedDeliveryOption && (
+                                            <div className="delivery-breakdown mt-4 p-4 border rounded-lg bg-gray-100">
+                                                <h4 className="font-bold text-md mb-2">
+                                                    Breakdown of the {selectedDeliveryOption.type.toUpperCase()} Combined Option
+                                                </h4>
+
+                                                {/* FORWARD (DELIVERY) BREAKDOWN */}
+                                                <div className="mb-3 p-2 border-b border-gray-300">
+                                                    <h5 className="font-semibold text-gray-800">📦 Delivery to You (Forward Leg):</h5>
+                                                    <ul className="list-disc ml-5 text-sm text-gray-700">
+                                                        <li>**Time:** **{selectedDeliveryOption.forwardETD}** day{Number(selectedDeliveryOption.forwardETD) > 1 ? 's' : ''}.</li>
+                                                        <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.forwardRate}**.</li>
+                                                        <li>**Agency:** **{selectedDeliveryOption.forwardCourierName || 'N/A'}**.</li>
+                                                    </ul>
+                                                </div>
+
+                                                {/* REVERSE (RETURN) BREAKDOWN */}
+                                                <div className="mb-3 p-2">
+                                                    <h5 className="font-semibold text-gray-800">↩️ Return Pickup from You (Reverse Leg):</h5>
+                                                    <ul className="list-disc ml-5 text-sm text-gray-700">
+                                                        <li>**Time:** **{selectedDeliveryOption.reverseETD}** day{Number(selectedDeliveryOption.reverseETD) > 1 ? 's' : ''}.</li>
+                                                        <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.reverseRate}**.</li>
+                                                        <li>**Agency:** **{selectedDeliveryOption.reverseCourierName || 'N/A'}**.</li>
+                                                    </ul>
+                                                </div>
+
+                                                <p className="mt-4 pt-2 border-t font-bold text-lg text-indigo-700">
+                                                    Total Combined Cost: <IndianRupee size={16} className="inline-icon" />{selectedDeliveryOption.charge}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <XCircle size={20} className="inline-icon" />
+                                        <p className="mt-2 text-red-600">{serviceabilityResult.message}</p>
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* --- START OF CONDITIONAL ONLINE BOOKING BLOCK --- */}
-            
-{isPanIndiaDelivery && (
-    <div className="online-booking-block">
-        <h3 className="section-heading"><Clock size={20} className="icon-mr" /> Select Rental Dates</h3>
 
-        {/* CONDITIONALLY RENDER THE BOOKING COMPONENT */}
-        {serviceabilityResult?.success && selectedDeliveryOption ? (
-            <AvailabilityCalendarAndBooking
+                    {isPanIndiaDelivery && (
+                        <div className="online-booking-block">
+                            <h3 className="section-heading"><Clock size={20} className="icon-mr" /> Select Rental Dates</h3>
+
+                            {/* CONDITIONALLY RENDER THE BOOKING COMPONENT */}
+                            {serviceabilityResult?.success && selectedDeliveryOption ? (
+                                <AvailabilityCalendarAndBooking
                 productName={product.name}
                 productRent={product.rent}
                 productId={product.productCode} 
                 selectedSize={selectedSize}
                 selectedColor={selectedColor}
                 deliveryCharge={selectedDeliveryOption?.charge} 
+                // --- ADD NEW PROPS ---
+                forwardETD={logisticsETDs.forwardETD}
+                reverseETD={logisticsETDs.reverseETD}
+                // --- END NEW PROPS ---
             />
-        ) : (
-            <p className="text-red-500 font-semibold mt-2">
-                Please enter a valid Pincode and select a delivery option above to proceed with booking.
-            </p>
-        )}
-    </div>
-)}
+                            ) : (
+                                <p className="text-red-500 font-semibold mt-2">
+                                    Please enter a valid Pincode and select a delivery option above to proceed with booking.
+                                </p>
+                            )}
+                        </div>
+                    )}
                     {/* --- END OF CONDITIONAL ONLINE BOOKING BLOCK --- */}
 
                     {/* The Enquire button should only show if NOT a Pan India product, or as a fallback if online booking is complex */}
