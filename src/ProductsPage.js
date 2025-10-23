@@ -1,5 +1,5 @@
 // ProductsPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef} from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './ProductsPage.css'; // Make sure this path is correct
 import { db } from './firebaseConfig'; // Your initialized Firestore instance
@@ -7,6 +7,154 @@ import { collection, query, where, getDocs, orderBy as firebaseOrderBy } from 'f
 
 // Import icons from lucide-react
 import { Filter, ListFilter, IndianRupee, ShoppingCart, Loader2, XCircle, ShoppingBag, Clock } from 'lucide-react'; // Added Clock icon
+// ImageGallery component (paste above ProductsPage)
+// Clean minimal ImageGallery (no thumbnails)
+
+// Enhanced ImageGallery (cinematic + lightbox)
+
+function ImageGallery({
+  images = [],
+  productName = "",
+  autoplay = true,
+  autoplayInterval = 4500,
+  kenBurnsDuration = 12000, // ms
+}) {
+  const imgs = Array.isArray(images) ? images.filter(Boolean) : [];
+  const count = Math.max(1, imgs.length);
+  const [index, setIndex] = useState(0);
+  const [hover, setHover] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [tiltStyle, setTiltStyle] = useState({});
+  const autoplayRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // autoplay
+  useEffect(() => {
+    if (!autoplay || count <= 1 || hover || lightboxOpen) return;
+    autoplayRef.current = setInterval(() => setIndex(i => (i + 1) % count), autoplayInterval);
+    return () => clearInterval(autoplayRef.current);
+  }, [autoplay, autoplayInterval, count, hover, lightboxOpen]);
+
+  useEffect(() => {
+    setIndex(0); // reset when images change
+  }, [images]);
+
+  // keyboard for lightbox & arrows
+  useEffect(() => {
+    const onKey = (e) => {
+      if (lightboxOpen) {
+        if (e.key === "Escape") { setLightboxOpen(false); }
+        if (e.key === "ArrowLeft") setIndex(i => (i - 1 + count) % count);
+        if (e.key === "ArrowRight") setIndex(i => (i + 1) % count);
+      } else {
+        if (e.key === "ArrowLeft") setIndex(i => (i - 1 + count) % count);
+        if (e.key === "ArrowRight") setIndex(i => (i + 1) % count);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [count, lightboxOpen]);
+
+  // parallax tilt
+  const onMove = (e) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY ?? (e.touches && e.touches[0].clientY);
+    if (!clientX) return;
+    const x = (clientX - rect.left) / rect.width - 0.5;
+    const y = (clientY - rect.top) / rect.height - 0.5;
+    const rotateY = x * 6; // adjust intensity
+    const rotateX = -y * 6;
+    const translateX = x * -6;
+    setTiltStyle({
+      transform: `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateX(${translateX}px)`,
+    });
+  };
+
+  const onLeave = () => {
+    setTiltStyle({ transform: "" });
+  };
+
+  const go = (i) => setIndex((i + count) % count);
+
+  // Lightbox close with body scroll lock
+  useEffect(() => {
+    document.body.style.overflow = lightboxOpen ? "hidden" : "";
+  }, [lightboxOpen]);
+
+  if (imgs.length === 0) {
+    return (
+      <div className="image-gallery cinematic fallback">
+        <img src="https://placehold.co/400x500/cccccc/333?text=No+Image" alt={productName || "Product image"} />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div
+        className="image-gallery cinematic"
+        ref={containerRef}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => { setHover(false); setTiltStyle({ transform: "" }); }}
+        onMouseMove={onMove}
+        onTouchMove={onMove}
+        onTouchEnd={onLeave}
+        style={tiltStyle}
+        aria-label={`${productName} image gallery cinematic`}
+      >
+        <button className="ig-nav ig-prev" aria-label="Previous" onClick={() => go(index - 1)}>‹</button>
+
+        <div
+          className="ig-main cinematic-main"
+          onDoubleClick={() => setLightboxOpen(true)}
+          onClick={() => setLightboxOpen(true)}
+          role="button"
+          tabIndex={0}
+        >
+          {imgs.map((src, i) => {
+            const active = i === index;
+            return (
+              <img
+                key={i}
+                src={src}
+                alt={`${productName} (${i + 1} of ${imgs.length})`}
+                className={`ig-image cinematic ${active ? "active" : ""}`}
+                style={{ animationDuration: `${kenBurnsDuration}ms` }} // ken burns tuned per image
+                draggable={false}
+                onError={(e) => (e.target.src = "https://placehold.co/800x1000/cccccc/333?text=Image+Not+Found")}
+              />
+            );
+          })}
+          {/* overlays for film grain + vignette + bloom */}
+          <div className="cinematic-overlay" aria-hidden></div>
+        </div>
+
+        <button className="ig-nav ig-next" aria-label="Next" onClick={() => go(index + 1)}>›</button>
+      </div>
+
+      {/* Lightbox modal */}
+      {lightboxOpen && (
+        <div className="ig-lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" onClick={() => setLightboxOpen(false)}>
+          <div className="ig-lightbox-inner" onClick={(e) => e.stopPropagation()}>
+            <button className="lb-close" onClick={() => setLightboxOpen(false)} aria-label="Close">✕</button>
+            <button className="lb-arrow lb-prev" onClick={() => go(index - 1)} aria-label="Previous">‹</button>
+            <div className="lb-image-wrap">
+              <img src={imgs[index]} alt={`${productName} large`} className="lb-image" />
+              <div className="lb-caption">{productName} — {index + 1} / {imgs.length}</div>
+            </div>
+            <button className="lb-arrow lb-next" onClick={() => go(index + 1)} aria-label="Next">›</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+
+
 
 function ProductsPage() {
     const { gender, subcategoryName } = useParams();
@@ -328,14 +476,18 @@ function ProductsPage() {
                                     className="product-card-link"
                                 >
                                     <div className="product-card">
-                                        <div className="product-image-container">
-                                            <img
-                                                src={product.imageUrl || `https://placehold.co/250x300/e0e0e0/333333?text=${product.name.split(' ')[0]}`}
-                                                alt={product.name}
-                                                className="product-image"
-                                                onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/250x300/cccccc/333333?text=Image Not Found`; }}
-                                            />
-                                        </div>
+<div className="product-image-container">
+  <ImageGallery
+    images={[product.imageUrl, ...(product.images || [])]}
+    productName={product.name}
+    autoplay={true} 
+    autoplayInterval={5000} // Change interval to 5 seconds
+    kenBurnsDuration={12000} // Change Ken Burns zoom/pan duration to 12 seconds
+  />
+</div>
+
+
+
                                         <div className="product-info">
                                             <h3 className="product-name">{product.name}</h3>
                                             <p className="product-color">Available Stores: {product.availableStores ? product.availableStores.join(', '):'N/A' }</p>
