@@ -15,7 +15,21 @@ import aboutus2 from "../src/assets/Gemini_Generated_Image_mjcef7mjcef7mjce.png"
 import logo1 from "../src/assets/DOR white.png"
 // Import Helmet for SEO meta tags
 import { Helmet } from 'react-helmet-async';
+import CustomerReviewUpload from "./components/CustomerReviewUpload";
+import CustomerReviewsSection from "./components/CustomerReviewsSection";
 
+import CollaborationSection from "./components/CollaborationSection";
+const WhatsAppIcon = ({ size = 20 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="M19.11 17.33c-.27-.14-1.57-.77-1.81-.85-.24-.09-.42-.14-.6.14-.17.27-.69.85-.84 1.03-.15.17-.31.19-.58.07-.27-.14-1.13-.42-2.16-1.33-.8-.7-1.35-1.56-1.51-1.83-.16-.27-.02-.42.12-.56.13-.13.27-.31.4-.47.13-.16.17-.27.27-.45.09-.18.05-.33-.02-.47-.07-.14-.6-1.44-.82-1.97-.22-.53-.44-.46-.6-.46-.16 0-.33-.02-.51-.02-.18 0-.47.07-.72.33-.25.27-.95.93-.95 2.27 0 1.33.97 2.63 1.11 2.81.14.18 1.91 2.93 4.63 4.1 2.72 1.17 2.72.78 3.21.75.49-.02 1.57-.64 1.79-1.27.22-.64.22-1.19.16-1.31-.05-.13-.24-.2-.51-.33zM16 3C9.37 3 4 8.37 4 15c0 2.11.55 4.09 1.51 5.8L4 29l8.36-1.48C13.99 28.45 14.98 28.6 16 28.6c6.63 0 12-5.37 12-12S22.63 3 16 3zm0 22.8c-.96 0-1.9-.16-2.78-.48l-.2-.07-4.87.86.9-4.75-.1-.2A9.83 9.83 0 0 1 6.8 15c0-5.07 4.13-9.2 9.2-9.2s9.2 4.13 9.2 9.2-4.13 9.2-9.2 9.2z"/>
+  </svg>
+);
 function HomePage() {
   const [menCategories, setMenCategories] = useState([]);
   const [womenCategories, setWomenCategories] = useState([]);
@@ -113,6 +127,8 @@ function HomePage() {
       keywords: ["Easy Process", "Accurate Description", "Suited Event Perfectly"]
     }
   ];
+
+  
   // State for the image slider
   const [currentSlide, setCurrentSlide] = useState(0);
   // State for mobile menu open/close
@@ -350,107 +366,141 @@ function HomePage() {
       {/* Header */}
 
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-        <div className="header-container">
-          {/* The <h1> tag signifies this as the most important heading on the page for SEO. */}
-          {/* Using <Link to="/"> ensures client-side routing and clean URL for homepage. */}
-          <a href="#" className="header-logo animate-pulse-custom">
-            <img
-              src={logo1}
-              alt="Dress On Rent"
-              className="logo-image"
-            />
+  <div className="header-container">
+    <a href="#" className="header-logo animate-pulse-custom">
+      <img
+        src={logo1}
+        alt="Dress On Rent"
+        className="logo-image"
+      />
+    </a>
+
+    <div className="header-nav-wrapper">
+      <nav className="desktop-nav">
+        <a href="#men" className="nav-link group">
+          Men
+          <span className="nav-link-underline"></span>
+        </a>
+        <a href="#women" className="nav-link group">
+          Women
+          <span className="nav-link-underline"></span>
+        </a>
+        <a href="#stores-location" className="nav-link group">
+          Stores Location
+          <span className="nav-link-underline"></span>
+        </a>
+        <a href="#how-it-works" className="nav-link group">
+          How It Works
+          <span className="nav-link-underline"></span>
+        </a>
+        <a href="#contact" className="nav-link group">
+          Contact Us
+          <span className="nav-link-underline"></span>
+        </a>
+
+        <a href="#franchise" className="nav-link group">
+          Franchise
+          <span className="nav-link-underline"></span>
+        </a>
+
+        <a href="#men" className="cta-button">
+          Rent Now
+          <ChevronRight size={18} className="icon-right" />
+        </a>
+      </nav>
+
+      {/* ✅ NEW: SOCIAL ICONS IN DESKTOP HEADER */}
+      <div className="social-links">
+        <a
+          href="https://www.instagram.com/yourdorinstagram"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-link animate-social-pop"
+          aria-label="Instagram"
+        >
+          <Instagram size={20} />
+        </a>
+        <a
+          href="https://www.facebook.com/yourdorfacebook"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-link animate-social-pop"
+          aria-label="Facebook"
+        >
+          <Facebook size={20} />
+        </a>
+        <a
+          href="https://wa.me/919876543210"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-link animate-social-pop"
+          aria-label="WhatsApp"
+        >
+          <WhatsAppIcon size={20} />
+        </a>
+      </div>
+
+      <button
+        className={`mobile-menu-button animate-slow-spin ${isMobileMenuOpen ? 'rotate-90' : ''}`}
+        onClick={toggleMobileMenu}
+        aria-expanded={isMobileMenuOpen}
+        aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
+      >
+        <Menu size={28} />
+      </button>
+    </div>
+  </div>
+
+  {isMobileMenuOpen && (
+    <nav className="mobile-nav">
+      <ul className="mobile-nav-list">
+        <li><a href="#men" className="mobile-nav-item" onClick={toggleMobileMenu}>Men's Collection</a></li>
+        <li><a href="#women" className="mobile-nav-item" onClick={toggleMobileMenu}>Women's Collection</a></li>
+        <li><a href="#stores-location" className="mobile-nav-item" onClick={toggleMobileMenu}>Our Stores Location</a></li>
+        <li><a href="#contact" className="mobile-nav-item" onClick={toggleMobileMenu}>Contact Us</a></li>
+        <li><a href="#franchise" className="mobile-nav-item" onClick={toggleMobileMenu}>Franchise Opportunities</a></li>
+
+        <li>
+          <a href="#men" className="mobile-nav-item" onClick={toggleMobileMenu} style={{ color: '#db2777', fontWeight: 'bold' }}>
+            Rent Now
           </a>
+        </li>
 
-          <div className="header-nav-wrapper">
-            <nav className="desktop-nav">
-              {/* Navigation links are already descriptive, which is good for SEO. */}
-              <a href="#men" className="nav-link group">
-                Men
-                <span className="nav-link-underline"></span>
-              </a>
-              <a href="#women" className="nav-link group">
-                Women
-                <span className="nav-link-underline"></span>
-              </a>
-              <a href="#stores-location" className="nav-link group">
-                Stores Location
-                <span className="nav-link-underline"></span>
-              </a>
-              <a href="#how-it-works" className="nav-link group">
-                How It Works
-                <span className="nav-link-underline"></span>
-              </a>
-              <a href="#contact" className="nav-link group">
-                Contact Us
-                <span className="nav-link-underline"></span>
-              </a>
+        {/* ✅ NEW MOBILE SOCIAL ICONS */}
+        <li className="mobile-social">
+          <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" className="social-link">
+            <Instagram size={18} />
+          </a>
+          <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" className="social-link">
+            <Facebook size={18} />
+          </a>
+          <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="social-link">
+            <WhatsAppIcon size={18} />
+          </a>
+        </li>
+      </ul>
+    </nav>
+  )}
+</header>
 
-              <a href="#franchise" className="nav-link group">
-                Franchise
-                <span className="nav-link-underline"></span>
-              </a>
-              {/* New Call to Action Button - Anchor text is clear */}
-              <a href="#men" className="cta-button">
-                Rent Now
-                <ChevronRight size={18} className="icon-right" />
-              </a>
-            </nav>
-            <button
-              className={`mobile-menu-button animate-slow-spin ${isMobileMenuOpen ? 'rotate-90' : ''}`}
-              onClick={toggleMobileMenu}
-              aria-expanded={isMobileMenuOpen}
-              // SEO Change 2: Added aria-label for accessibility for screen readers
-              aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
-            >
-              {/* Replaced SVG with Lucide icon */}
-              <Menu size={28} />
-            </button>
-          </div>
-        </div>
-        {isMobileMenuOpen && (
-          <nav className="mobile-nav">
-            <ul className="mobile-nav-list">
-              <li><a href="#men" className="mobile-nav-item" onClick={toggleMobileMenu}>Men's Collection</a></li>
-              <li><a href="#women" className="mobile-nav-item" onClick={toggleMobileMenu}>Women's Collection</a></li>
-              <li><a href="#stores-location" className="mobile-nav-item" onClick={toggleMobileMenu}>Our Stores Location</a></li>
-              <li><a href="#contact" className="mobile-nav-item" onClick={toggleMobileMenu}>Contact Us</a></li>
-              <li><a href="#franchise" className="mobile-nav-item" onClick={toggleMobileMenu}>Franchise Opportunities</a></li>
-              {/* Mobile CTA Button if desired, or just direct them to sections */}
-              <li>
-                <a href="#men" className="mobile-nav-item" onClick={toggleMobileMenu} style={{ color: '#db2777', fontWeight: 'bold' }}>
-                  Rent Now
-                </a>
-              </li>
-            </ul>
-          </nav>
-        )}
-      </header>
       {/* Hero Section */}
       {/* Hero Section - Alternative Design */}
       {/* Hero Section - Split Layout Design */}
       {/* Hero Section - Ultimate Design with Background Image */}
       <section className="hero-section-ultimate">
-        <div className="hero-ultimate-background"></div> {/* This will hold the background image and overlay */}
-        <div className="container hero-ultimate-content">
-          {/* SEO Change 1: Added the H1 tag for your primary heading */}
-          {/* This is crucial for search engines to understand the main topic of your page. */}
-          {/* The styling for this H1 is handled in the CSS section below. */}
+  <div className="hero-ultimate-background" />
 
-          {/* <p className="hero-ultimate-description animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            Step into elegance without compromise. Rent the finest designer wear for your unforgettable moments . Look stunning for every occasion with our premium lehengas, sherwanis, gowns, and suits. Explore hassle-free and affordable dress rental options near you.
-          </p> */}
-          <div className="hero-ultimate-buttons animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <Link to="/#women" className="cta-button hero-ultimate-button-women">
-              Explore Women's Rental Styles
-              <ChevronRight size={18} className="icon-right" />
-            </Link>
-            <Link to="/#men" className="cta-button hero-ultimate-button-men">
-              Explore Men's Rental Styles
-              <ChevronRight size={18} className="icon-right" />
-            </Link>
-          </div>
-        </div>
-      </section>
+  <div className="hero-buttons-center hero-buttons--floatA">
+    <a href="#women" className="cta-button cta-glow animate-cta-in" style={{ animationDelay: "0.1s" }}>
+      Women's Collection <ChevronRight size={18} className="icon-right" />
+    </a>
+
+    <a href="#men" className="cta-button cta-outline animate-cta-in" style={{ animationDelay: "0.22s" }}>
+      Men's Collection <ChevronRight size={18} className="icon-right" />
+    </a>
+  </div>
+</section>
+
       {/* Store Locations Section */}
       <section id="stores-location"
         ref={storesRef}
@@ -674,138 +724,16 @@ function HomePage() {
         </script>
       </Helmet>
 
+       <CollaborationSection />
+
       {/* ✨ Style Advisor Section (Gemini API Integration) ✨ */}
-      <section ref={styleAdvisorRef} className={`section bg-neutral-100 text-center ${styleAdvisorIsVisible ? 'animate-fade-in' : 'opacity-0'}`}>
-        <div className="container">
-          {/* H2 tag is appropriate for the section title */}
-          <h2 className="section-title">✨ Get Personalized Style Advice for Your Dress Rental Outfit ✨</h2>
-          <p className="section-description-sub">
-            Describe your event, and our AI-powered style advisor will suggest the perfect rental attire, from lehengas on rent and sherwanis on rent to gowns on rent and suits on rent, tailored for your occasion in Pune or Nagpur! Whether it's a cocktail party, corporate event, or a photoshoot, we help you find the latest collection and best place to rent your desired outfit.
-          </p>
-          <div className="style-advisor-form">
-            <textarea
-              className="style-advisor-textarea"
-              placeholder="e.g., 'A formal corporate gala dinner', 'A casual outdoor summer wedding', 'A traditional Indian festival'"
-              value={eventDescription}
-              onChange={(e) => setEventDescription(e.target.value)}
-              rows="4"
-              aria-label="Describe your event for style advice for dress rental" // SEO Change 1: Added aria-label for accessibility
-            ></textarea>
-            <button
-              onClick={getStyleAdvice}
-              disabled={isLoadingAdvice}
-              className="btn btn-primary btn-lg style-advisor-button animate-button-press"
-              aria-label={isLoadingAdvice ? "Getting style advice" : "Get personalized dress rental style advice"} // SEO Change 2: Dynamic aria-label for button
-            >
-              {isLoadingAdvice ? (
-                <>
-                  <svg className="spinner-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="spinner-path-1" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="spinner-path-2" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Getting Advice...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="icon-mr" size={20} />
-                  Get Style Advice
-                </>
-              )}
-            </button>
-            {adviceError && (
-              <p className="error-message">{adviceError}</p>
-            )}
-            {styleAdvice && (
-              <div className="style-advice-output">
-                <h3 className="output-title">Our Rental Outfit Recommendation:</h3>
-                <p className="output-text">{styleAdvice}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-      <section
-        id="testimonials"
-        ref={testimonialsRef}
-        className={`section bg-white ${testimonialsIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}
-        // SEO Change 1: Add Schema.org microdata for AggregateRating and LocalBusiness
-        itemScope
-        itemType="https://schema.org/LocalBusiness" // Changed to LocalBusiness for broader applicability and review snippets
-      >
-        <div className="container text-center">
-          {/* SEO Change 2: Enhanced H2 title with keywords */}
-          <h2 className="section-title">What Our Customers Say About DOR Dress On Rent  - Top Rental Outfits</h2>
+         {/* uploader */}
+      
 
-          {/* SEO Change 5: Added meta tags for LocalBusiness schema properties for the business itself */}
-          <meta itemProp="name" content="DOR Dress On Rent" />
-          <meta itemProp="url" content="YOUR_WEBSITE_URL_HERE" /> {/* Replace with your actual website URL */}
-          <meta itemProp="image" content="YOUR_BUSINESS_LOGO_URL_HERE" /> {/* Replace with your business logo URL */}
-          <meta itemProp="telephone" content="+91-YOUR-PHONE-NUMBER" /> {/* Replace with your actual phone number */}
-          <div itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
-            <meta itemProp="addressLocality" content="Pune" />
-            <meta itemProp="addressRegion" content="Maharashtra" />
-            <meta itemProp="addressCountry" content="IN" />
-          </div>
-
-          <div className="grid-3-col gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="testimonial-card animate-pop-in"
-                style={{ transitionDelay: `${index * 0.1}s` }}
-                // SEO Change 3: Add Schema.org microdata for individual Review
-                itemScope
-                itemType="https://schema.org/Review"
-                itemProp="review" // Nested within LocalBusiness
-              >
-                <p className="testimonial-quote" itemProp="reviewBody">"{testimonial.quote}"</p>
-                {/* Display stars for rating */}
-                <div className="testimonial-rating" itemProp="reviewRating" itemScope itemType="https://schema.org/Rating">
-                  <meta itemProp="ratingValue" content={testimonial.rating} />
-                  <meta itemProp="bestRating" content="5" />
-                  <meta itemProp="worstRating" content="1" />
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      fill={i < testimonial.rating ? '#FFD700' : 'none'} // Gold for filled stars
-                      stroke={i < testimonial.rating ? '#FFD700' : '#d1d5db'} // Stroke color
-                      className="inline-block"
-                    />
-                  ))}
-                </div>
-                <p className="testimonial-author" itemProp="author" itemScope itemType="https://schema.org/Person">
-                  <span itemProp="name">{testimonial.author}</span>
-                </p>
-                <p className="testimonial-city">{testimonial.city}</p>
-                {/* SEO Change 6: Add itemReviewed for each individual review */}
-                <div itemProp="itemReviewed" itemScope itemType="https://schema.org/LocalBusiness">
-                  <meta itemProp="name" content="DOR Dress On Rent" />
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* SEO Change 4: Add AggregateRating properties, nested under LocalBusiness */}
-          <div itemProp="aggregateRating" itemScope itemType="https://schema.org/AggregateRating">
-            <meta itemProp="ratingCount" content={testimonials.length} />
-            {/* Calculate average rating dynamically for best accuracy */}
-            <meta itemProp="ratingValue" content={(testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length).toFixed(1)} />
-          </div>
-
-          {/* Add a link to your Google My Business reviews */}
-          <div className="mt-8 text-center">
-            <a
-              href="https://g.page/your-dor-pune-gmb-link/review?rc" // Replace with your actual Google My Business review link for Pune
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary animate-button-press"
-              aria-label="Read more customer reviews for DOR Dress On Rent on Google" // SEO Change 5: Added aria-label for accessibility
-            >
-              Read More Reviews on Google <ChevronRight size={16} className="inline-block ml-1" />
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* live list */}
+      <CustomerReviewsSection />
+      <CustomerReviewUpload onSubmitted={() => console.log("uploaded")} />
+      
       <section
         id="about-us"
         ref={aboutUsRef}
