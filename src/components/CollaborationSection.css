@@ -206,3 +206,58 @@
     aspect-ratio: 9 / 16;
   }
 }
+/* ============================================================
+   LIGHT THEME — Apple Clean Minimal (Matches New Light Theme)
+   ============================================================ */
+.home-page.light-theme .vgrid-section {
+  background:
+    /* remove the dark blush gradients and use flat white canvas */
+    var(--color-dark);
+  color: var(--color-light);
+}
+
+/* Title + Subtitle */
+.home-page.light-theme .vgrid-section .section-title {
+  color: var(--color-light) !important;
+}
+.home-page.light-theme .vgrid-section .section-subtitle {
+  color: var(--color-accent) !important;
+}
+
+/* Cards — switch to soft Apple card look */
+.home-page.light-theme .vcard {
+  background: var(--color-mid);
+  border: 1px solid #E5E5E7;
+  box-shadow: var(--shadow-sm);
+  transform: none;
+}
+
+/* Hover depth */
+.home-page.light-theme .vcard:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Video frame background (remove black border look) */
+.home-page.light-theme .vframe {
+  background: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+/* Badge style to match softer UI */
+.home-page.light-theme .badge {
+  background: rgba(0,0,0,.08);
+  border: 1px solid rgba(0,0,0,.12);
+  color: #1C1C1E;
+  backdrop-filter: blur(6px);
+}
+
+/* CTA button */
+.home-page.light-theme .cta {
+  background: var(--color-accent);
+  color: #1C1C1E;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
+.home-page.light-theme .cta:hover {
+  background: var(--color-soft);
+  box-shadow: 0 12px 26px rgba(0,0,0,.12);
+}

@@ -5,14 +5,15 @@ import './styles/HomePage.css';
 import useScrollReveal from './hooks/useScrollReveal';
 
 // Import icons from lucide-react
-import { ChevronRight, Sparkles, Shirt, Crown, User, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Clock, Wand2, Loader2, Star, Menu } from 'lucide-react'; // Added Loader2 for loading state
+import { ChevronRight, Sparkles, Shirt, Crown, User, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Clock, Wand2, Loader2, Star, Menu, Sun, Moon } from 'lucide-react'; // Added Sun/Moon for theme toggle
 
 // Import Firebase
 import { db } from './firebaseConfig';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import aboutus1 from "../src/assets/Gemini_Generated_Image_jprw1njprw1njprw.png";
 import aboutus2 from "../src/assets/Gemini_Generated_Image_mjcef7mjcef7mjce.png";
-import logo1 from "../src/assets/DOR white.png"
+import logo1 from "../src/assets/DOR white.png";
+import logo2 from "../src/assets/DOR black.png"
 // Import Helmet for SEO meta tags
 import { Helmet } from 'react-helmet-async';
 import CustomerReviewUpload from "./components/CustomerReviewUpload";
@@ -43,6 +44,18 @@ function HomePage() {
   const [storeLocations, setStoreLocations] = useState([]);
   const [loadingStores, setLoadingStores] = useState(true);
   const [storeError, setStoreError] = useState('');
+
+  // NEW THEME STATE & TOGGLE FUNCTION
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark'); // Load from local storage or default to 'dark'
+
+  const toggleTheme = () => {
+    setTheme(currentTheme => {
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', newTheme); // Save the new theme choice
+      return newTheme;
+    });
+  };
+  // END NEW THEME STATE
 
   // NEW STATE: State for modal visibility
   const [showStoreModal, setShowStoreModal] = useState(true);
@@ -265,7 +278,8 @@ function HomePage() {
   const [testimonialsRef, testimonialsIsVisible] = useScrollReveal({ threshold: 0.2 });
 
   return (
-    <div className="home-page">
+    // APPLY THE DYNAMIC THEME CLASS HERE
+    <div className={`home-page ${theme === 'light' ? 'light-theme' : 'dark-theme'}`}>
       {/* Store Selection Modal */}
       {/* SEO Optimization with React Helmet */}
       <Helmet>
@@ -336,7 +350,7 @@ function HomePage() {
             {loadingStores ? (
               <div className="modal-loading">
                 <Loader2 size={32} className="animate-spin text-blue-500" />
-                <p>Loading stores...</p>
+                <p className="message-text">Loading stores...</p>
               </div>
             ) : storeError ? (
               <p className="modal-error">{storeError}</p>
@@ -369,10 +383,11 @@ function HomePage() {
   <div className="header-container">
     <a href="#" className="header-logo animate-pulse-custom">
       <img
-        src={logo1}
-        alt="Dress On Rent"
-        className="logo-image"
-      />
+  src={theme === 'light' ? logo2 : logo1}
+  alt="Dress On Rent"
+  className="logo-image"
+/>
+
     </a>
 
     <div className="header-nav-wrapper">
@@ -402,6 +417,16 @@ function HomePage() {
           Franchise
           <span className="nav-link-underline"></span>
         </a>
+        
+        {/* NEW THEME TOGGLE BUTTON for Desktop */}
+        <button
+          onClick={toggleTheme}
+          className={`theme-toggle-button ${theme === 'light' ? 'light-mode' : 'dark-mode'}`}
+          aria-label={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+        {/* END NEW THEME TOGGLE BUTTON */}
 
         <a href="#men" className="cta-button">
           Rent Now
@@ -410,35 +435,7 @@ function HomePage() {
       </nav>
 
       {/* ✅ NEW: SOCIAL ICONS IN DESKTOP HEADER */}
-      <div className="social-links">
-        <a
-          href="https://www.instagram.com/yourdorinstagram"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link animate-social-pop"
-          aria-label="Instagram"
-        >
-          <Instagram size={20} />
-        </a>
-        <a
-          href="https://www.facebook.com/yourdorfacebook"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link animate-social-pop"
-          aria-label="Facebook"
-        >
-          <Facebook size={20} />
-        </a>
-        <a
-          href="https://wa.me/919876543210"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link animate-social-pop"
-          aria-label="WhatsApp"
-        >
-          <WhatsAppIcon size={20} />
-        </a>
-      </div>
+      
 
       <button
         className={`mobile-menu-button animate-slow-spin ${isMobileMenuOpen ? 'rotate-90' : ''}`}
@@ -459,6 +456,19 @@ function HomePage() {
         <li><a href="#stores-location" className="mobile-nav-item" onClick={toggleMobileMenu}>Our Stores Location</a></li>
         <li><a href="#contact" className="mobile-nav-item" onClick={toggleMobileMenu}>Contact Us</a></li>
         <li><a href="#franchise" className="mobile-nav-item" onClick={toggleMobileMenu}>Franchise Opportunities</a></li>
+
+        {/* NEW THEME TOGGLE BUTTON for Mobile */}
+        <li>
+          <button
+            onClick={toggleTheme}
+            className="mobile-nav-item theme-toggle-mobile"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            {theme === 'dark' ? <Sun size={18} className="mr-2" /> : <Moon size={18} className="mr-2" />}
+            Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
+          </button>
+        </li>
+        {/* END NEW THEME TOGGLE BUTTON */}
 
         <li>
           <a href="#men" className="mobile-nav-item" onClick={toggleMobileMenu} style={{ color: '#db2777', fontWeight: 'bold' }}>
@@ -482,6 +492,19 @@ function HomePage() {
     </nav>
   )}
 </header>
+{/* LEFT STICKY SOCIAL BAR */}
+<div className="left-social-bar">
+  <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+    <Instagram size={22} />
+  </a>
+  <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+    <Facebook size={22} />
+  </a>
+  <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+    <WhatsAppIcon size={22} />
+  </a>
+</div>
+
 
       {/* Hero Section */}
       {/* Hero Section - Alternative Design */}
@@ -502,85 +525,47 @@ function HomePage() {
 </section>
 
       {/* Store Locations Section */}
-      <section id="stores-location"
-        ref={storesRef}
-        className={`section bg-white ${storesIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-        <div className="container text-center">
-          {/* H2 tag is already well-placed for section title */}
-          <h2 className="section-title">DOR Dress On Rent Stores in Pune & Nagpur</h2>
-          {loadingStores ? (
-            <div className="message-container loading">
-              <Loader2 size={48} className="animate-spin text-blue-500" />
-              <p className="message-text">Loading our dress rental stores...</p>
-            </div>
-          ) : storeError ? (
-            <p className="message-container error">{storeError}</p>
-          ) : storeLocations.length === 0 ? (
-            <p className="message-container no-products">No store locations found.</p>
-          ) : (
-            <div className="grid-3-col">
-              {storeLocations.map((store) => (
-                <div key={store.id} className="store-card">
-                  <img
-                    src={store.image}
-                    alt={`DOR Dress On Rent store location in ${store.name} for gown and suit rentals, including options for ${store.name.includes('Pune') ? 'Pimpri Chinchwad, Kothrud' : 'Deolali, Wardha Road'}`}
-                    className="store-card-image"
-                    loading="lazy"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=DOR ${store.name} Store`; }}
-                  />
-                  {/* H3 tag is appropriate for individual store names */}
-                  <h3 className="card-title">{store.name} Store</h3>
-                  {/* If store.address is available, you might consider adding it here as well for local SEO */}
-                  {/* {store.address && <p className="store-address">{store.address}</p>} */}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+      {/* Store Locations Section */}
+<section id="stores-location"
+  ref={storesRef}
+  // Removed 'bg-white' to inherit the theme's soft off-white background (var(--color-dark))
+  className={`section ${storesIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+  <div className="container text-center">
+    {/* H2 tag is already well-placed for section title */}
+    <h2 className="section-title">DOR Dress On Rent Stores in Pune & Nagpur</h2>
+    {loadingStores ? (
+      <div className="message-container loading">
+        <Loader2 size={48} className="animate-spin text-blue-500" />
+        <p className="message-text">Loading our dress rental stores...</p>
+      </div>
+    ) : storeError ? (
+      <p className="message-container error">{storeError}</p>
+    ) : storeLocations.length === 0 ? (
+      <p className="message-container no-products">No store locations found.</p>
+    ) : (
+      <div className="grid-3-col">
+        {storeLocations.map((store) => (
+          <div key={store.id} className="store-card">
+            <img
+              src={store.image}
+              alt={`DOR Dress On Rent store location in ${store.name} for gown and suit rentals, including options for ${store.name.includes('Pune') ? 'Pimpri Chinchwad, Kothrud' : 'Deolali, Wardha Road'}`}
+              className="store-card-image"
+              loading="lazy"
+              onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=DOR ${store.name} Store`; }}
+            />
+            {/* H3 tag is appropriate for individual store names */}
+            <h3 className="card-title">{store.name} Store</h3>
+            {/* If store.address is available, you might consider adding it here as well for local SEO */}
+            {/* {store.address && <p className="store-address">{store.address}</p>} */}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
 
       {/* Store Image Slider */}
-      <section className={`section bg-neutral-100 overflow-hidden ${sliderIsVisible ? 'animate-fade-in' : 'opacity-0'}`} ref={sliderRef}>
-        <div className="container">
-          {/* H2 tag is appropriate for this section title */}
-          <h2 className="section-title">A Glimpse Inside Our DOR Dress Rental Stores</h2>
-          {loadingStores ? (
-            <div className="message-container loading">
-              <Loader2 size={48} className="animate-spin text-blue-500" />
-              <p className="message-text">Loading store images for dress rentals...</p>
-            </div>
-          ) : storeError ? (
-            <p className="message-container error">{storeError}</p>
-          ) : storeLocations.length === 0 ? (
-            <p className="message-container no-products">No store images available.</p>
-          ) : (
-            <>
-              <div className="slider-container">
-                {storeLocations.map((store, index) => (
-                  <img
-                    key={store.id}
-                    src={store.image}
-                    alt={`DOR Dress On Rent ${store.name} store showroom with rental lehengas, suits, gowns, and ethnic wear in Pune and Nagpur`}
-                    className={`slider-image ${index === currentSlide ? 'active-slide' : 'hidden-slide'}`}
-                    loading="lazy"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/1200x600/cccccc/333333?text=DOR+${store.name}+Store+Image`; }}
-                  />
-                ))}
-                <div className="slider-dots">
-                  {storeLocations.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => goToSlide(index)}
-                      className={`dot ${index === currentSlide ? 'active-dot' : ''}`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    ></button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
+      
       {/* Women's Collection Section */}
       <section id="women" ref={womenRef} className={`section bg-neutral-100 ${womenIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
         <div className="container">
@@ -662,67 +647,7 @@ function HomePage() {
 
 
       {/* How It Works Section */}
-      <section id="how-it-works" ref={howItWorksRef} className={`section bg-white ${howItWorksIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '0.1s' }}>
-        <div className="container text-center">
-          {/* H2 tag is appropriate for the section title */}
-          <h2 className="section-title">How to Rent Your Perfect Outfit from DOR - Dress On Rent</h2>
-          <div className="grid-3-col">
-            <div className={`how-it-works-step-card ${howItWorksIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '0.1s' }}>
-              <div className="how-it-works-icon-wrapper">
-                <Sparkles size={36} className="how-it-works-icon" />
-              </div>
-              <h3 className="card-title">1. Choose Your Rental Outfit</h3>
-              <p className="step-description">Browse our extensive collection of designer lehengas on rent, sherwanis on rent, gowns on rent, suits on rent, and other premium dresses for all occasions available for rent in Pune and Nagpur. Find your ideal wedding dress on rent, party wear on rent, or photoshoot dress on rent with ease, offering affordable and hassle-free dress rental.</p>
-            </div>
-            <div className={`how-it-works-step-card ${howItWorksIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '0.2s' }}>
-              <div className="how-it-works-icon-wrapper">
-                <Shirt size={36} className="how-it-works-icon" />
-              </div>
-              <h3 className="card-title">2. Select Rental Dates & Size</h3>
-              <p className="step-description">Pick your rental period and find your perfect fit with our detailed size guides. We offer personalized fittings at our Pune and Nagpur stores for your chosen rental attire, ensuring a convenient dress rental service.</p>
-            </div>
-            <div className={`how-it-works-step-card ${howItWorksIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '0.3s' }}>
-              <div className="how-it-works-icon-wrapper">
-                <Crown size={36} className="how-it-works-icon" />
-              </div>
-              <h3 className="card-title">3. Rock Your Rented Look & Return</h3>
-              <p className="step-description">Enjoy your event! After your special occasion, simply return the rented outfit to us. We handle the cleaning and maintenance, making your dress rental experience hassle-free. It's a sustainable and eco-friendly fashion rental choice.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* SEO Change 1: Add HowTo Schema Markup using Helmet */}
-      {/* This should be placed within your main <Helmet> component at the top of HomePage.js */}
-      {/* If you already have a Helmet component, add this script tag inside it. */}
-      <Helmet>
-        <script type="application/ld+json">
-          {`
-                {
-                    "@context": "https://schema.org",
-                    "@type": "HowTo",
-                    "name": "How to Rent a Dress from DOR - Dress On Rent in Pune & Nagpur",
-                    "description": "A simple guide to renting premium ethnic and formal wear from DOR in Pune and Nagpur, offering affordable and hassle-free solutions for various occasions.",
-                    "step": [
-                        {
-                            "@type": "HowToStep",
-                            "name": "Choose Your Rental Outfit",
-                            "text": "Browse our extensive collection of designer lehengas, sherwanis, gowns, suits, and other premium dresses and suits for all occasions available for rent in Pune and Nagpur, including options for pre-wedding shoots, parties, and festivals. Find your ideal wedding dress on rent or party wear on rent."
-                        },
-                        {
-                            "@type": "HowToStep",
-                            "name": "Select Rental Dates & Size",
-                            "text": "Pick your rental period and find your perfect fit with our detailed size guides. We offer fittings at our Pune and Nagpur stores for your chosen rental attire, ensuring a convenient dress rental service and helping you avoid buying expensive outfits."
-                        },
-                        {
-                            "@type": "HowToStep",
-                            "name": "Rock Your Rented Look & Return",
-                            "text": "Enjoy your event! After your special occasion, simply return the rented outfit to us. We handle the cleaning and maintenance, making your dress rental experience hassle-free. This promotes sustainable and eco-friendly fashion rental."
-                        }
-                    ]
-                }
-            `}
-        </script>
-      </Helmet>
+   
 
        <CollaborationSection />
 
@@ -871,7 +796,6 @@ function HomePage() {
                       </span>
                     ))
                   }
-                  {/* Add specific addresses for Pune and Nagpur if available statically or fetched dynamically */}
                   {/* Example static addresses: */}
                   {/* Pune Store: Shop No. 101, XYZ Building, MG Road, Camp, Pune, Maharashtra 411001<br/> */}
                   {/* Nagpur Store: 2nd Floor, PQR Plaza, Civil Lines, Nagpur, Maharashtra 440001<br/> */}

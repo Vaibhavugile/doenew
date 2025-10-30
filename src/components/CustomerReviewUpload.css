@@ -139,3 +139,68 @@
   transform:translateY(-2px);
   box-shadow:0 12px 24px rgba(242,196,206,.35);
 }
+/* ============================================================
+   LIGHT THEME — Apple Clean Minimal
+   ============================================================ */
+.home-page.light-theme .review-upload-section {
+  background: var(--color-dark);
+  color: var(--color-light);
+}
+
+/* Title + Accent */
+.home-page.light-theme .ru-title {
+  color: var(--color-light);
+}
+.home-page.light-theme .ru-sub {
+  color: var(--color-accent);
+}
+
+/* Drop Zone */
+.home-page.light-theme .ru-drop {
+  background: var(--color-mid);
+  border: 1px dashed #D7D7D8;
+}
+.home-page.light-theme .ru-drop:hover {
+  border-color: #C9C9CA;
+}
+
+/* Inputs */
+.home-page.light-theme .ru-field input,
+.home-page.light-theme .ru-field select,
+.home-page.light-theme .ru-field textarea {
+  background: #FFFFFF;
+  border: 1px solid #E5E5E7;
+  color: #1C1C1E;
+}
+.home-page.light-theme .ru-field input:focus,
+.home-page.light-theme .ru-field select:focus,
+.home-page.light-theme .ru-field textarea:focus {
+  box-shadow: 0 0 0 3px rgba(230,165,165,.30);
+  border-color: var(--color-accent);
+}
+
+/* Progress Bar */
+.home-page.light-theme .ru-progress {
+  background: #E5E5E7;
+}
+.home-page.light-theme .ru-progress i {
+  background: var(--color-accent);
+}
+
+/* Status Messages */
+.home-page.light-theme .ru-status.info {
+  background: rgba(0,0,0,.06);
+  border: 1px solid rgba(0,0,0,.12);
+  color: #1C1C1E;
+}
+
+/* Button */
+.home-page.light-theme .ru-btn {
+  background: var(--color-accent);
+  color: #1C1C1E;
+  box-shadow: 0 10px 22px rgba(0,0,0,.08);
+}
+.home-page.light-theme .ru-btn:hover {
+  background: var(--color-soft);
+  box-shadow: 0 14px 30px rgba(0,0,0,.12);
+}

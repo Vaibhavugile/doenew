@@ -151,3 +151,50 @@
 .review-name { font-weight: 700; color: var(--color-light); }
 .review-rating { color: var(--color-accent); display: flex; gap: 6px; align-items: center; }
 .review-rating em { font-style: normal; font-size: .85rem; color: var(--color-light); opacity: .75; }
+
+/* ============================================================
+   LIGHT THEME — Apple Clean Minimal
+   ============================================================ */
+.home-page.light-theme .reviews-section {
+  background: var(--color-dark); /* pure white */
+  color: var(--color-light);
+}
+
+/* Headers */
+.home-page.light-theme .reviews-title {
+  color: var(--color-light) !important;
+}
+.home-page.light-theme .reviews-subtitle {
+  color: var(--color-accent) !important;
+}
+
+/* Review Card */
+.home-page.light-theme .review-card {
+  background: var(--color-mid);         /* soft Apple card surface */
+  border: 1px solid #E5E5E7;
+  box-shadow: var(--shadow-sm);
+}
+.home-page.light-theme .review-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Video Frame */
+.home-page.light-theme .review-frame {
+  background: #FFFFFF;
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+
+/* Badge */
+.home-page.light-theme .review-badge {
+  background: rgba(0,0,0,.06);
+  border: 1px solid rgba(0,0,0,.12);
+  color: #1C1C1E;
+}
+
+/* Meta Text */
+.home-page.light-theme .review-name {
+  color: #1C1C1E;
+}
+.home-page.light-theme .review-rating em {
+  color: #3A3A3C;
+}
