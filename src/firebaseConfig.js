@@ -1,15 +1,17 @@
 // src/firebaseConfig.js
-import { initializeApp } from 'firebase/app';
+import { initializeApp } from "firebase/app";
 import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    serverTimestamp // <-- Import for timestamps
-} from 'firebase/firestore'; 
-import { getStorage } from 'firebase/storage';
+  getFirestore, 
+  collection, 
+  addDoc, 
+  serverTimestamp 
+} from "firebase/firestore"; 
+import { getStorage } from "firebase/storage";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
-// Your web app's Firebase configuration
+// -----------------------------
+// Your Firebase Project Config
+// -----------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyBmeU2_tCAmhMlsZ3laAvwM6R1J309Y0hk",
   authDomain: "pidr-c644e.firebaseapp.com",
@@ -20,34 +22,37 @@ const firebaseConfig = {
   measurementId: "G-PGRBXP6XK5"
 };
 
-
-// Initialize Firebase
+// -----------------------------
+// Firebase Initialization
+// -----------------------------
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
 
-// --- FUNCTION TO SAVE ORDERS ---
-
-/**
- * Saves a new rental order to the 'orders' collection.
- * @param {object} orderData - The data for the new order.
- * @returns {string} The ID of the newly created order document.
- */
-export const saveRentalOrder = async (orderData) => { // <-- EXPORTED HERE
-    try {
-        const docRef = await addDoc(collection(db, 'orders'), {
-            ...orderData,
-            orderStatus: 'Awaiting Payment',
-            createdAt: serverTimestamp()
-        });
-        return docRef.id;
-    } catch (error) {
-        console.error("Error saving rental order:", error);
-        throw new Error("Failed to save order to the database: " + error.message);
-    }
+// -----------------------------
+// SAVE RENTAL ORDER FUNCTION
+// -----------------------------
+export const saveRentalOrder = async (orderData) => {
+  try {
+    const docRef = await addDoc(collection(db, "orders"), {
+      ...orderData,
+      orderStatus: "Awaiting Payment",
+      createdAt: serverTimestamp()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error saving rental order:", error);
+    throw new Error("Failed to save order to the database: " + error.message);
+  }
 };
 
-// --- EXPORTS ---
-export { db, storage }; // <-- REMOVED saveRentalOrder from here
-export const checkPincodeServiceability = httpsCallable(functions, 'checkPincodeServiceability');
+// -----------------------------
+// CLOUD FUNCTION CALL
+// -----------------------------
+export const checkPincodeServiceability = httpsCallable(functions, "checkPincodeServiceability");
+
+// -----------------------------
+// EXPORTS FOR PROJECT USE
+// -----------------------------
+export { db, storage, app };

@@ -1,7 +1,7 @@
 // HomePage.js
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './HomePage.css';
+import './styles/HomePage.css';
 import useScrollReveal from './hooks/useScrollReveal';
 
 // Import icons from lucide-react
@@ -15,6 +15,7 @@ import aboutus2 from "../src/assets/Gemini_Generated_Image_mjcef7mjcef7mjce.png"
 import logo1 from "../src/assets/DOR white.png"
 // Import Helmet for SEO meta tags
 import { Helmet } from 'react-helmet-async';
+
 function HomePage() {
   const [menCategories, setMenCategories] = useState([]);
   const [womenCategories, setWomenCategories] = useState([]);
