@@ -209,3 +209,82 @@
 
 /* -------- Utilities -------- */
 .icon-mr{ margin-right:6px }
+.home-page.light-theme .products-page {
+  background: #FFFFFF !important;
+  color: #1C1C1E;
+}
+
+/* Light Header */
+.home-page.light-theme .products-header-content {
+  background: #FFFFFF !important;
+  border: 1px solid #DCDCDC;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+  color: #1C1C1E;
+}
+.home-page.light-theme .products-title { color:#1C1C1E; }
+.home-page.light-theme .breadcrumb-link { color:#6B6B6B; }
+.home-page.light-theme .breadcrumb-link:hover { color:var(--color-accent); }
+
+/* Light Filter Bar */
+.home-page.light-theme .filter-bar {
+  background:#FFFFFF;
+  border:1px solid #DCDCDC;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+}
+.home-page.light-theme .filter-select {
+  background:#FFFFFF;
+  color:#1C1C1E;
+  border:1px solid #CFCFCF;
+}
+.home-page.light-theme .filter-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(230,165,165,.3);
+}
+.home-page.light-theme .mobile-filter-toggle,
+.home-page.light-theme .clear-filters-btn,
+.home-page.light-theme .clear-filters-btn-overlay {
+  background: var(--color-accent);
+  color: #1C1C1E;
+}
+
+/* Light Product Cards */
+.home-page.light-theme .product-card {
+  background:#FFFFFF;
+  border:1px solid #DCDCDC;
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+  border-radius:18px;
+  color:#1C1C1E;
+}
+.home-page.light-theme .product-card:hover {
+  box-shadow:0 14px 32px rgba(0,0,0,0.12);
+  transform:translateY(-6px) scale(1.02);
+}
+
+/* Light Cinematic Overlay */
+.home-page.light-theme .cinematic-overlay {
+  background:
+    radial-gradient(120% 80% at 10% 0%, rgba(0,0,0,.07), transparent 40%),
+    radial-gradient(80% 60% at 50% 100%, rgba(0,0,0,.09), transparent 60%);
+}
+
+/* Light Product Text */
+.home-page.light-theme .product-name,
+.home-page.light-theme .product-rent { color:#1C1C1E; }
+.home-page.light-theme .product-color,
+.home-page.light-theme .rent-per-day { color:#6F6F6F; }
+
+/* Light Lightbox */
+.home-page.light-theme .ig-lightbox-inner {
+  background:#FFFFFF;
+  border:1px solid #DCDCDC;
+}
+.home-page.light-theme .lb-caption {
+  background:#F7F7F7;
+  color:#1C1C1E;
+}
+.home-page.light-theme .lb-close,
+.home-page.light-theme .lb-arrow {
+  background: rgba(0,0,0,.08);
+  color:#1C1C1E;
+}
