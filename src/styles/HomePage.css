@@ -11,8 +11,10 @@
   --color-dark: #2C2B30;      /* page bg */
   --color-mid:  #4F4F51;      /* surfaces */
   --color-light:#D6D6D6;      /* text on dark */
-  --color-soft: #F2C4CE;      /* soft accent */
-  --color-accent:#F2C4CE;     /* main accent */
+    /*--color-soft: #F2C4CE;      soft accent */
+  /*--color-accent:#F2C4CE;     main accent */
+  --color-accent:#C9A66B; /* Luxury Gold */
+  --color-soft:#D9B78C;   /* Hover Gold Shade */
   --header-h:   80px;
 
   /* Shadows (dark) */
@@ -301,8 +303,8 @@ address.address-text { font-style: normal; }
   --color-dark: #FFFFFF;   /* pure white main background */
   --color-mid:  #F7F7F8;   /* soft neutral card surface */
   --color-light:#1C1C1E;   /* charcoal text */
-  --color-soft: #E6A5A5;   /* soft accent (brandable) */
-  --color-accent:#E6A5A5;  /* main accent */
+  --color-accent: #D9904E; /* Burnt Saffron */
+--color-soft: #E8AE6F; /* Softer hover tone */
 
   /* Subtle, Apple-like shadows */
   --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
@@ -456,4 +458,71 @@ address.address-text { font-style: normal; }
 .home-page.light-theme .left-social-bar a:hover {
   color: black;
   box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+
+/* ================= CollectionOverrides.css =================
+   Purpose: 
+   1) Force 2×2 grid on mobile for Women/Men collection sections.
+   2) Apply the "Collaboration" dark vibe to these sections, with
+      light-theme overrides to match your Apple-minimal light theme.
+   Safe to import after HomePage.css and CollaborationSection.css.
+   ============================================================ */
+
+/* ---------- 1) Mobile: 2×2 grid for collection cards ---------- */
+@media (max-width: 639.98px){
+  #women .grid-4-col,
+  #men .grid-4-col{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+  #women .category-card-image,
+  #men .category-card-image{
+    height: 180px;
+  }
+}
+
+/* ---------- 2) Collaboration-themed dark background & cards ---------- */
+.collab-collection{
+  position: relative;
+  color: var(--color-light);
+  /* Soft blush + violet haze over charcoal (from CollaborationSection.css) */
+  background:
+    radial-gradient(80% 140% at 50% 0%, rgba(242,196,206,.22) 0%, transparent 70%),
+    radial-gradient(80% 140% at 80% 90%, rgba(116,93,255,.18) 0%, transparent 70%),
+    radial-gradient(80% 140% at 20% 90%, rgba(255,171,202,.16) 0%, transparent 70%),
+    var(--color-dark);
+  overflow: clip;
+}
+
+/* Title color to ensure visibility on the darker bg */
+.collab-collection .section-title{
+  color: var(--color-light) !important;
+}
+
+/* Card treatment to match collaboration vibe */
+.collab-collection .category-card{
+  background:
+    linear-gradient(145deg, #1b1b1e, #151518) padding-box,
+    conic-gradient(from 180deg at 50% 50%,
+      rgba(242,196,206,.55),
+      rgba(215,182,255,.45),
+      rgba(155,194,255,.45),
+      rgba(255,227,166,.45),
+      rgba(242,196,206,.55)) border-box;
+  border: 1px solid transparent;
+}
+.collab-collection .category-card:hover{
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* ---------- Light theme overrides (align with Apple-minimal) ---------- */
+.home-page.light-theme .collab-collection{
+  background: var(--color-dark);  /* in light, this resolves to white from :root overrides */
+  color: var(--color-light);
+}
+.home-page.light-theme .collab-collection .category-card{
+  /* background: #FAF8F4 !important;  */
+  background: #F3EFEA!important; /* Ivory Blush    #FAF8F4 */
+  border: 1px solid #E4D9D3 !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
 }

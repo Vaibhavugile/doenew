@@ -223,49 +223,7 @@ function HomePage() {
   };
 
   // Function to get style advice from Gemini API
-  const getStyleAdvice = async () => {
-    if (!eventDescription.trim()) {
-      setAdviceError('Please describe your event to get style advice.');
-      return;
-    }
-
-    setIsLoadingAdvice(true);
-    setAdviceError('');
-    setStyleAdvice('');
-
-    try {
-      let chatHistory = [];
-      const prompt = `Given the event: "${eventDescription}", suggest 3-5 suitable dress or suit styles from a rental perspective for a dress rental business. Focus on popular categories like Suits, Blazers, Sherwani, Jodhpuri for men, and Bridal Gowns, Sangeet Gowns, Pre-Wedding Gowns, Maternity Gowns, Bridal Maternity Gowns for women. Provide short, concise suggestions.`;
-      chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-      const payload = { contents: chatHistory };
-      const apiKey = "AIzaSyB8Qs1DCfin_qFAoo19CDAe8I3qnkmaj0U";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-
-      if (result.candidates && result.candidates.length > 0 &&
-        result.candidates[0].content && result.candidates[0].content.parts &&
-        result.candidates[0].content.parts.length > 0) {
-        const text = result.candidates[0].content.parts[0].text;
-        setStyleAdvice(text);
-      } else {
-        setAdviceError('Could not get style advice. Please try again.');
-        console.error('Gemini API response structure unexpected:', result);
-      }
-    } catch (error) {
-      setAdviceError('Failed to fetch style advice. Please check your network connection.');
-      console.error('Error fetching style advice:', error);
-    } finally {
-      setIsLoadingAdvice(false);
-    }
-  };
+ 
 
   // --- Scroll Reveal Hooks for each section ---
   const [storesRef, storesIsVisible] = useScrollReveal({ threshold: 0.2 });
@@ -365,9 +323,7 @@ function HomePage() {
                       setShowStoreModal(false);
                     }}
                   >
-                    <div className="modal-button-icon-bg">
-                      <Crown size={64} className="modal-button-icon" />
-                    </div>
+                    
                     <span className="modal-button-text">{store.name}</span>
                   </button>
                 ))}
@@ -405,7 +361,7 @@ function HomePage() {
           <span className="nav-link-underline"></span>
         </a>
         <a href="#how-it-works" className="nav-link group">
-          How It Works
+          Earn With Us
           <span className="nav-link-underline"></span>
         </a>
         <a href="#contact" className="nav-link group">
@@ -529,7 +485,7 @@ function HomePage() {
 <section id="stores-location"
   ref={storesRef}
   // Removed 'bg-white' to inherit the theme's soft off-white background (var(--color-dark))
-  className={`section ${storesIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+  className={`section collab-collection ${storesIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
   <div className="container text-center">
     {/* H2 tag is already well-placed for section title */}
     <h2 className="section-title">DOR Dress On Rent Stores in Pune & Nagpur</h2>
@@ -567,7 +523,7 @@ function HomePage() {
       {/* Store Image Slider */}
       
       {/* Women's Collection Section */}
-      <section id="women" ref={womenRef} className={`section bg-neutral-100 ${womenIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+      <section id="women" ref={womenRef} className={`section bg-neutral-100 collab-collection ${womenIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
         <div className="container">
           {/* H2 tag is appropriate for the section title */}
           <h2 className="section-title">Women's Collection </h2>
@@ -605,7 +561,7 @@ function HomePage() {
       </section>
       {/* Men's Collection Section */}
 
-      <section id="men" ref={menRef} className={`section bg-white ${menIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+      <section id="men" ref={menRef} className={`section bg-white collab-collection  ${menIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
   <div className="container">
     <h2 className="section-title">Men's Collection</h2>
 
