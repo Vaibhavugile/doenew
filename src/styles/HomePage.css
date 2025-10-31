@@ -526,3 +526,57 @@ address.address-text { font-style: normal; }
   border: 1px solid #E4D9D3 !important;
   box-shadow: 0 6px 18px rgba(0,0,0,0.10);
 }
+.icon-facebook { color: #1877F2 !important; }
+.icon-whatsapp { color: #25D366 !important; }
+.icon-instagram {
+  color: #E1306C !important;
+}
+/* ========================================================================== 
+   3D LOGO SPIN EFFECT
+   ========================================================================== */
+/* ========================================================================== 
+   3D LOGO FINAL CONTINUOUS FLIP-TILT (No Hover Override)
+   ========================================================================== */
+
+/* 1. Define the 3D space on the wrapper */
+.header-logo .logo-3d-container {
+    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. Set the base (always active) state for the image */
+.header-logo .logo-3d-container .logo-image { 
+    transform-style: preserve-3d;
+    
+    /* Apply the continuous, wide-range flip-tilt animation */
+    /* Duration set to 12s for a noticeable but slow flip */
+    animation: continuousFlipTilt 12s ease-in-out infinite alternate; 
+    
+    /* Removed the 'transition' property as we are removing the hover effect */
+}
+
+/* 3. Define the continuous flip-tilt keyframes */
+@keyframes continuousFlipTilt {
+    0% { 
+        /* Starting position: Tilted back and left */
+        transform: 
+            rotateX(15deg) 
+            rotateY(-15deg) 
+            translateZ(0px) 
+            scale(1); 
+    }
+    100% { 
+        /* Ending position: Tilted forward and right, slightly popped out */
+        transform: 
+            rotateX(-15deg) 
+            rotateY(15deg) 
+            translateZ(5px) 
+            scale(1.02); /* Slight pulse as it tilts */
+    }
+}
+/* NOTE: Hover styles (Step 4 from previous code) have been removed entirely 
+   to ensure the continuous animation never stops. */

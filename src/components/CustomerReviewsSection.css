@@ -3,6 +3,7 @@
   --color-mid: #4F4F51;
   --color-light: #D6D6D6;
   --color-accent: #F2C4CE;
+  --carousel-gap: clamp(16px, 2.5vw, 24px); /* New: Define gap as a variable */
 }
 
 /* SECTION BACKGROUND */
@@ -64,18 +65,60 @@
   font-size: 1rem;
 }
 
-/* GRID */
-.reviews-grid {
-  width: min(1200px, 94vw);
+/* CAROUSEL (REPLACING GRID) */
+.reviews-carousel {
+  /* Use full width of container */
+  width: 100%;
   margin: 0 auto;
+  
+  /* Horizontal Grid/Flex setup */
   display: grid;
-  gap: clamp(12px, 2vw, 18px);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column; /* Lays items out in a single row */
+  gap: var(--carousel-gap);
+  
+  /* Scrolling and Snapping */
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory; /* The premium "sliding" effect */
+  scroll-padding-left: clamp(20px, 3vw, 40px);
+  scroll-behavior: smooth; /* For auto-scrolling */
+  
+  /* Aesthetics */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  padding: 0 0 24px clamp(20px, 3vw, 40px);
 }
-@media (min-width: 768px) { .reviews-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1200px) { .reviews-grid { grid-template-columns: repeat(4, 1fr); } }
 
-/* CARD */
+/* 3-CARD VIEW LOGIC */
+/* The card width is calculated as a fraction of the viewport width (vw)
+   to ensure the correct number of cards are visually present on screen. */
+
+/* Default (Mobile): Show 1 card (85% width) */
+.reviews-carousel {
+  grid-auto-columns: 85vw;
+}
+
+/* Tablet/Small Desktop: Show 2 cards at once */
+@media (min-width: 600px) {
+  .reviews-carousel {
+    /* (100% / 2) - half the gap - a fixed buffer for scrollbar/extra padding */
+    grid-auto-columns: calc(50vw - (var(--carousel-gap) / 2) - 30px);
+  }
+}
+
+/* Large Desktop (The "Show 3" request): Show 3 cards at once */
+@media (min-width: 992px) {
+  .reviews-carousel {
+    /* (100% / 3) - two-thirds the gap - a fixed buffer for scrollbar/extra padding */
+    grid-auto-columns: calc(33.333vw - (var(--carousel-gap) * 2 / 3) - 30px);
+  }
+}
+
+/* Hide the scrollbar for Chrome/Safari */
+.reviews-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* CARD (WITH PREMIUM HOVER SETUP) */
 .review-card {
   position: relative;
   border-radius: 18px;
@@ -87,26 +130,45 @@
   opacity: 0;
   transform: translateY(12px);
   animation: fadeUp .6s cubic-bezier(.22,1,.36,1) forwards;
+  
+  /* CAROUSEL SETUP */
+  scroll-snap-align: start;
+  width: 100%;
+  
+  /* PREMIUM HOVER SETUP */
+  perspective: 1000px; /* Establishes a 3D scene */
+  transition: all 0.4s cubic-bezier(.25, .8, .25, 1); /* Smoother transition for all properties */
 }
 @keyframes fadeUp {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* VIDEO HOLDER */
+/* VIDEO HOLDER - NOW LANDSCAPE (16:9) */
 .review-frame {
   position: relative;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 16 / 9; /* LANDSCAPE */
   border-radius: 14px;
   overflow: hidden;
   background: #000;
-  transition: transform .4s ease, box-shadow .4s ease;
+  
+  /* 3D Transform Preparation */
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-out, box-shadow 0.6s ease;
 }
+
+/* Premium Hover Effect */
 @media (hover:hover) {
+  .review-card:hover {
+    transform: translateY(-10px) scale(1.015); /* Lift the whole card */
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6); /* Deeper shadow */
+  }
+
   .review-card:hover .review-frame {
-    transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 14px 30px rgba(0,0,0,.35);
+    /* Apply a subtle 3D tilt */
+    transform: rotateY(-2deg) rotateX(1deg) scale(1.01);
   }
 }
+
 .review-frame video {
   width: 100%;
   height: 100%;

@@ -3,6 +3,9 @@ import { db } from "../firebaseConfig";
 import { collection, onSnapshot, orderBy, query, limit } from "firebase/firestore";
 import "./CustomerReviewsSection.css";
 
+// Autoplay settings
+const AUTOPLAY_INTERVAL = 4000; // 4 seconds between slides
+
 export default function CustomerReviewsSection({
   sectionTitle = "Customer Reviews",
   sectionSubtitle = "Real people. Real fits. Real love ✦",
@@ -12,6 +15,7 @@ export default function CustomerReviewsSection({
   const [reviews, setReviews] = useState([]);
   const vidsRef = useRef([]);
   const cardsRef = useRef([]);
+  const carouselRef = useRef(null); // New ref for the carousel container
 
   // live Firestore subscription
   useEffect(() => {
@@ -28,6 +32,7 @@ export default function CustomerReviewsSection({
     [reviews]
   );
 
+  // Intersection Observer for video autoplay (remains the same)
   useEffect(() => {
     const onEnter = async (video, card) => {
       if (!video) return;
@@ -57,6 +62,61 @@ export default function CustomerReviewsSection({
     return () => io.disconnect();
   }, [threshold, items.length]);
 
+  // Autoplay/Automatic Scrolling Logic
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel || items.length === 0) return;
+
+    // Scroll function to move to the next item
+    const scrollNext = () => {
+      // Find the currently visible card that is closest to the left edge
+      const firstCard = cardsRef.current[0];
+      if (!firstCard) return;
+
+      // Calculate the scroll distance: Card Width + Gap.
+      // We will use the offsetWidth of the first card as the slide width.
+      // NOTE: Because CSS Scroll Snap is enabled, the `scrollLeft` change will snap
+      // to the next card's start point automatically and smoothly.
+      const scrollDistance = firstCard.offsetWidth + 
+                             parseFloat(getComputedStyle(carousel).gap || '0');
+
+      // Calculate maximum scrollable distance
+      const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+      
+      if (carousel.scrollLeft >= maxScrollLeft) {
+        // If at the end, smoothly scroll back to the start (0)
+        carousel.scrollLeft = 0;
+      } else {
+        // Otherwise, scroll forward by one card width
+        carousel.scrollLeft += scrollDistance;
+      }
+    };
+
+    let autoplayTimer = setInterval(scrollNext, AUTOPLAY_INTERVAL);
+
+    // Pause autoplay on user interaction
+    const pauseAutoplay = () => clearInterval(autoplayTimer);
+    const resumeAutoplay = () => {
+        pauseAutoplay(); // Clear any existing timer
+        autoplayTimer = setInterval(scrollNext, AUTOPLAY_INTERVAL);
+    };
+
+    carousel.addEventListener('mouseenter', pauseAutoplay);
+    carousel.addEventListener('mouseleave', resumeAutoplay);
+    carousel.addEventListener('touchstart', pauseAutoplay);
+    carousel.addEventListener('touchend', resumeAutoplay);
+    
+    // Cleanup on unmount
+    return () => {
+      pauseAutoplay();
+      carousel.removeEventListener('mouseenter', pauseAutoplay);
+      carousel.removeEventListener('mouseleave', resumeAutoplay);
+      carousel.removeEventListener('touchstart', pauseAutoplay);
+      carousel.removeEventListener('touchend', resumeAutoplay);
+    };
+  }, [items.length]);
+
+
   const toggleSound = (i) => {
     const v = vidsRef.current[i];
     if (!v) return;
@@ -82,7 +142,10 @@ export default function CustomerReviewsSection({
         {sectionSubtitle && <p className="reviews-subtitle">{sectionSubtitle}</p>}
       </div>
 
-      <div className="reviews-grid stagger-grid is-visible">
+      <div 
+        className="reviews-carousel stagger-grid is-visible"
+        ref={carouselRef} // Attach ref for automatic scrolling
+      >
         {items.map((it, i) => (
           <article
             key={it.key}

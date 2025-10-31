@@ -5,8 +5,8 @@ import './styles/HomePage.css';
 import useScrollReveal from './hooks/useScrollReveal';
 
 // Import icons from lucide-react
-import { ChevronRight, Sparkles, Shirt, Crown, User, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Clock, Wand2, Loader2, Star, Menu, Sun, Moon } from 'lucide-react'; // Added Sun/Moon for theme toggle
-
+import { ChevronRight, Sparkles, Shirt, Crown, User, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Clock, Wand2, Loader2, Star, Menu, Sun, Moon,Navigation } from 'lucide-react'; // Added Sun/Moon for theme toggle
+import { FaWhatsapp } from "react-icons/fa"; 
 // Import Firebase
 import { db } from './firebaseConfig';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
@@ -25,12 +25,16 @@ const WhatsAppIcon = ({ size = 20 }) => (
     width={size}
     height={size}
     viewBox="0 0 32 32"
-    fill="currentColor"
     aria-hidden="true"
   >
-    <path d="M19.11 17.33c-.27-.14-1.57-.77-1.81-.85-.24-.09-.42-.14-.6.14-.17.27-.69.85-.84 1.03-.15.17-.31.19-.58.07-.27-.14-1.13-.42-2.16-1.33-.8-.7-1.35-1.56-1.51-1.83-.16-.27-.02-.42.12-.56.13-.13.27-.31.4-.47.13-.16.17-.27.27-.45.09-.18.05-.33-.02-.47-.07-.14-.6-1.44-.82-1.97-.22-.53-.44-.46-.6-.46-.16 0-.33-.02-.51-.02-.18 0-.47.07-.72.33-.25.27-.95.93-.95 2.27 0 1.33.97 2.63 1.11 2.81.14.18 1.91 2.93 4.63 4.1 2.72 1.17 2.72.78 3.21.75.49-.02 1.57-.64 1.79-1.27.22-.64.22-1.19.16-1.31-.05-.13-.24-.2-.51-.33zM16 3C9.37 3 4 8.37 4 15c0 2.11.55 4.09 1.51 5.8L4 29l8.36-1.48C13.99 28.45 14.98 28.6 16 28.6c6.63 0 12-5.37 12-12S22.63 3 16 3zm0 22.8c-.96 0-1.9-.16-2.78-.48l-.2-.07-4.87.86.9-4.75-.1-.2A9.83 9.83 0 0 1 6.8 15c0-5.07 4.13-9.2 9.2-9.2s9.2 4.13 9.2 9.2-4.13 9.2-9.2 9.2z"/>
+    <path
+      fill="#25D366"   // ✅ OFFICIAL WHATSAPP GREEN
+      d="M19.11 17.33c-.27-.14-1.57-.77-1.81-.85-.24-.09-.42-.14-.6.14-.17.27-.69.85-.84 1.03-.15.17-.31.19-.58.07-.27-.14-1.13-.42-2.16-1.33-.8-.7-1.35-1.56-1.51-1.83-.16-.27-.02-.42.12-.56.13-.13.27-.31.4-.47.13-.16.17-.27.27-.45.09-.18.05-.33-.02-.47-.07-.14-.6-1.44-.82-1.97-.22-.53-.44-.46-.6-.46-.16 0-.33-.02-.51-.02-.18 0-.47.07-.72.33-.25.27-.95.93-.95 2.27 0 1.33.97 2.63 1.11 2.81.14.18 1.91 2.93 4.63 4.1 2.72 1.17 2.72.78 3.21.75.49-.02 1.57-.64 1.79-1.27.22-.64.22-1.19.16-1.31-.05-.13-.24-.2-.51-.33zM16 3C9.37 3 4 8.37 4 15c0 2.11.55 4.09 1.51 5.8L4 29l8.36-1.48C13.99 28.45 14.98 28.6 16 28.6c6.63 0 12-5.37 12-12S22.63 3 16 3zm0 22.8c-.96 0-1.9-.16-2.78-.48l-.2-.07-4.87.86.9-4.75-.1-.2A9.83 9.83 0 0 1 6.8 15c0-5.07 4.13-9.2 9.2-9.2s9.2 4.13 9.2 9.2-4.13 9.2-9.2 9.2z"
+    />
   </svg>
 );
+
+
 function HomePage() {
   const [menCategories, setMenCategories] = useState([]);
   const [womenCategories, setWomenCategories] = useState([]);
@@ -103,43 +107,45 @@ function HomePage() {
     };
   }, []);
   // Data for Testimonials (can also be fetched from Firebase)
-  const testimonials = [
-    {
-      quote: "Renting from them was a breeze! The suit was perfect for my event, and the quality was exceptional. Highly recommend for any occasion!",
-      author: "Rahul Sharma",
-      city: "Camp, Pune",
-      rating: 5,
-      keywords: ["Easy Rental", "Perfect Fit", "Exceptional Quality", "Highly Recommended"]
-    },
-    {
-      quote: "My pre-wedding gown was stunning and fit perfectly. Saved me so much money, and the process was seamless. Will definitely use again!",
-      author: "Priya Singh",
-      city: "Wakad, Pune",
-      rating: 5,
-      keywords: ["Stunning Gown", "Perfect Fit", "Cost-Effective", "Seamless Process", "Will Use Again"]
-    },
-    {
-      quote: "Excellent collection and very professional service. Found the ideal sherwani for my brother's wedding. Their team was very helpful.",
-      author: "Amit Kumar",
-      city: "Nagpur",
-      rating: 4,
-      keywords: ["Excellent Collection", "Professional Service", "Helpful Team", "Ideal Sherwani"]
-    },
-    {
-      quote: "The dress I rented for my friend's reception was beautiful and in perfect condition. Great value for money!",
-      author: "Sneha Reddy",
-      city: "Koregaon Park, Pune",
-      rating: 5,
-      keywords: ["Beautiful Dress", "Perfect Condition", "Great Value"]
-    },
-    {
-      quote: "Very easy process from selection to return. The outfit was exactly as described and suited my event perfectly.",
-      author: "John Doe",
-      city: "Baner, Pune",
-      rating: 4,
-      keywords: ["Easy Process", "Accurate Description", "Suited Event Perfectly"]
-    }
-  ];
+  const stores = [
+  {
+    id: "pune-wakad",
+    name: "DOR — Pune (Wakad)",
+    address: "Shop No 5, ABC Towers, Wakad, Pune, Maharashtra 411057",
+    phoneDisplay: "+91 98765 43210",
+    phone: "+919876543210",
+    email: "wakad@dressonrent.com",
+    instagram: "https://www.instagram.com/dor_wakad",
+    facebook: "https://www.facebook.com/dor.wakad",
+    whatsapp: "https://wa.me/919876543210?text=Hi%20DOR%20Wakad%2C%20I%27d%20like%20to%20rent%20an%20outfit",
+    mapsDest: "Shop%20No%205%2C%20ABC%20Towers%2C%20Wakad%2C%20Pune%2C%20Maharashtra%20411057",
+  },
+  {
+    id: "pune-mgroad",
+    name: "DOR — Pune (MG Road, Camp)",
+    address: "Shop No. 101, XYZ Building, MG Road, Camp, Pune, Maharashtra 411001",
+    phoneDisplay: "+91 91234 56789",
+    phone: "+919123456789",
+    email: "camp@dressonrent.com",
+    instagram: "https://www.instagram.com/dor_camp",
+    facebook: "https://www.facebook.com/dor.camp",
+    whatsapp: "https://wa.me/919123456789?text=Hi%20DOR%20Camp%2C%20I%27m%20interested%20in%20renting",
+    mapsDest: "Shop%20No.%20101%2C%20XYZ%20Building%2C%20MG%20Road%2C%20Camp%2C%20Pune%2C%20Maharashtra%20411001",
+  },
+  {
+    id: "nagpur-civillines",
+    name: "DOR — Nagpur (Civil Lines)",
+    address: "2nd Floor, PQR Plaza, Civil Lines, Nagpur, Maharashtra 440001",
+    phoneDisplay: "+91 99876 54321",
+    phone: "+919987654321",
+    email: "nagpur@dressonrent.com",
+    instagram: "https://www.instagram.com/dor_nagpur",
+    facebook: "https://www.facebook.com/dor.nagpur",
+    whatsapp: "https://wa.me/919987654321?text=Hi%20DOR%20Nagpur%2C%20need%20help%20with%20rentals",
+    mapsDest: "2nd%20Floor%2C%20PQR%20Plaza%2C%20Civil%20Lines%2C%20Nagpur%2C%20Maharashtra%20440001",
+  },
+];
+
 
   
   // State for the image slider
@@ -337,15 +343,15 @@ function HomePage() {
 
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
   <div className="header-container">
-    <a href="#" className="header-logo animate-pulse-custom">
-      <img
-  src={theme === 'light' ? logo2 : logo1}
-  alt="Dress On Rent"
-  className="logo-image"
-/>
-
-    </a>
-
+<a href="#" className="header-logo animate-pulse-custom">
+        <div className="logo-3d-container">
+          <img
+            src={theme === 'light' ? logo2 : logo1}
+            alt="Dress On Rent"
+            className="logo-image"
+          />
+        </div>
+      </a>
     <div className="header-nav-wrapper">
       <nav className="desktop-nav">
         <a href="#men" className="nav-link group">
@@ -360,7 +366,7 @@ function HomePage() {
           Stores Location
           <span className="nav-link-underline"></span>
         </a>
-        <a href="#how-it-works" className="nav-link group">
+        <a href="#earn-with-us" className="nav-link group">
           Earn With Us
           <span className="nav-link-underline"></span>
         </a>
@@ -433,33 +439,24 @@ function HomePage() {
         </li>
 
         {/* ✅ NEW MOBILE SOCIAL ICONS */}
-        <li className="mobile-social">
-          <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" className="social-link">
-            <Instagram size={18} />
-          </a>
-          <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" className="social-link">
-            <Facebook size={18} />
-          </a>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="social-link">
-            <WhatsAppIcon size={18} />
-          </a>
-        </li>
+        
       </ul>
     </nav>
   )}
 </header>
 {/* LEFT STICKY SOCIAL BAR */}
 <div className="left-social-bar">
-  <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-    <Instagram size={22} />
+  <a href="https://www.instagram.com/yourdorinstagram" target="_blank">
+    <Instagram size={22} className="icon-instagram" />
   </a>
-  <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-    <Facebook size={22} />
+  <a href="https://www.facebook.com/yourdorfacebook" target="_blank">
+    <Facebook size={22} className="icon-facebook" />
   </a>
-  <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-    <WhatsAppIcon size={22} />
+  <a href="https://wa.me/919876543210" target="_blank">
+    <WhatsAppIcon size={22} className="icon-whatsapp" />
   </a>
 </div>
+
 
 
       {/* Hero Section */}
@@ -709,61 +706,78 @@ function HomePage() {
 
       {/* Footer */}
       <footer id="contact" className="footer">
-        <div className="footer-container">
-          <div className="footer-col">
-            {/* SEO Change 1: Enhanced H3 heading with keywords */}
-            <h3 className="footer-heading">DOR - Dress On Rent | Luxury Outfit Rentals in Pune & Nagpur</h3>
-            <p className="footer-text">
-              Your premier destination for high-quality lehenga on rent, sherwani on rent, gown on rent, and suit rentals in Pune and Nagpur. Elevate your style sustainably and affordably for any event with DOR Dress On Rent. We offer a convenient, hassle-free way to rent vs buy ethnic wear, ensuring you save money on wedding dress and other special occasion outfits.
-            </p>
-            <div className="social-links">
-              {/* SEO Change 2: Updated social media links with actual URLs and rel attributes */}
-              <a href="https://www.instagram.com/yourdorinstagram" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Instagram"><Instagram size={24} /></a> {/* REPLACE with actual Instagram URL */}
-              <a href="https://www.facebook.com/yourdorfacebook" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Facebook"><Facebook size={24} /></a> {/* REPLACE with actual Facebook URL */}
-              <a href="https://www.twitter.com/yourdortwitter" target="_blank" rel="noopener noreferrer" className="social-icon animate-social-pop" aria-label="Visit DOR on Twitter"><Twitter size={24} /></a> {/* REPLACE with actual Twitter URL */}
-            </div>
-          </div>
-
-          <div className="footer-col">
-            <h3 className="footer-heading">Quick Links for Dress Rentals</h3>
+      <div className="footer-container">
+        {stores.map((s) => (
+          <div className="footer-col" key={s.id}>
+            <h3 className="footer-heading">{s.name}</h3>
             <ul className="footer-list">
-              {/* SEO Change 3: Ensure anchor links are descriptive */}
-              <li><a href="#men" className="footer-link animate-footer-link-hover">Men's Rental Collection</a></li>
-              <li><a href="#women" className="footer-link animate-footer-link-hover">Women's Rental Collection</a></li>
-              <li><a href="#how-it-works" className="footer-link animate-footer-link-hover">How Dress Rental Works</a></li>
-              <li><a href="#about-us" className="footer-link animate-footer-link-hover">About DOR Dress On Rent</a></li>
-              <li><Link to="/faq" className="footer-link animate-footer-link-hover">FAQ for Dress Rentals</Link></li> {/* Assuming /faq is a separate page */}
-            </ul>
-          </div>
-
-          <div className="footer-col">
-            <h3 className="footer-heading">Contact DOR - Dress On Rent</h3>
-            <ul className="footer-list">
-              <li className="contact-item"><Mail size={18} className="icon-mr" /> info@DOR.com</li> {/* REPLACE with actual email */}
-              <li className="contact-item"><Phone size={18} className="icon-mr" /> +91 98765 43210</li> {/* REPLACE with actual phone number */}
-              <li className="contact-item align-start"><MapPin size={18} className="icon-mr mt-1" />
-                <address className="address-text">
-                  Our Stores:<br />
-                  {/* SEO Change 4: Display full store names and addresses for local SEO */}
-                  {loadingStores ? 'Loading...' : storeError ? 'Error loading stores' :
-                    storeLocations.map(store => (
-                      <span key={store.id}>
-                        {store.name}: [Your full address for {store.name} store, e.g., Shop No 5, ABC Towers, Wakad, Pune, Maharashtra 411057]<br />
-                      </span>
-                    ))
-                  }
-                  {/* Example static addresses: */}
-                  {/* Pune Store: Shop No. 101, XYZ Building, MG Road, Camp, Pune, Maharashtra 411001<br/> */}
-                  {/* Nagpur Store: 2nd Floor, PQR Plaza, Civil Lines, Nagpur, Maharashtra 440001<br/> */}
-                </address>
+              <li className="contact-item align-start">
+                <MapPin size={18} className="icon-mr" />
+                <address className="address-text">{s.address}</address>
+              </li>
+              <li className="contact-item">
+                <Phone size={18} className="icon-mr" />
+                <a href={`tel:${s.phone}`} className="footer-link">{s.phoneDisplay}</a>
+              </li>
+              <li className="contact-item">
+                <Mail size={18} className="icon-mr" />
+                <a href={`mailto:${s.email}`} className="footer-link">{s.email}</a>
               </li>
             </ul>
+
+            <div className="social-links" style={{ marginTop: ".75rem" }}>
+              <a
+                href={s.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon animate-social-pop"
+                aria-label={`${s.name} on Instagram`}
+                title="Instagram"
+              >
+                <Instagram size={22} className="icon-instagram" />
+              </a>
+
+              <a
+                href={s.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon animate-social-pop"
+                aria-label={`${s.name} on Facebook`}
+                title="Facebook"
+              >
+                <Facebook size={22} className="icon-facebook" />
+              </a>
+
+              <a
+                href={s.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon animate-social-pop"
+                aria-label={`WhatsApp ${s.name}`}
+                title="WhatsApp"
+              >
+                <FaWhatsapp size={22} className="icon-whatsapp" />
+              </a>
+
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${s.mapsDest}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon animate-social-pop"
+                aria-label={`Directions to ${s.name}`}
+                title="Get Directions"
+              >
+                <Navigation size={22} />
+              </a>
+            </div>
           </div>
-        </div>
-        <div className="copyright">
-          &copy; {new Date().getFullYear()} DOR. All rights reserved.
-        </div>
-      </footer>
+        ))}
+      </div>
+
+      <div className="copyright">
+        &copy; {new Date().getFullYear()} DOR. All rights reserved.
+      </div>
+    </footer>
     </div>
   );
 }
