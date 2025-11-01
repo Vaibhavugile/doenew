@@ -5,14 +5,12 @@ import {
   collection,
   collectionGroup,
   deleteDoc,
-  doc,
   getDocs,
   limit,
   orderBy,
   query,
   startAfter,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import {
   ref as storageRef,
@@ -24,27 +22,12 @@ import {
 import { db, storage } from "./firebaseConfig";
 import "./AdminProductsManager.css";
 
-/**
- * Firestore shape (you already use it)
- * menCategories/{categoryId}/products/{productId}
- * womenCategories/{categoryId}/products/{productId}
- *
- * This page:
- * - Filters by gender + category (or shows ALL categories via collectionGroup)
- * - Paginates server-side (25 per page) ordered by addedDate desc
- * - Client-side search (name / productCode / color)
- * - Edit modal (name, desc, rent, color, sizes, stores, material, care)
- * - Replace hero image (re-uploads to canonical path → onProductImage will regenerate thumbs)
- * - Delete product (doc + Storage folder cleanup)
- * - “Bulk import” button → /admin/bulk-products
- */
-
 const PAGE = 25;
 
 export default function AdminProductsManager() {
   const [gender, setGender] = useState("men");
   const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState(""); // empty = All categories (uses collectionGroup)
+  const [categoryId, setCategoryId] = useState("");
   const [loadingCats, setLoadingCats] = useState(false);
 
   const [items, setItems] = useState([]);
@@ -53,14 +36,16 @@ export default function AdminProductsManager() {
   const [atEnd, setAtEnd] = useState(false);
 
   const [search, setSearch] = useState("");
+  const [colorFilter, setColorFilter] = useState("");
+  const [storeFilter, setStoreFilter] = useState("");
 
-  const [editing, setEditing] = useState(null); // product obj for modal
+  const [editing, setEditing] = useState(null);
   const [busyEdit, setBusyEdit] = useState(false);
 
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
 
-  // Load categories when gender changes
+  // Load categories for current gender
   useEffect(() => {
     const loadCats = async () => {
       setLoadingCats(true);
@@ -78,16 +63,13 @@ export default function AdminProductsManager() {
     loadCats();
   }, [gender]);
 
-  // Load first page whenever filters change
+  // Load products (first page) when filters change
   useEffect(() => {
     let cancel = false;
     const run = async () => {
       setLoading(true);
-      setMsg("");
-      setErr("");
-      setItems([]);
-      setCursor(null);
-      setAtEnd(false);
+      setMsg(""); setErr("");
+      setItems([]); setCursor(null); setAtEnd(false);
       try {
         let snap;
         if (categoryId) {
@@ -99,8 +81,7 @@ export default function AdminProductsManager() {
           );
           snap = await getDocs(q1);
         } else {
-          // All categories for a gender via collectionGroup
-          // (product docs need `gender` saved for this to filter; if not, we fallback to client filter)
+          // All categories for this gender via collectionGroup
           const q1 = query(
             collectionGroup(db, "products"),
             orderBy("addedDate", "desc"),
@@ -108,14 +89,22 @@ export default function AdminProductsManager() {
           );
           snap = await getDocs(q1);
         }
+
         if (cancel) return;
-        const data = snap.docs.map((d) => ({ id: d.id, ...d.data(), _ref: d.ref }));
-        // If using collectionGroup and your docs don't store gender, filter client-side:
-        const filtered = categoryId
-          ? data
-          : data.filter((p) =>
-              (p.gender ? p.gender === gender : true)
-            );
+
+        const data = snap.docs.map((d) => {
+          const obj = { id: d.id, ...d.data(), _ref: d.ref };
+          // menCategories/{cat}/products/{id}
+          const parts = d.ref.path.split("/");
+          if (parts[0] === "menCategories" || parts[0] === "womenCategories") {
+            obj.gender = parts[0] === "menCategories" ? "men" : "women";
+            obj.categoryId = parts[1];
+          }
+          return obj;
+        });
+
+        const filtered = categoryId ? data : data.filter((p) => (p.gender ? p.gender === gender : true));
+
         setItems(filtered);
         setCursor(snap.docs[snap.docs.length - 1] || null);
         setAtEnd(snap.empty || snap.docs.length < PAGE);
@@ -154,7 +143,15 @@ export default function AdminProductsManager() {
         );
         snap = await getDocs(qn);
       }
-      const data = snap.docs.map((d) => ({ id: d.id, ...d.data(), _ref: d.ref }));
+      const data = snap.docs.map((d) => {
+        const obj = { id: d.id, ...d.data(), _ref: d.ref };
+        const parts = d.ref.path.split("/");
+        if (parts[0] === "menCategories" || parts[0] === "womenCategories") {
+          obj.gender = parts[0] === "menCategories" ? "men" : "women";
+          obj.categoryId = parts[1];
+        }
+        return obj;
+      });
       const filtered = categoryId ? data : data.filter((p) => (p.gender ? p.gender === gender : true));
       setItems((prev) => [...prev, ...filtered]);
       setCursor(snap.docs[snap.docs.length - 1] || cursor);
@@ -167,46 +164,59 @@ export default function AdminProductsManager() {
     }
   };
 
-  // Search (client-side)
+  // Build filter options
+  const colorOptions = useMemo(() => {
+    const s = new Set();
+    items.forEach((p) => { if (p.color) s.add(p.color); });
+    return Array.from(s).sort();
+  }, [items]);
+
+  const storeOptions = useMemo(() => {
+    const s = new Set();
+    items.forEach((p) => (p.availableStores || []).forEach((st) => s.add(st)));
+    return Array.from(s).sort();
+  }, [items]);
+
+  // Visible rows (search + color + store)
   const visible = useMemo(() => {
-    if (!search.trim()) return items;
     const s = search.trim().toLowerCase();
     return items.filter((p) => {
-      const hay =
-        `${p.name || ""} ${p.productCode || ""} ${p.color || ""}`.toLowerCase();
-      return hay.includes(s);
+      const hay = `${p.name || ""} ${p.productCode || ""} ${p.color || ""} ${(p.availableStores || []).join(" ")}`.toLowerCase();
+      const passSearch = s ? hay.includes(s) : true;
+      const passColor = colorFilter ? (p.color === colorFilter) : true;
+      const passStore = storeFilter ? (p.availableStores || []).includes(storeFilter) : true;
+      return passSearch && passColor && passStore;
     });
-  }, [items, search]);
+  }, [items, search, colorFilter, storeFilter]);
 
-  // Edit
+  // Edit modal state (no deep clone of refs)
   const openEdit = (p) => {
-  // Only copy fields we edit; keep _ref as a raw reference (not cloned)
-  setEditing({
-    _ref: p._ref,                     // keep the doc ref
-    id: p.id || "",
-    name: p.name || "",
-    description: p.description || "",
-    rent: p.rent ?? 0,
-    originalPrice: p.originalPrice ?? "",
-    color: p.color || "",
-    sizes: Array.isArray(p.sizes) ? [...p.sizes] : [],
-    availableStores: Array.isArray(p.availableStores) ? [...p.availableStores] : [],
-    material: p.material || "",
-    careInstructions: p.careInstructions || "",
-    imageUrl: p.imageUrl || "",
-    thumbs: p.thumbs || null,        // fine to keep for preview
-  });
-};
-
+    setEditing({
+      _ref: p._ref,
+      id: p.id || "",
+      productCode: p.productCode || "",
+      name: p.name || "",
+      description: p.description || "",
+      rent: p.rent ?? 0,
+      originalPrice: p.originalPrice ?? "",
+      color: p.color || "",
+      sizes: Array.isArray(p.sizes) ? [...p.sizes] : [],
+      availableStores: Array.isArray(p.availableStores) ? [...p.availableStores] : [],
+      material: p.material || "",
+      careInstructions: p.careInstructions || "",
+      imageUrl: p.imageUrl || "",
+      thumbs: p.thumbs || null,
+    });
+  };
   const closeEdit = () => setEditing(null);
 
   const saveEdit = async () => {
     if (!editing || !editing._ref) return;
     setBusyEdit(true);
-    setMsg("");
-    setErr("");
+    setMsg(""); setErr("");
     try {
       const payload = {
+        productCode: (editing.productCode || "").trim() || null,
         name: (editing.name || "").trim(),
         description: (editing.description || "").trim(),
         rent: editing.rent ? Number(editing.rent) : 0,
@@ -232,27 +242,22 @@ export default function AdminProductsManager() {
     }
   };
 
-  // Replace hero image (uploads to canonical path)
+  // Replace hero image (uploads to canonical path; onProductImage regenerates thumbs)
   const onReplaceImage = async (file) => {
     if (!editing || !editing._ref || !file) return;
     try {
       setBusyEdit(true);
-      // Derive gender/category/productId from ref path
-      // .../menCategories/{categoryId}/products/{productId}
       const parts = editing._ref.path.split("/");
       const g = parts[0] === "menCategories" ? "men" : "women";
-      const categoryId = parts[1];
+      const catId = parts[1];
       const productId = parts[3];
-      const heroPath = `products/${g}/${categoryId}/${productId}/hero.jpg`;
+      const heroPath = `products/${g}/${catId}/${productId}/hero.jpg`;
       const r = storageRef(storage, heroPath);
       await uploadBytes(r, file, { contentType: file.type });
       const url = await getDownloadURL(r);
-      // Your onProductImage will generate thumbs & lqip shortly; we can set imageUrl immediately
       await updateDoc(editing._ref, { imageUrl: url, updatedAt: new Date().toISOString() });
       setItems((prev) =>
-        prev.map((x) =>
-          x._ref.path === editing._ref.path ? { ...x, imageUrl: url } : x
-        )
+        prev.map((x) => (x._ref.path === editing._ref.path ? { ...x, imageUrl: url } : x))
       );
       setMsg("✅ Image replaced (thumbs will refresh automatically).");
     } catch (e) {
@@ -263,22 +268,19 @@ export default function AdminProductsManager() {
     }
   };
 
-  // Delete product (doc + storage folder cleanup)
+  // Delete product (doc + storage folder)
   const onDelete = async (p) => {
     if (!p || !p._ref) return;
     const ok = window.confirm(`Delete "${p.name || p.productCode || p.id}"? This cannot be undone.`);
     if (!ok) return;
     try {
       setMsg(""); setErr("");
-      // Derive storage folder
       const parts = p._ref.path.split("/"); // ["menCategories", "{cat}", "products", "{id}"]
       const g = parts[0] === "menCategories" ? "men" : "women";
       const catId = parts[1];
       const productId = parts[3];
       const folder = storageRef(storage, `products/${g}/${catId}/${productId}`);
-      // Delete all files under the product folder
       await deleteFolderRecursive(folder);
-      // Delete Firestore doc
       await deleteDoc(p._ref);
       setItems((prev) => prev.filter((x) => x._ref.path !== p._ref.path));
       setMsg("🗑️ Deleted.");
@@ -290,9 +292,7 @@ export default function AdminProductsManager() {
 
   return (
     <div className="apm-container">
-      <Helmet>
-        <title>Admin • Products</title>
-      </Helmet>
+      <Helmet><title>Admin • Products</title></Helmet>
 
       <header className="apm-header">
         <h1>Products</h1>
@@ -311,6 +311,7 @@ export default function AdminProductsManager() {
               <option value="women">Women</option>
             </select>
           </div>
+
           <div className="group">
             <label>Category</label>
             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} disabled={loadingCats}>
@@ -320,12 +321,29 @@ export default function AdminProductsManager() {
               ))}
             </select>
           </div>
+
+          <div className="group">
+            <label>Color</label>
+            <select value={colorFilter} onChange={(e)=>setColorFilter(e.target.value)}>
+              <option value="">All</option>
+              {colorOptions.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+
+          <div className="group">
+            <label>Store</label>
+            <select value={storeFilter} onChange={(e)=>setStoreFilter(e.target.value)}>
+              <option value="">All</option>
+              {storeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+
           <div className="group flex1">
             <label>Search</label>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name / code / color"
+              placeholder="Search name / code / color / store"
             />
           </div>
         </div>
@@ -342,6 +360,7 @@ export default function AdminProductsManager() {
                   <th>Name</th>
                   <th>Code</th>
                   <th>Color</th>
+                  <th>Stores</th>
                   <th>Rent</th>
                   <th>Sizes</th>
                   <th>Added</th>
@@ -361,8 +380,9 @@ export default function AdminProductsManager() {
                       />
                     </td>
                     <td className="apm-ellipsis">{p.name || "—"}</td>
-                    <td>{p.productCode || "—"}</td>
+                    <td className="apm-ellipsis">{p.productCode || "—"}</td>
                     <td>{p.color || "—"}</td>
+                    <td className="apm-ellipsis">{(p.availableStores || []).join(", ") || "—"}</td>
                     <td>₹{p.rent || 0}</td>
                     <td className="apm-ellipsis">{(p.sizes || []).join(", ")}</td>
                     <td>{formatDate(p.addedDate)}</td>
@@ -401,14 +421,27 @@ export default function AdminProductsManager() {
             <div className="apm-modal-body">
               <div className="apm-edit-grid">
                 <div className="apm-edit-left">
+                  <div className="row">
+                    <div className="group">
+                      <label>Product Code</label>
+                      <input value={editing.productCode || ""} onChange={(e) => setEditing({ ...editing, productCode: e.target.value })} />
+                    </div>
+                    <div className="group">
+                      <label>Color</label>
+                      <input value={editing.color || ""} onChange={(e) => setEditing({ ...editing, color: e.target.value })} />
+                    </div>
+                  </div>
+
                   <div className="group">
                     <label>Name</label>
                     <input value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
                   </div>
+
                   <div className="group">
                     <label>Description</label>
                     <textarea rows={4} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} />
                   </div>
+
                   <div className="row">
                     <div className="group">
                       <label>Rent (₹/day)</label>
@@ -419,37 +452,27 @@ export default function AdminProductsManager() {
                       <input type="number" value={editing.originalPrice || ""} onChange={(e) => setEditing({ ...editing, originalPrice: e.target.value })} />
                     </div>
                   </div>
+
                   <div className="row">
-                    <div className="group">
-                      <label>Color</label>
-                      <input value={editing.color || ""} onChange={(e) => setEditing({ ...editing, color: e.target.value })} />
-                    </div>
                     <div className="group">
                       <label>Sizes (S|M|L|XL)</label>
-                      <input
-                        value={toPipes(editing.sizes)}
-                        onChange={(e) => setEditing({ ...editing, sizes: fromPipes(e.target.value) })}
-                      />
+                      <input value={toPipes(editing.sizes)} onChange={(e) => setEditing({ ...editing, sizes: fromPipes(e.target.value) })} />
                     </div>
-                  </div>
-                  <div className="row">
                     <div className="group">
                       <label>Stores (Camp|Pune|Wakad)</label>
-                      <input
-                        value={toPipes(editing.availableStores)}
-                        onChange={(e) =>
-                          setEditing({ ...editing, availableStores: fromPipes(e.target.value) })
-                        }
-                      />
+                      <input value={toPipes(editing.availableStores)} onChange={(e) => setEditing({ ...editing, availableStores: fromPipes(e.target.value) })} />
                     </div>
+                  </div>
+
+                  <div className="row">
                     <div className="group">
                       <label>Material</label>
                       <input value={editing.material || ""} onChange={(e) => setEditing({ ...editing, material: e.target.value })} />
                     </div>
-                  </div>
-                  <div className="group">
-                    <label>Care Instructions</label>
-                    <input value={editing.careInstructions || ""} onChange={(e) => setEditing({ ...editing, careInstructions: e.target.value })} />
+                    <div className="group">
+                      <label>Care Instructions</label>
+                      <input value={editing.careInstructions || ""} onChange={(e) => setEditing({ ...editing, careInstructions: e.target.value })} />
+                    </div>
                   </div>
                 </div>
 
@@ -457,20 +480,10 @@ export default function AdminProductsManager() {
                   <div className="group">
                     <label>Hero image</label>
                     <div className="apm-hero">
-                      <img
-                        src={editing.thumbs?.sm?.url || editing.imageUrl}
-                        alt=""
-                      />
+                      <img src={editing.thumbs?.sm?.url || editing.imageUrl} alt="" />
                     </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => onReplaceImage(e.target.files?.[0])}
-                      disabled={busyEdit}
-                    />
-                    <small className="muted">
-                      Uploading a new hero will auto-generate thumbs via Cloud Function.
-                    </small>
+                    <input type="file" accept="image/*" onChange={(e) => onReplaceImage(e.target.files?.[0])} disabled={busyEdit} />
+                    <small className="muted">Uploading a new hero regenerates thumbs automatically.</small>
                   </div>
                 </div>
               </div>
@@ -492,30 +505,18 @@ export default function AdminProductsManager() {
 /* ---------- helpers ---------- */
 function normalizePipesOrArray(v) {
   if (Array.isArray(v)) return v.map((s) => (s || "").toString().trim()).filter(Boolean);
-  return (v || "")
-    .toString()
-    .split("|")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  return (v || "").toString().split("|").map((s) => s.trim()).filter(Boolean);
 }
-function toPipes(v) {
-  if (Array.isArray(v)) return v.join("|");
-  return (v || "").toString();
-}
-function fromPipes(s) {
-  return (s || "").split("|").map((x) => x.trim()).filter(Boolean);
-}
+function toPipes(v) { return Array.isArray(v) ? v.join("|") : (v || "").toString(); }
+function fromPipes(s) { return (s || "").split("|").map((x) => x.trim()).filter(Boolean); }
 function formatDate(d) {
   if (!d) return "—";
   try {
     const dt = typeof d === "string" ? new Date(d) : d.toDate ? d.toDate() : new Date(d);
     return dt.toLocaleDateString();
-  } catch {
-    return "—";
-  }
+  } catch { return "—"; }
 }
 async function deleteFolderRecursive(folderRef) {
-  // listAll is fine for a product folder (do not use recursively on a big bucket)
   const listing = await listAll(folderRef);
   await Promise.all(listing.items.map((f) => deleteObject(f)));
   await Promise.all(listing.prefixes.map((sub) => deleteFolderRecursive(sub)));

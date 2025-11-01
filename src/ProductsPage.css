@@ -164,7 +164,12 @@
 /* -------- Cinematic gallery -------- */
 .image-gallery.cinematic{ position:relative; width:100%; height: 0; padding-bottom: 125%; overflow:hidden; border-bottom:1px solid rgba(255,255,255,.08); }
 .image-gallery.cinematic .ig-main{ position:absolute; inset:0; overflow:hidden; }
-.ig-image{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transform: scale(1.04); }
+ .ig-image{
+ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transform: scale(1.04);
+
+ }
+
+
 .ig-image.active{ opacity:1; animation: kenburns linear forwards; }
 @keyframes kenburns{ from{ transform: scale(1.05)} to{ transform: scale(1.12)} }
 

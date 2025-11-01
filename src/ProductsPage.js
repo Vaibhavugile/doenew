@@ -12,13 +12,14 @@ import { Filter, ListFilter, IndianRupee, ShoppingCart, Loader2, XCircle, Shoppi
 
 // Enhanced ImageGallery (cinematic + lightbox)
 
-function ImageGallery({
-  images = [],
-  productName = "",
-  autoplay = true,
-  autoplayInterval = 4500,
-  kenBurnsDuration = 12000, // ms
-}) {
+ function ImageGallery({
+   images = [],
+   productName = "",
+   lqip = "",                 // ✅ new
+   autoplay = true,
+   autoplayInterval = 4500,
+  kenBurnsDuration = 12000,  // ms
+ }) {
   const imgs = Array.isArray(images) ? images.filter(Boolean) : [];
   const count = Math.max(1, imgs.length);
   const [index, setIndex] = useState(0);
@@ -117,15 +118,22 @@ function ImageGallery({
           {imgs.map((src, i) => {
             const active = i === index;
             return (
-              <img
-                key={i}
-                src={src}
-                alt={`${productName} (${i + 1} of ${imgs.length})`}
-                className={`ig-image cinematic ${active ? "active" : ""}`}
-                style={{ animationDuration: `${kenBurnsDuration}ms` }} // ken burns tuned per image
-                draggable={false}
-                onError={(e) => (e.target.src = "https://placehold.co/800x1000/cccccc/333?text=Image+Not+Found")}
-              />
+             <img
+   key={i}
+   src={src}
+  alt={`${productName} (${i + 1} of ${imgs.length})`}
+  className={`ig-image cinematic ${active ? "active" : ""}`}
+  style={{
+    animationDuration: `${kenBurnsDuration}ms`,
+    backgroundImage: lqip ? `url(${lqip})` : undefined,   // ✅ blur placeholder
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }}
+  loading="lazy"            // ✅ lazy load
+  decoding="async"
+  draggable={false}
+  onError={(e) => (e.target.src = "https://placehold.co/800x1000/cccccc/333?text=Image+Not+Found")}
+ />
             );
           })}
           {/* overlays for film grain + vignette + bloom */}
@@ -479,13 +487,22 @@ const storedTheme = localStorage.getItem("theme") || "light";
                                 >
                                     <div className="product-card">
 <div className="product-image-container">
-  <ImageGallery
-    images={[product.imageUrl, ...(product.images || [])]}
-    productName={product.name}
-    autoplay={true} 
-    autoplayInterval={5000} // Change interval to 5 seconds
-    kenBurnsDuration={12000} // Change Ken Burns zoom/pan duration to 12 seconds
-  />
+  {(() => {
+   const hero =
+    product?.thumbs?.sm?.url ||
+     product?.thumbs?.xs?.url ||
+     product?.imageUrl;
+   return (
+     <ImageGallery
+       images={[hero, ...(product.images || [])]}   // ✅ use thumb first
+       lqip={product?.lqip}                         // ✅ blur placeholder
+       productName={product.name}
+       autoplay={true}
+       autoplayInterval={5000}
+       kenBurnsDuration={12000}
+     />
+   );
+ })()}
 </div>
 
 

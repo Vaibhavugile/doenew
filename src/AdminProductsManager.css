@@ -35,12 +35,14 @@
 .apm-edit-right .apm-hero img { width:100%; height:100%; object-fit:cover; }
 .apm-modal-foot { display:flex; gap:8px; justify-content:flex-end; padding:12px 14px; border-top:1px solid #f3f3f3; }
 
+/* Skeleton */
 .apm-skeleton { padding:10px; }
 .sk-row { display:grid; grid-template-columns:56px 1fr; gap:12px; padding:8px 0; align-items:center; }
 .sk-thumb { width:56px; height:42px; background:#eee; border-radius:8px; }
 .sk-line { height:12px; background:#eee; border-radius:6px; }
 .sk-line.sm { width:40%; }
-/* add or keep your existing file; these are small tweaks */
+
+/* Wider ellipsis for specific columns */
 .apm-table th:nth-child(2),
 .apm-table td:nth-child(2),
 .apm-table th:nth-child(3),
