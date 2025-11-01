@@ -1,0 +1,110 @@
+/* EarnWithUsModal.css — REVISED STYLES */
+
+/* --- BASE MODAL STYLES (Inherits Theme Variables) --- */
+.earn-modal-content {
+    /* Set base colors using variables. When the parent .home-page.light-theme
+       changes the variables, these styles will update automatically. */
+    background-color: var(--color-dark); /* Resolves to Dark BG in dark theme, and Light BG in light theme */
+    color: var(--color-light);         /* Resolves to Light Text in dark theme, and Dark Text in light theme */
+
+    max-width: 900px !important;
+    width: 95%;
+    padding: 2.5rem;
+}
+
+.earn-steps-container {
+    display: flex;
+    flex-direction: column; 
+    gap: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .earn-steps-container {
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center; 
+        gap: 1rem;
+    }
+}
+
+/* --- STEP STYLES (Default Dark Theme) --- */
+.earn-step {
+    flex: 1 1 30%;
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    /* Glassmorphism/Dark Theme effect */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: transform .3s ease, background .3s ease;
+}
+
+.earn-step:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.step-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-soft));
+    color: var(--color-dark); /* Icon color is dark in dark mode */
+    box-shadow: 0 0 15px rgba(201, 166, 107, 0.7); 
+}
+
+.earn-step .step-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-light); /* Light text on dark step */
+    margin-bottom: 0.5rem;
+}
+
+.earn-step .step-description {
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+.step-separator-desktop {
+    display: none; 
+    color: var(--color-accent);
+}
+
+@media (min-width: 768px) {
+    .step-separator-desktop {
+        display: block; 
+    }
+}
+
+/* Overrides to make steps look good in light mode */
+.light-theme .earn-step {
+    /* Light Theme: Flat surface, using var(--color-mid) which should be a light gray */
+    background: var(--color-mid); 
+    backdrop-filter: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+}
+
+.light-theme .earn-step:hover {
+    background: #e9e9e9;
+}
+
+/* Explicitly set text color on light mode steps to the dark color variable */
+.light-theme .earn-step .step-title,
+.light-theme .earn-step .step-description {
+    color: var(--color-light); /* Will resolve to Dark Text */
+    opacity: 1; /* Ensure high contrast */
+}
+
+.light-theme .step-separator-desktop {
+    color: var(--color-light); /* Will resolve to Dark Text */
+}

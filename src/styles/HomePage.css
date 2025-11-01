@@ -11,8 +11,7 @@
   --color-dark: #2C2B30;      /* page bg */
   --color-mid:  #4F4F51;      /* surfaces */
   --color-light:#D6D6D6;      /* text on dark */
-    /*--color-soft: #F2C4CE;      soft accent */
-  /*--color-accent:#F2C4CE;     main accent */
+
   --color-accent:#C9A66B; /* Luxury Gold */
   --color-soft:#D9B78C;   /* Hover Gold Shade */
   --header-h:   80px;
@@ -300,7 +299,7 @@ address.address-text { font-style: normal; }
    ===================================================================== */
 .home-page.light-theme {
   /* Apple-like clean white UI */
-  --color-dark: #FFFFFF;   /* pure white main background */
+  --color-dark: #F3EFEA;   /* pure white main background */
   --color-mid:  #F7F7F8;   /* soft neutral card surface */
   --color-light:#1C1C1E;   /* charcoal text */
   --color-accent: #D9904E; /* Burnt Saffron */
@@ -522,7 +521,7 @@ address.address-text { font-style: normal; }
 }
 .home-page.light-theme .collab-collection .category-card{
   /* background: #FAF8F4 !important;  */
-  background: #F3EFEA!important; /* Ivory Blush    #FAF8F4 */
+  background: #FFFFFF!important; /* Ivory Blush    #FAF8F4 */
   border: 1px solid #E4D9D3 !important;
   box-shadow: 0 6px 18px rgba(0,0,0,0.10);
 }

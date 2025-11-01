@@ -20,6 +20,7 @@ import CustomerReviewUpload from "./components/CustomerReviewUpload";
 import CustomerReviewsSection from "./components/CustomerReviewsSection";
 
 import CollaborationSection from "./components/CollaborationSection";
+import EarnWithUsModal from "./components/EarnWithUsModal";
 const WhatsAppIcon = ({ size = 20 }) => (
   <svg
     width={size}
@@ -48,7 +49,7 @@ function HomePage() {
   const [storeLocations, setStoreLocations] = useState([]);
   const [loadingStores, setLoadingStores] = useState(true);
   const [storeError, setStoreError] = useState('');
-
+const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
   // NEW THEME STATE & TOGGLE FUNCTION
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark'); // Load from local storage or default to 'dark'
 
@@ -110,39 +111,39 @@ function HomePage() {
   const stores = [
   {
     id: "pune-wakad",
-    name: "DOR — Pune (Wakad)",
-    address: "Shop No 5, ABC Towers, Wakad, Pune, Maharashtra 411057",
-    phoneDisplay: "+91 98765 43210",
-    phone: "+919876543210",
-    email: "wakad@dressonrent.com",
-    instagram: "https://www.instagram.com/dor_wakad",
-    facebook: "https://www.facebook.com/dor.wakad",
-    whatsapp: "https://wa.me/919876543210?text=Hi%20DOR%20Wakad%2C%20I%27d%20like%20to%20rent%20an%20outfit",
-    mapsDest: "Shop%20No%205%2C%20ABC%20Towers%2C%20Wakad%2C%20Pune%2C%20Maharashtra%20411057",
+    name: "DOR — PCMC (Wakad)",
+    address: "Mount Vert Society Square, Hinjawadi - Aundh Rd, next to Yug Honda, Kaspate Wasti, Pimpri-Chinchwad, Maharashtra 411057",
+    phoneDisplay: "+918698797007",
+    phone: "+918698797007",
+    email: "contact@dordressonrent.com",
+    instagram: "https://www.instagram.com/dor_designer?igsh=MWp4dmgyMWdibnMxcw==",
+    facebook: "https://www.facebook.com/share/1D8F1q6RRZ/?mibextid=wwXIfr",
+    whatsapp: "https://wa.me/918698797007?text=Hi%20DOR%20Wakad%2C%20I%27d%20like%20to%20rent%20an%20outfit",
+    mapsDest: "https://share.google/jfvJEM6NjSnFAktzG",
   },
   {
     id: "pune-mgroad",
     name: "DOR — Pune (MG Road, Camp)",
-    address: "Shop No. 101, XYZ Building, MG Road, Camp, Pune, Maharashtra 411001",
-    phoneDisplay: "+91 91234 56789",
-    phone: "+919123456789",
-    email: "camp@dressonrent.com",
-    instagram: "https://www.instagram.com/dor_camp",
-    facebook: "https://www.facebook.com/dor.camp",
-    whatsapp: "https://wa.me/919123456789?text=Hi%20DOR%20Camp%2C%20I%27m%20interested%20in%20renting",
-    mapsDest: "Shop%20No.%20101%2C%20XYZ%20Building%2C%20MG%20Road%2C%20Camp%2C%20Pune%2C%20Maharashtra%20411001",
+    address: "Pudumjee Compound, 815/816, near Pudumjee Police Station, next to Smato, Camp, Bhawani Peth, Pune, Maharashtra 411002",
+    phoneDisplay: "+918698797007",
+    phone: "+918698797007",
+    email: "contact@dordressonrent.com",
+    instagram: "https://www.instagram.com/dor_designer?igsh=MWp4dmgyMWdibnMxcw==",
+    facebook: "https://www.facebook.com/share/1D8F1q6RRZ/?mibextid=wwXIfr",
+    whatsapp: "https://wa.me/918698797007?text=Hi%20DOR%20Pune%2C%20I%27d%20like%20to%20rent%20an%20outfit",
+    mapsDest: "https://share.google/Nhmiv11PWx4sATzHi",
   },
   {
     id: "nagpur-civillines",
-    name: "DOR — Nagpur (Civil Lines)",
-    address: "2nd Floor, PQR Plaza, Civil Lines, Nagpur, Maharashtra 440001",
-    phoneDisplay: "+91 99876 54321",
-    phone: "+919987654321",
-    email: "nagpur@dressonrent.com",
-    instagram: "https://www.instagram.com/dor_nagpur",
-    facebook: "https://www.facebook.com/dor.nagpur",
-    whatsapp: "https://wa.me/919987654321?text=Hi%20DOR%20Nagpur%2C%20need%20help%20with%20rentals",
-    mapsDest: "2nd%20Floor%2C%20PQR%20Plaza%2C%20Civil%20Lines%2C%20Nagpur%2C%20Maharashtra%20440001",
+    name: "DOR — Nagpur",
+    address: "BSGN SOCIETY, 7, above ANNA IDLI, Shyam Nagar, Manish Nagar, Somalwada, Nagpur, Maharashtra 440037",
+    phoneDisplay: "+919823287654",
+    phone: "+919823287654",
+    email: "contact@dordressonrent.com",
+    instagram: "https://www.instagram.com/dor_designer?igsh=MWp4dmgyMWdibnMxcw==",
+    facebook: "https://www.facebook.com/share/1D8F1q6RRZ/?mibextid=wwXIfr",
+    whatsapp: "https://wa.me/918698797007?text=Hi%20DOR%20Nagpur%2C%20need%20help%20with%20rentals",
+    mapsDest: "https://share.google/aTKF4L5rbS4etRfLd",
   },
 ];
 
@@ -338,6 +339,11 @@ function HomePage() {
           </div>
         </div>
       )}
+      <EarnWithUsModal
+          showEarnModal={showEarnModal}
+          setShowEarnModal={setShowEarnModal}
+          theme={theme}
+      />
 
       {/* Header */}
 
@@ -366,10 +372,14 @@ function HomePage() {
           Stores Location
           <span className="nav-link-underline"></span>
         </a>
-        <a href="#earn-with-us" className="nav-link group">
-          Earn With Us
-          <span className="nav-link-underline"></span>
-        </a>
+       <a 
+      href="#" 
+      onClick={(e) => {e.preventDefault(); setShowEarnModal(true);}} 
+      className="nav-link group"
+  >
+    Earn With Us
+    <span className="nav-link-underline"></span>
+  </a>
         <a href="#contact" className="nav-link group">
           Contact Us
           <span className="nav-link-underline"></span>
@@ -418,7 +428,18 @@ function HomePage() {
         <li><a href="#stores-location" className="mobile-nav-item" onClick={toggleMobileMenu}>Our Stores Location</a></li>
         <li><a href="#contact" className="mobile-nav-item" onClick={toggleMobileMenu}>Contact Us</a></li>
         <li><a href="#franchise" className="mobile-nav-item" onClick={toggleMobileMenu}>Franchise Opportunities</a></li>
-
+<li>
+            <button
+                onClick={() => {
+                    setShowEarnModal(true);
+                    toggleMobileMenu(); // Close mobile menu after opening modal
+                }}
+                className="mobile-nav-item"
+                style={{ color: 'var(--color-accent)', fontWeight: 'bold', background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
+            >
+                Earn with Us
+            </button>
+        </li>
         {/* NEW THEME TOGGLE BUTTON for Mobile */}
         <li>
           <button
@@ -446,13 +467,13 @@ function HomePage() {
 </header>
 {/* LEFT STICKY SOCIAL BAR */}
 <div className="left-social-bar">
-  <a href="https://www.instagram.com/yourdorinstagram" target="_blank">
+  <a href="https://www.instagram.com/dor_designer?igsh=MWp4dmgyMWdibnMxcw==" target="_blank">
     <Instagram size={22} className="icon-instagram" />
   </a>
-  <a href="https://www.facebook.com/yourdorfacebook" target="_blank">
+  <a href="https://www.facebook.com/share/1D8F1q6RRZ/?mibextid=wwXIfr" target="_blank">
     <Facebook size={22} className="icon-facebook" />
   </a>
-  <a href="https://wa.me/919876543210" target="_blank">
+  <a href="https://wa.me/918698797007?text=Hi%20DOR%20%2C%20need%20help%20with%20rentals" target="_blank">
     <WhatsAppIcon size={22} className="icon-whatsapp" />
   </a>
 </div>
@@ -760,7 +781,7 @@ function HomePage() {
               </a>
 
               <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${s.mapsDest}`}
+                href={`${s.mapsDest}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon animate-social-pop"
