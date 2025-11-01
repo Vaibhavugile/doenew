@@ -121,7 +121,6 @@
   grid-template-columns: repeat(2, 1fr);
   max-width: 420px; margin: 0 auto;
 }
-.product-grid > .product-card-link:nth-child(n+5){ display:none; }
 
 /* TABLET — 3 across (show first 6) */
 @media (min-width:640px){
@@ -130,7 +129,6 @@
     grid-template-columns: repeat(3, 1fr);
   }
   .product-grid > .product-card-link{ display:block; }
-  .product-grid > .product-card-link:nth-child(n+7){ display:none; }
 }
 
 /* LAPTOP / DESKTOP — 4 across, show first 8 (two rows) */
@@ -141,7 +139,6 @@
     grid-auto-rows: 1fr;
   }
   .product-grid > .product-card-link{ display:block; }
-  .product-grid > .product-card-link:nth-child(n+9){ display:none; }
 }
 
 .product-card-link{ text-decoration:none; color:inherit; }

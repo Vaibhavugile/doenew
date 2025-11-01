@@ -11,7 +11,8 @@ import CategoryPage from './components/CategoryPage';
 
 import ProductsPage from './ProductsPage';
 import ProductDetailPage from './ProductDetailPage';
-
+import BulkProductsWizard from './BulkProductsWizard';
+import AdminProductsManager from './AdminProductsManager';
 function App() {
   return (
     <Router>
@@ -30,6 +31,9 @@ function App() {
 
           {/* Product Details Page */}
           <Route path="/product/:gender/:subcategoryName/:productId" element={<ProductDetailPage />} />
+          <Route path="/admin/bulk-products" element={<BulkProductsWizard />} />
+          <Route path="/admin/products" element={<AdminProductsManager />} />
+
 
           {/* 404 Fallback */}
           <Route
