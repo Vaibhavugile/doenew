@@ -1,22 +1,28 @@
+
 /* =============================================================
-   ProductDetailPage.css — CINEMATIC LUXURY (Full updated)
-   Merges your v2 theme + cinematic lighting, fog, mouse-light,
-   slow Ken-Burns style reveals, shimmer + accessibility toggles.
+   ProductDetailPage.css — CINEMATIC LUXURY (Gold Theme Edition)
+   Fully updated to match the gold palette used on Home/Products.
+   No extra overrides needed — drop-in replacement.
    ============================================================= */
 
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* -------- Theme Tokens (mirror of your existing v2) -------- */
+/* -------- Theme Tokens (site-wide gold) -------- */
 :root{
   --color-dark: #2C2B30;          /* page canvas / panels */
   --color-mid: #4F4F51;           /* page background */
   --color-light: #D6D6D6;         /* primary text on dark */
-  --color-soft: #F2C4CE;          /* subtle accent */
-  --accent-strong: #F58F7C;       /* CTA / highlights */
-  --accent-strong-25: rgba(245,143,124,.25);
-  --accent-strong-35: rgba(245,143,124,.35);
-  --accent-strong-50: rgba(245,143,124,.5);
+
+  /* Gold accents to match Home/Products */
+  --color-accent: #C9A66B;        /* Luxury Gold */
+  --color-soft:   #D9B78C;        /* Hover Gold Shade */
+
+  /* Back-compat for previous selectors */
+  --accent-strong: var(--color-accent);
+  --accent-strong-25: rgba(201,166,107,.25);
+  --accent-strong-35: rgba(201,166,107,.35);
+  --accent-strong-50: rgba(201,166,107,.5);
 
   --muted-1: rgba(255,255,255,.9);
   --muted-2: rgba(255,255,255,.7);
@@ -47,15 +53,15 @@
 
   --header-h: 80px;
 
-  /* Cinematic variables (feel free to tweak) */
-  --cine-ambient-strength: 0.08;      /* ambient radial gradient opacity */
-  --cine-fog-opacity: 0.06;           /* fog layer opacity */
-  --cine-mouselight-size: 320px;      /* mouse-following spotlight size */
+  /* Cinematic variables */
+  --cine-ambient-strength: 0.08;
+  --cine-fog-opacity: 0.06;
+  --cine-mouselight-size: 320px;
   --cine-shimmer-duration: 8s;
-  --scroll-offset: 0px;               /* updated by JS on scroll */
+  --scroll-offset: 0px;
 }
 
-/* -------- Base page styling (kept from v2) -------- */
+/* -------- Base page styling -------- */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -66,7 +72,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
   background-color: var(--color-mid);
   color: var(--color-light);
   font-family: 'Cinzel', serif !important;
-  padding-top: 64px; /* header rhythm */
+  padding-top: 64px;
   overflow-x: hidden;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -126,7 +132,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
   .product-main-section { gap: 40px; }
 }
 
-/* -------- Gallery (v2 base) -------- */
+/* -------- Gallery -------- */
 .product-gallery-column {
   position: sticky;
   top: calc(64px + 16px);
@@ -215,7 +221,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
 .thumbnail-image:hover { opacity: 1; transform: translateY(-3px); }
 .thumbnail-image.active-thumbnail { opacity: 1; border-color: var(--accent-strong); box-shadow: var(--shadow-sm); }
 
-/* -------- Details Panel (v2 base) -------- */
+/* -------- Details Panel -------- */
 .product-details-column {
   background: var(--panel);
   border: 1px solid rgba(255,255,255,.06);
@@ -272,7 +278,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
   transition: background-color .25s ease, box-shadow .25s ease, transform .25s ease;
 }
 .btn:hover, .check-button:hover, .enquire-button:hover, .zoom-button:hover, .reset-zoom-button:hover, .modal-ok-button:hover {
-  background-color: var(--accent-strong); box-shadow: 0 8px 10px -1px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05), 0 0 16px var(--accent-strong-50);
+  background-color: var(--color-soft); box-shadow: 0 8px 10px -1px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05), 0 0 16px var(--accent-strong-50);
   transform: translateY(-2px);
 }
 .enquire-button { width: 100%; font-size: 1.1rem; padding: 14px 18px; }
@@ -303,7 +309,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
 .additional-info-block ul { list-style: none; padding: 0; margin: 0; }
 .additional-info-block li { font-size: .95rem; color: var(--muted-1); margin-bottom: 8px; opacity: .98; }
 
-/* modal styles (v2 kept) */
+/* modal styles */
 .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .modal-content { background: var(--panel); color: var(--color-light); padding: 28px; border-radius: 12px; box-shadow: var(--shadow-lg); text-align: center; max-width: 460px; width: 92%; position: relative; border: 1px solid rgba(255,255,255,.06); animation: fadeInScale .3s ease-out forwards; }
 .modal-close-button { position: absolute; top: 8px; right: 12px; background: none; border: none; font-size: 2rem; cursor: pointer; color: #9aa0a6; transition: color .2s ease; }
@@ -315,7 +321,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
 .modal-ok-button { background-color: var(--accent-strong); color: var(--color-dark); padding: 12px 22px; border-radius: 10px; }
 @keyframes fadeInScale { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
 
-/* zoom modal (v2 kept) */
+/* zoom modal */
 .zoom-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: flex; align-items: center; justify-content: center; z-index: 1001; overflow: hidden; }
 .zoom-modal-content { background: transparent; max-width: 90vw; max-height: 90vh; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 .zoomed-image-wrapper { width: 100%; height: calc(100% - 60px); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: grab; position: relative; }
@@ -328,7 +334,7 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
 .zoom-level-text { font-size: 1.05rem; font-weight: 700; min-width: 64px; text-align: center; }
 .reset-zoom-button { background: #3b3a40; color: var(--color-light); }
 
-/* related products (v2 kept) */
+/* related products */
 .related-products-section { padding: 42px 18px; background: var(--color-dark); color: var(--color-light); margin-top: 26px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
 .related-products-section .section-heading { font-size: 1.6rem; margin-bottom: 28px; color: var(--muted-1); }
 .related-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 22px; }
@@ -338,26 +344,26 @@ body { margin: 0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Robo
 .related-product-name { font-size: 1.05rem; font-weight: 700; color: var(--muted-1); margin: 14px 14px 6px; line-height: 1.45; text-align: left; }
 .related-product-price { font-size: 1rem; font-weight: 800; color: var(--accent-strong); margin: 0 14px 14px; display: flex; align-items: center; gap: 6px; text-align: left; }
 
-/* online booking (v2 kept) */
+/* online booking */
 .online-booking-block { margin-top: 20px; padding: 18px; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; background: #1f1f23; }
 .online-booking-block .section-heading { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 800; color: var(--muted-1); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--accent-strong); }
 
-/* datepicker + misc (v2 kept) */
+/* datepicker + misc */
 .availability-calendar-placeholder { padding: 14px; border: 1px dashed rgba(255,255,255,.25); border-radius: 6px; background: transparent; text-align: center; min-height: 80px; display: flex; flex-direction: column; justify-content: center; color: var(--muted-2); }
 .rental-summary { margin-top: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.08); color: var(--muted-1); }
 .rental-summary strong { color: var(--accent-strong); }
 .online-booking-block .book-online-button { width: 100%; padding: 12px; font-size: 1.05rem; font-weight: 800; background: var(--accent-strong); color: var(--color-dark); border: none; border-radius: 10px; margin-top: 12px; transition: transform .2s ease, box-shadow .2s ease; }
 .online-booking-block .book-online-button:hover { transform: translateY(-2px); box-shadow: 0 0 16px var(--accent-strong-35); }
 
-/* UI Animations (kept) */
+/* UI Animations */
 @keyframes popIn { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: scale(1); } }
 .animate-pop-in { animation: popIn .6s cubic-bezier(.175,.885,.32,1.275) both; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in-up { animation: fadeInUp .8s ease-out both; }
 
-/* -------- CINEMATIC LUXURY LAYER (ADDITIONS) -------- */
+/* -------- CINEMATIC LUXURY LAYER -------- */
 
-/* Ambient gradient background (cinematic) */
+/* Ambient gradient background (gold tint) */
 body::before{
   content: '';
   position: fixed;
@@ -366,8 +372,8 @@ body::before{
   width: 120%;
   height: 120%;
   background:
-    radial-gradient(circle at 20% 30%, rgba(245,143,124,var(--cine-ambient-strength)), transparent 60%),
-    radial-gradient(circle at 80% 60%, rgba(242,196,206,var(--cine-ambient-strength)), transparent 60%),
+    radial-gradient(circle at 20% 30%, rgba(201,166,107,var(--cine-ambient-strength)), transparent 60%),
+    radial-gradient(circle at 80% 60%, rgba(217,183,140,var(--cine-ambient-strength)), transparent 60%),
     radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 100%);
   z-index: -3;
   animation: cine-slow-pan 90s ease-in-out infinite alternate;
@@ -384,7 +390,6 @@ body::after{
   content: '';
   position: fixed;
   inset: 0;
-  /* Using a subtle repeated radial for soft fog; falls back gracefully */
   background-image:
     radial-gradient(circle at 10% 20%, rgba(255,255,255,0.006), transparent 20%),
     radial-gradient(circle at 80% 70%, rgba(255,255,255,0.006), transparent 20%);
@@ -417,7 +422,7 @@ body::after{
 }
 .main-image-display:hover{
   transform: rotateY(6deg) rotateX(3deg) scale(1.02);
-  box-shadow: 0 60px 120px rgba(0,0,0,0.8), 0 0 80px rgba(245,143,124,0.22);
+  box-shadow: 0 60px 120px rgba(0,0,0,0.8), 0 0 80px rgba(201,166,107,0.22);
 }
 
 /* image subtle scale on hover */
@@ -446,7 +451,7 @@ body::after{
   position: absolute;
   width: var(--cine-mouselight-size);
   height: var(--cine-mouselight-size);
-  background: radial-gradient(circle, rgba(245,143,124,0.28) 0%, rgba(245,143,124,0.08) 22%, transparent 60%);
+  background: radial-gradient(circle, rgba(201,166,107,0.28) 0%, rgba(201,166,107,0.08) 22%, transparent 60%);
   pointer-events: none;
   transform: translate(-50%,-50%);
   border-radius: 50%;
@@ -465,11 +470,11 @@ body::after{
 }
 
 /* heading glow */
-.product-main-title, .product-secondary-title{ text-shadow: 0 0 12px rgba(245,143,124,0.2); }
+.product-main-title, .product-secondary-title{ text-shadow: 0 0 12px rgba(201,166,107,0.2); }
 
 /* price shimmer (slow pulse) */
 .rent-price-large{
-  text-shadow: 0 0 18px rgba(245,143,124,0.35);
+  text-shadow: 0 0 18px rgba(201,166,107,0.35);
   animation: cine-shimmer var(--cine-shimmer-duration) linear infinite;
 }
 @keyframes cine-shimmer { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.18) saturate(1.05); } }
@@ -536,14 +541,14 @@ body::after{
   .related-product-image { height: 180px; }
 }
 
-/* Dark themed datepicker adjustments remain (kept) */
+/* Dark themed datepicker adjustments */
 .react-datepicker { background-color: #1f1f23 !important; border: 1px solid rgba(255,255,255,.1); color: var(--color-light); box-shadow: var(--shadow-md); border-radius: 10px; font-family: 'Inter', sans-serif; }
 .react-datepicker__header { background-color: #2C2B30 !important; border-bottom: 1px solid rgba(255,255,255,.1); color: var(--color-light); padding: 8px 0; }
 .react-datepicker__current-month, .react-datepicker-time__header { color: var(--accent-strong); font-weight: 700; letter-spacing: 0.5px; }
 .react-datepicker__day-name { color: var(--color-soft); font-weight: 600; }
 .react-datepicker__month { background-color: transparent !important; color: var(--color-light); padding: 10px; }
 .react-datepicker__day { border-radius: 6px; color: var(--color-light); transition: all 0.2s ease-in-out; }
-.react-datepicker__day:hover { background-color: rgba(245,143,124,.25); color: var(--color-dark); }
+.react-datepicker__day:hover { background-color: rgba(201,166,107,.25); color: var(--color-dark); }
 .react-datepicker__day.available-day:not(.react-datepicker__day--disabled) { background-color: rgba(34,197,94,.15); color: #86efac; }
 .react-datepicker__day.booked-day { background-color: rgba(239,68,68,.25) !important; color: #fca5a5 !important; text-decoration: line-through; cursor: not-allowed !important; font-weight: 600; }
 .react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range, .react-datepicker__day--selected { background-color: var(--accent-strong) !important; color: var(--color-dark) !important; }
@@ -551,4 +556,139 @@ body::after{
 .react-datepicker__navigation-icon::before { border-color: var(--accent-strong); }
 .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before { border-color: var(--color-soft); }
 
-/* END OF FILE */
+/* -------- Optional: Light Theme Variant to match your other pages --------
+   Apply by adding 'home-page light-theme' classes to your top wrapper/body.
+-----------------------------------------------------------------------------*/
+
+.home-page.light-theme .product-detail-page{
+  background:#FFFFFF;
+  color:#1C1C1E;
+}
+.home-page.light-theme .page-header-section{
+  background: #FFFFFFCC;
+  border-bottom:1px solid #E5E5E7;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  backdrop-filter: blur(12px);
+}
+.home-page.light-theme .breadcrumb-link{ color:#6B6B6B; }
+.home-page.light-theme .breadcrumb-link:hover{ color: var(--color-accent); }
+
+/* Card surfaces */
+.home-page.light-theme .product-details-column{
+  background:#FFFFFF !important;
+  color:#1C1C1E !important;
+  border:1px solid #DCDCDC !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06) !important;
+}
+.home-page.light-theme .main-image-display{
+  background: #FFFFFF !important;
+  border:1px solid #DCDCDC !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06) !important;
+}
+.home-page.light-theme .click-to-zoom-indicator{
+  background: rgba(0,0,0,.08);
+  color:#1C1C1E;
+}
+.home-page.light-theme .nav-arrow{
+  background: rgba(0,0,0,.08);
+  color:#1C1C1E;
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+/* Price + buttons */
+.home-page.light-theme .rent-price-large{ color: var(--color-accent) !important; text-shadow:none; }
+.home-page.light-theme .original-price-strike{ color: #6F6F6F; }
+.home-page.light-theme .btn,
+.home-page.light-theme .check-button,
+.home-page.light-theme .enquire-button,
+.home-page.light-theme .zoom-button,
+.home-page.light-theme .reset-zoom-button,
+.home-page.light-theme .modal-ok-button{
+  background-color: var(--color-accent) !important;
+  color:#1C1C1E !important;
+}
+.home-page.light-theme .btn:hover,
+.home-page.light-theme .check-button:hover,
+.home-page.light-theme .enquire-button:hover,
+.home-page.light-theme .zoom-button:hover,
+.home-page.light-theme .reset-zoom-button:hover,
+.home-page.light-theme .modal-ok-button:hover{
+  background-color: var(--color-soft) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.10) !important;
+}
+
+/* Inputs */
+.home-page.light-theme .option-select, 
+.home-page.light-theme .pincode-input{
+  background:#FFFFFF;
+  color:#1C1C1E;
+  border:1px solid #CFCFCF;
+}
+.home-page.light-theme .option-select:focus, 
+.home-page.light-theme .pincode-input:focus{
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(217,183,140,.30);
+}
+
+/* Related products section */
+.home-page.light-theme .related-products-section{
+  background:#F3EFEA;
+  color:#1C1C1E;
+  border:1px solid #E5E5E7;
+}
+.home-page.light-theme .related-product-card{
+  background:#FFFFFF;
+  border:1px solid #DCDCDC;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  color:#1C1C1E;
+}
+.home-page.light-theme .related-product-price{
+  color: var(--color-accent);
+}
+
+/* Datepicker tweak */
+.home-page.light-theme .react-datepicker{ 
+  background:#FFFFFF !important; 
+  border:1px solid #DCDCDC !important; 
+  color:#1C1C1E !important;
+}
+.home-page.light-theme .react-datepicker__header{ background:#F7F7F8 !important; }
+.home-page.light-theme .react-datepicker__current-month, 
+.home-page.light-theme .react-datepicker-time__header{ color: var(--color-accent) !important; }
+.home-page.light-theme .react-datepicker__day:hover{ background-color: rgba(201,166,107,.25) !important; color:#111 !important; }
+.home-page.light-theme .react-datepicker__day--in-selecting-range, 
+.home-page.light-theme .react-datepicker__day--in-range, 
+.home-page.light-theme .react-datepicker__day--selected{ background-color: var(--color-accent) !important; color:#111 !important; }
+/* ---------------- FIX LIGHT THEME TEXT COLORS ---------------- */
+
+.home-page.light-theme .product-main-title,
+.home-page.light-theme .product-secondary-title,
+.home-page.light-theme .price-term,
+.home-page.light-theme .product-description-block p,
+.home-page.light-theme .section-heading,
+.home-page.light-theme .product-code-display,
+.home-page.light-theme .product-color-display,
+.home-page.light-theme .product-details-column,
+.home-page.light-theme .related-product-name,
+.home-page.light-theme .additional-info-block li {
+  color: #1a1a1a !important; /* solid black */
+}
+
+/* Price and labels */
+.home-page.light-theme .rent-price-large {
+  color: var(--color-accent) !important;
+  text-shadow: none !important;
+}
+
+.home-page.light-theme .original-price-strike {
+  color: #6b6b6b !important;
+}
+
+/* Breadcrumb & menu text */
+.home-page.light-theme .breadcrumb-link {
+  color: #4a4a4a !important;
+}
+
+.home-page.light-theme .breadcrumb-link:hover {
+  color: var(--color-accent) !important;
+}

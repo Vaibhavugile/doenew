@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './ProductDetailPage.css';
-import { db, checkPincodeServiceability } from './firebaseConfig';
+import { db} from './firebaseConfig';
 import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { IndianRupee, MessageSquare, Info, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, Ruler, Palette, ZoomIn, ZoomOut, Maximize2, MapPin, Clock } from 'lucide-react';
-import axios from 'axios';
-import AvailabilityCalendarAndBooking from './AvailabilityCalendarAndBooking';
 
 function ProductDetailPage() {
+    const storedTheme = localStorage.getItem('theme') || 'light';
+
     const { gender, subcategoryName, productId } = useParams();
 
     const [product, setProduct] = useState(null);
@@ -42,10 +42,8 @@ function ProductDetailPage() {
     const [loadingServiceability, setLoadingServiceability] = useState(false);
 
     // Tracks the user's final choice (Fastest or Cheapest)
-    const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null);
     // Check if the product is available for Pan India delivery based on the stores array
     const isPanIndiaDelivery = product && product.availableStores && product.availableStores.includes('PAN INDIA Delivery');
-    const [logisticsETDs, setLogisticsETDs] = useState({ forwardETD: 0, reverseETD: 0 });
 
     // REFS for cinematic effects
     const galleryRef = useRef(null);
@@ -241,6 +239,17 @@ function ProductDetailPage() {
         return () => observer.disconnect();
     }, [relatedProducts]);
 
+    // Make sure body scroll is never stuck when this page loads
+useEffect(() => {
+  const unlock = () => {
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  };
+  unlock();           // on mount
+  return unlock;      // on unmount (safety)
+}, []);
+
+
     const handleThumbnailClick = (index) => {
         setCurrentImageIndex(index);
     };
@@ -257,112 +266,59 @@ function ProductDetailPage() {
         );
     };
 
-    const calculateDaysDifference = (etdDateString) => {
-        if (!etdDateString) return 0;
-        const etdDate = new Date(etdDateString);
-        if (isNaN(etdDate.getTime())) { console.error("Failed to parse ETD date string:", etdDateString); return 0; }
-        const todayStart = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-        const etdDayStart = new Date(etdDate.getFullYear(), etdDate.getMonth(), etdDate.getDate());
-        const diffTime = etdDayStart.getTime() - todayStart.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return Math.max(0, diffDays);
-    };
+   
+    
 
-    const handleDeliveryOptionSelect = (optionType) => {
-        if (!serviceabilityResult?.options) return;
+   const handleEnquire = async () => {
+  if (!product) {
+    setModalMessage('Product details are not available for inquiry.');
+    setModalType('error');
+    setShowModal(true);
+    return;
+  }
 
-        const forward = serviceabilityResult.options.forward;
-        const reverse = serviceabilityResult.options.reverse;
-        let selectedForward, selectedReverse;
+  try {
+    const whatsappNumber = '+918446442204';
 
-        if (optionType === 'fastest') {
-            selectedForward = forward.fastest;
-            selectedReverse = reverse.fastest;
-        } else if (optionType === 'cheapest') {
-            selectedForward = forward.cheapest;
-            selectedReverse = reverse.cheapest;
-        } else return;
+    // ✅ Store name string (fallback if none exists)
+    const storeName = product?.availableStores?.length > 0 
+      ? product.availableStores.join(', ') 
+      : 'Store Info Not Available';
 
-        const forwardBufferDays = calculateDaysDifference(selectedForward.etd);
-        const reverseBufferDays = calculateDaysDifference(selectedReverse.etd);
+    // ✅ Current page link (auto)
+    const productPageLink = window.location.href;
 
-        const totalRate = selectedForward.rate + selectedReverse.rate;
-        const totalETD = forwardBufferDays + reverseBufferDays;
+    const message =
+      `Hello, I'm interested in renting the product:\n` +
+      `*${product.name}*\n` +
+      `Product Code: ${product.productCode}\n` +
+      `Rent: ₹${product.rent?.toLocaleString('en-IN')} for 3 days\n\n` +
+      `*Available At:* ${storeName}\n\n` +
+      `Product Link:\n${productPageLink}\n\n` +
+      `Please provide more details.`;
 
-        setSelectedDeliveryOption({
-            type: optionType,
-            charge: totalRate.toFixed(2),
-            etd: totalETD,
-            forwardETD: forwardBufferDays,
-            forwardCourierName: selectedForward.courierName,
-            forwardRate: selectedForward.rate.toFixed(2),
-            reverseETD: reverseBufferDays,
-            reverseCourierName: selectedReverse.courierName,
-            reverseRate: selectedReverse.rate.toFixed(2),
-        });
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-        setLogisticsETDs({
-            forwardETD: forwardBufferDays,
-            reverseETD: reverseBufferDays
-        });
-    };
+    window.open(whatsappUrl, '_blank');
+    setModalMessage(`Inquiry sent on WhatsApp! We will respond shortly.`);
+    setModalType('success');
+    setShowModal(true);
 
-    const handleEnquire = async () => {
-        if (!product) {
-            setModalMessage('Product details are not available for inquiry.');
-            setModalType('error');
-            setShowModal(true);
-            return;
-        }
+  } catch (error) {
+    console.error("Error sending inquiry:", error);
+    setModalMessage('Failed to open WhatsApp. Please try again.');
+    setModalType('error');
+    setShowModal(true);
+  }
+};
 
-        try {
-            const whatsappNumber = '+918446442204';
-            const message = `Hello, I'm interested in renting the product "${product.name}" (Product Code: ${product.productCode}).\n\nDetails:\nRent: ₹${product.rent.toLocaleString('en-IN')} for 3 days.\n\nPlease provide more details.`;
-
-            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-            setModalMessage(`Your inquiry for "${product.name}" has been sent! We will get back to you shortly on WhatsApp.`);
-            setModalType('success');
-            setShowModal(true);
-        } catch (error) {
-            console.error("Error sending inquiry:", error);
-            setModalMessage('Failed to open WhatsApp. Please ensure you have WhatsApp installed or try again.');
-            setModalType('error');
-            setShowModal(true);
-        }
-    };
     const closeModal = () => {
         setShowModal(false);
         setModalMessage('');
         setModalType('');
     };
 
-    const checkServiceability = async () => {
-        if (!deliveryPincode || !/^\d{6}$/.test(deliveryPincode)) {
-            setServiceabilityResult({ success: false, message: 'Please enter a valid 6-digit Pincode.' });
-            return;
-        }
-
-        setLoadingServiceability(true);
-        setServiceabilityResult(null);
-        setSelectedDeliveryOption(null);
-
-        try {
-            const result = await checkPincodeServiceability({ deliveryPincode });
-            setServiceabilityResult(result.data);
-            if (result.data.success && result.data.options?.fastest) {
-                handleDeliveryOptionSelect('fastest');
-            }
-        } catch (error) {
-            console.error("Cloud Function Error:", error?.code, error?.message);
-            let errorMessage = "Delivery check failed. Please try again.";
-            if (error?.details && typeof error.details === 'string') errorMessage = error.details;
-            else if (error?.message) errorMessage = error.message;
-            setServiceabilityResult({ success: false, message: errorMessage });
-        } finally {
-            setLoadingServiceability(false);
-        }
-    };
+   
 
     // --- New Zoom Modal Functions ---
     const openZoomModal = (imageUrl) => {
@@ -433,7 +389,8 @@ function ProductDetailPage() {
     const mainImageUrl = displayImages[currentImageIndex] || `https://placehold.co/600x800/e0e0e0/333333?text=${product.name}`;
 
     return (
-        <div className="product-detail-page new-layout">
+        <div className={`product-detail-page home-page ${storedTheme}-theme new-layout`}>
+
             <header className="page-header-section">
                 <div className="container">
                     <p className="breadcrumb-nav">
@@ -500,6 +457,7 @@ function ProductDetailPage() {
 
                     <div className="product-price-block">
                         <span className="rent-price-large"><IndianRupee size={30} className="inline-icon" />{product.rent.toLocaleString('en-IN')}</span> <span className="price-term">for 3 days</span>
+
                         {product.originalPrice && (
                             <span className="original-price-strike">M.R.P: <IndianRupee size={20} className="inline-icon" />{product.originalPrice.toLocaleString('en-IN')}</span>
                         )}
@@ -556,160 +514,9 @@ function ProductDetailPage() {
                         )}
                     </div>
 
-                    <div className="pincode-check-block">
-                        <h3 className="section-heading"><MapPin size={20} className="icon-mr" /> Check Delivery Serviceability</h3>
-                        <div className="pincode-input-group">
-                            <input
-                                type="text"
-                                className="pincode-input"
-                                placeholder="Enter 6-digit Pincode"
-                                value={deliveryPincode}
-                                onChange={(e) => {
-                                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                    setDeliveryPincode(value);
-                                    setServiceabilityResult(null);
-                                }}
-                                maxLength={6}
-                                aria-label="Delivery Pincode"
-                            />
-                            <button
-                                className="btn btn-secondary check-pincode-button"
-                                onClick={checkServiceability}
-                                disabled={loadingServiceability || deliveryPincode.length !== 6}
-                            >
-                                {loadingServiceability ? <Loader2 size={20} className="loading-spinner spin-fast" /> : 'Check'}
-                            </button>
-                        </div>
+                    
 
-                        {serviceabilityResult && (
-                            <div className={`serviceability-message ${serviceabilityResult.success ? 'success' : 'error'}`}>
-                                {serviceabilityResult.success ? (
-                                    <>
-                                        <CheckCircle size={20} className="inline-icon" />
-                                        <p className="font-bold mb-2 text-green-700">✅ Two-Way Logistics Available!</p>
-
-                                        <p className="text-sm text-gray-600 mb-3">Select your combined scenario:</p>
-
-                                        {(() => {
-                                            const options = serviceabilityResult.options;
-                                            const fastestForwardDays = calculateDaysDifference(options.forward.fastest.etd);
-                                            const fastestReverseDays = calculateDaysDifference(options.reverse.fastest.etd);
-                                            const fastestTotalETD = fastestForwardDays + fastestReverseDays;
-                                            const fastestTotalRate = (options.forward.fastest.rate + options.reverse.fastest.rate).toFixed(2);
-
-                                            const cheapestForwardDays = calculateDaysDifference(options.forward.cheapest.etd);
-                                            const cheapestReverseDays = calculateDaysDifference(options.reverse.cheapest.etd);
-                                            const cheapestTotalETD = cheapestForwardDays + cheapestReverseDays;
-                                            const cheapestTotalRate = (options.forward.cheapest.rate + options.reverse.cheapest.rate).toFixed(2);
-
-                                            return (
-                                                <div className="delivery-options-selection space-y-3">
-                                                    <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'fastest' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
-                                                        <input
-                                                            type="radio"
-                                                            name="delivery-option"
-                                                            value="fastest"
-                                                            checked={selectedDeliveryOption?.type === 'fastest'}
-                                                            onChange={() => handleDeliveryOptionSelect('fastest')}
-                                                            className="mr-3 text-indigo-600 focus:ring-indigo-500"
-                                                        />
-                                                        <div className="flex justify-between w-full items-center">
-                                                            <div>
-                                                                <p className="font-semibold text-gray-800">🚀 Fastest Round Trip</p>
-                                                                <p className="text-sm text-gray-600">Total Time: **{fastestTotalETD} days**</p>
-                                                            </div>
-                                                            <p className="font-bold text-xl text-indigo-700">
-                                                                <IndianRupee size={16} className="inline-icon" />{fastestTotalRate}
-                                                            </p>
-                                                        </div>
-                                                    </label>
-
-                                                    {(cheapestTotalRate !== fastestTotalRate || cheapestTotalETD !== fastestTotalETD) && (
-                                                        <label className={`delivery-option flex items-center p-3 border rounded-lg cursor-pointer transition duration-150 ease-in-out ${selectedDeliveryOption?.type === 'cheapest' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-teal-300'}`}>
-                                                            <input
-                                                                type="radio"
-                                                                name="delivery-option"
-                                                                value="cheapest"
-                                                                checked={selectedDeliveryOption?.type === 'cheapest'}
-                                                                onChange={() => handleDeliveryOptionSelect('cheapest')}
-                                                                className="mr-3 text-teal-600 focus:ring-teal-500"
-                                                            />
-                                                            <div className="flex justify-between w-full items-center">
-                                                                <div>
-                                                                    <p className="font-semibold text-gray-800">💰 Cheapest Round Trip</p>
-                                                                    <p className="text-sm text-gray-600">Total Time: **{cheapestTotalETD} days**</p>
-                                                                </div>
-                                                                <p className="font-bold text-xl text-teal-700">
-                                                                    <IndianRupee size={16} className="inline-icon" />{cheapestTotalRate}
-                                                                </p>
-                                                            </div>
-                                                        </label>
-                                                    )}
-                                                </div>
-                                            );
-                                        })()}
-
-                                        {selectedDeliveryOption && (
-                                            <div className="delivery-breakdown mt-4 p-4 border rounded-lg bg-gray-100">
-                                                <h4 className="font-bold text-md mb-2">
-                                                    Breakdown of the {selectedDeliveryOption.type.toUpperCase()} Combined Option
-                                                </h4>
-
-                                                <div className="mb-3 p-2 border-b border-gray-300">
-                                                    <h5 className="font-semibold text-gray-800">📦 Delivery to You (Forward Leg):</h5>
-                                                    <ul className="list-disc ml-5 text-sm text-gray-700">
-                                                        <li>**Time:** **{selectedDeliveryOption.forwardETD}** day{Number(selectedDeliveryOption.forwardETD) > 1 ? 's' : ''}.</li>
-                                                        <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.forwardRate}**.</li>
-                                                        <li>**Agency:** **{selectedDeliveryOption.forwardCourierName || 'N/A'}**.</li>
-                                                    </ul>
-                                                </div>
-
-                                                <div className="mb-3 p-2">
-                                                    <h5 className="font-semibold text-gray-800">↩️ Return Pickup from You (Reverse Leg):</h5>
-                                                    <ul className="list-disc ml-5 text-sm text-gray-700">
-                                                        <li>**Time:** **{selectedDeliveryOption.reverseETD}** day{Number(selectedDeliveryOption.reverseETD) > 1 ? 's' : ''}.</li>
-                                                        <li>**Cost:** <IndianRupee size={12} className="inline-icon" />**{selectedDeliveryOption.reverseRate}**.</li>
-                                                        <li>**Agency:** **{selectedDeliveryOption.reverseCourierName || 'N/A'}**.</li>
-                                                    </ul>
-                                                </div>
-
-                                                <p className="mt-4 pt-2 border-t font-bold text-lg text-indigo-700">
-                                                    Total Combined Cost: <IndianRupee size={16} className="inline-icon" />{selectedDeliveryOption.charge}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <>
-                                        <XCircle size={20} className="inline-icon" />
-                                        <p className="mt-2 text-red-600">{serviceabilityResult.message}</p>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {isPanIndiaDelivery && (
-                        <div className="online-booking-block">
-                            <h3 className="section-heading"><Clock size={20} className="icon-mr" /> Select Rental Dates</h3>
-                            {serviceabilityResult?.success && selectedDeliveryOption ? (
-                                <AvailabilityCalendarAndBooking
-                                    productName={product.name}
-                                    productRent={product.rent}
-                                    productId={product.productCode}
-                                    selectedSize={selectedSize}
-                                    selectedColor={selectedColor}
-                                    deliveryCharge={selectedDeliveryOption?.charge}
-                                    forwardETD={logisticsETDs.forwardETD}
-                                    reverseETD={logisticsETDs.reverseETD}
-                                />
-                            ) : (
-                                <p className="text-red-500 font-semibold mt-2">
-                                    Please enter a valid Pincode and select a delivery option above to proceed with booking.
-                                </p>
-                            )}
-                        </div>
-                    )}
+                    
 
                     {!isPanIndiaDelivery && (
                         <div className="action-area">
@@ -720,9 +527,7 @@ function ProductDetailPage() {
                             >
                                 <MessageSquare size={20} className="icon-mr" /> Enquire Now (via WhatsApp)
                             </button>
-                            <p className="enquire-note mt-2 text-sm text-gray-600">
-                                This product is available for store pickup or local delivery only. Please enquire to confirm.
-                            </p>
+                           
                         </div>
                     )}
 
@@ -743,7 +548,7 @@ function ProductDetailPage() {
                     <h3 className="section-heading">Related Products</h3>
                     <div className="related-products-grid">
                         {relatedProducts.map((rp) => (
-                            <Link key={rp.id} to={`/collection/${gender}/${subcategoryName}/product/${rp.id}`} className="related-product-card">
+                            <Link key={rp.id} to={`/product/${gender}/${subcategoryName}/${rp.id}`} className="related-product-card">
                                 <img className="related-product-image" src={rp.imageUrl || rp.image || `https://placehold.co/400x300/cccccc/333?text=${rp.name}`} alt={rp.name} />
                                 <div className="related-product-name">{rp.name}</div>
                                 <div className="related-product-price"><IndianRupee size={14} /> {rp.rent?.toLocaleString('en-IN') || rp.price}</div>
