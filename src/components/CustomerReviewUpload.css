@@ -9,9 +9,12 @@
 .review-upload-section {
   padding: clamp(36px, 5vw, 72px) 0;
   background:
-    radial-gradient(80% 140% at 50% 0%, rgba(242,196,206,.18), transparent 70%),
-    radial-gradient(80% 140% at 85% 95%, rgba(116,93,255,.12), transparent 70%),
-    var(--color-dark);
+    
+  radial-gradient(80% 140% at 50% 0%, rgba(255,229,191,0.12) 0%, transparent 70%),
+  radial-gradient(80% 140% at 80% 90%, rgba(163,120,70,0.10) 0%, transparent 70%),
+  radial-gradient(80% 140% at 20% 90%, rgba(255,215,165,0.10) 0%, transparent 70%),
+  var(--color-dark);
+
   color: var(--color-light);
 }
 

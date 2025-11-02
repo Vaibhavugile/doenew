@@ -13,6 +13,11 @@ import ProductsPage from './ProductsPage';
 import ProductDetailPage from './ProductDetailPage';
 import BulkProductsWizard from './BulkProductsWizard';
 import AdminProductsManager from './AdminProductsManager';
+import BlogRoutes from "./BlogModule";
+import BlogsPage from "./pages/BlogsPage";
+import { BlogDetails } from "./pages/BlogDetails";
+import { AddEditBlog } from "./pages/AddEditBlog";
+
 function App() {
   return (
     <Router>
@@ -34,7 +39,9 @@ function App() {
           <Route path="/admin/bulk-products" element={<BulkProductsWizard />} />
           <Route path="/admin/products" element={<AdminProductsManager />} />
 
-
+                 <Route path="/blog" element={<BlogsPage/>} />
+        <Route path="/blog/new" element={<AddEditBlog/>} />
+        <Route path="/blog/:slug" element={<BlogDetails/>} />
           {/* 404 Fallback */}
           <Route
             path="*"

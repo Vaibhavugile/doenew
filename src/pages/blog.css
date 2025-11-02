@@ -1,0 +1,671 @@
+/* =========================================================
+   blox-blog.css — Glass Luxury (unique .blox-* names)
+   Safe to drop alongside any existing CSS without conflicts.
+   Expects (falls back if missing): --color-light, --color-soft, --color-accent
+   ========================================================= */
+:root{
+  --_light: var(--color-light, #F7F8FB);
+  --_soft: var(--color-soft, #C9D6FF);
+  --_accent: var(--color-accent, #C9A66B); /* Luxury Gold */
+  --_surface: rgba(255,255,255,.08);
+  --_border: rgba(255,255,255,.16);
+  --_halo: rgba(255,255,255,.12);
+}
+
+/* ---------- Layout shells ---------- */
+.blox-shell{ max-width: 1200px; margin-inline:auto; padding-inline: 16px; }
+.blox-pad{ padding-block: 56px; background-color: #F3EFEA; }
+
+/* ---------- Headings / type ---------- */
+.blox-title{ font-weight: 800; letter-spacing: .2px; font-size: clamp(26px,3.2vw,38px); color:var(--_light); margin:0 0 6px }
+.blox-text{ font-size: 1.05rem; line-height: 1.78; color: var(--_light) }
+
+/* ---------- Hero ---------- */
+.blox-hero{ margin-bottom: 16px; }
+.blox-heroCard{
+  border-radius: 22px; padding: 26px;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  border:1px solid var(--_border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 16px 36px rgba(0,0,0,.28);
+}
+.blox-heroSub{ color: #111; margin:.25rem 0 .9rem; font-size:1.06rem }
+
+/* ---------- Tools (search + tag chips) ---------- */
+.blox-tools{ display:flex; flex-wrap:wrap; gap:.8rem 1rem; align-items:center }
+.blox-search{ display:flex; gap:.55rem; align-items:center }
+.blox-input{
+  padding:.82rem 1rem; min-width:280px; border-radius:14px;
+  background: rgba(255,255,255,.14); color: var(--_light);
+  border:1px solid rgba(255,255,255,.26); outline:none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08); transition:.25s;
+}
+.blox-input::placeholder{ color: rgba(255,255,255,.6) }
+.blox-input:focus{ background: rgba(255,255,255,.18); border-color: var(--_accent); box-shadow: 0 0 0 3px var(--_halo) }
+
+.blox-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:.4rem; padding:.78rem 1.14rem; border-radius:14px;
+  border:1px solid rgba(255,255,255,.22);
+  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06));
+  color: var(--_light); font-weight:700; cursor:pointer;
+  box-shadow: 0 10px 22px rgba(0,0,0,.28); transition: transform .2s, box-shadow .2s;
+}
+.blox-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 32px rgba(0,0,0,.34) }
+.blox-btnGhost{ background:transparent; border-color: rgba(255,255,255,.26) }
+
+.blox-chip{
+  font-size:.82rem; padding:.36rem .72rem; border-radius:9999px;
+  background: rgba(255,255,255,.14); color:var(--_light);
+  border:1px solid rgba(255,255,255,.26); backdrop-filter: blur(4px);
+  transition:.18s;
+}
+.blox-chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.34) }
+.blox-chipActive{ background: var(--_accent); border-color: transparent; color:#111 }
+
+/* ---------- Grid / cards ---------- */
+.blox-grid{ list-style:none; padding:0; margin:22px 0 8px; display:grid; gap:22px; grid-template-columns:1fr }
+@media (min-width:640px){ .blox-grid{ grid-template-columns: repeat(2,1fr) } }
+@media (min-width:1024px){ .blox-grid{ grid-template-columns: repeat(3,1fr) } }
+
+.blox-card{
+  border-radius:18px; overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  border:1px solid var(--_border);
+  box-shadow: 0 12px 30px rgba(0,0,0,.28);
+  transition: transform .22s, box-shadow .22s, border-color .22s;
+}
+.blox-card:hover{ transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,.36); border-color: rgba(255,255,255,.22) }
+.blox-cardLink{ display:flex; flex-direction:column; text-decoration:none; color:inherit }
+.blox-cardImg{ width:100%; aspect-ratio:16/10; object-fit:cover }
+.blox-cardBody{ padding:16px 16px 18px }
+.blox-cardTitle{ color:var(--_light); font-weight:800; font-size:1.12rem; margin:0 0 .35rem }
+.blox-cardSub{ color: rgba(247,248,251,.92); margin:0 }
+.blox-tags{ display:flex; flex-wrap:wrap; gap:.45rem; margin-top:.7rem }
+
+.blox-loadWrap{ display:flex; justify-content:center; margin:1.2rem 0 .4rem }
+.blox-empty{
+  padding:18px; border-radius:14px; text-align:center;
+  color: rgba(247,248,251,.92);
+  border:1px dashed rgba(255,255,255,.26);
+}
+
+/* ---------- Skeletons ---------- */
+.blox-skel{ border-radius:18px; overflow:hidden; border:1px solid var(--_border) }
+.blox-skelImg, .blox-skelLine{
+  background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
+  background-size: 200% 100%; animation: bloxShimmer 1.2s infinite;
+}
+.blox-skelImg{ width:100%; aspect-ratio:16/10 }
+.blox-skelLine{ height:12px; margin:10px 16px; border-radius:8px }
+.blox-w70{ width:70% } .blox-w40{ width:40% }
+@keyframes bloxShimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ---------- Article ---------- */
+.blox-articleHead{ margin-bottom: 10px }
+.blox-byline{ color: rgba(247,248,251,.9); margin:.25rem 0 .6rem; font-size:.98rem }
+.blox-heroImg{
+  width:100%; max-height:480px; object-fit:cover; border-radius:18px;
+  margin:1rem 0 1.4rem; box-shadow: 0 22px 42px rgba(0,0,0,.34)
+}
+.blox-article{ color:var(--_light); line-height:1.82; font-size:1.06rem; font-family: ui-sans-serif, system-ui, -apple-system, "Inter", sans-serif }
+.blox-article h2{ font-size:1.66rem; margin-top:1.25rem }
+.blox-article h3{ font-size:1.28rem; margin-top:.9rem }
+.blox-article a{ color:var(--_soft); text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.26) }
+.blox-article a:hover{ color:var(--_accent); border-color: var(--_accent) }
+.blox-article img{ max-width:100%; height:auto; border-radius:12px; box-shadow: 0 14px 30px rgba(0,0,0,.26) }
+.blox-quote{ margin:1rem 0; padding:.85rem 1rem; border-left:3px solid var(--_soft); background: var(--_surface); border-radius:10px }
+
+/* ---------- CMS (Create/Edit) ---------- */
+.blox-cmsShell{ max-width: 900px; }
+.blox-form{
+  display:grid; gap:1.35rem; padding:32px; border-radius:20px;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  border:1px solid var(--_border); backdrop-filter: blur(14px);
+  box-shadow: 0 22px 40px rgba(0,0,0,.32);
+}
+.blox-grid2{ display:grid; gap:1.35rem }
+@media (min-width:860px){ .blox-grid2{ grid-template-columns: 1fr 1fr } }
+.blox-field{ display:grid; gap:.5rem }
+.blox-label{
+  font-size:.94rem; font-weight:800; letter-spacing:.4px; text-transform:uppercase;
+  color:var(--_light); opacity:.96
+}
+.blox-control, .blox-area, .blox-select{
+  width:100%; font-size:1rem; color:var(--_light);
+  padding:.82rem 1rem; border-radius:14px;
+  background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.26);
+  outline:none; transition:.25s;
+}
+.blox-control::placeholder, .blox-area::placeholder{ color: rgba(255,255,255,.6) }
+.blox-control:focus, .blox-area:focus, .blox-select:focus{
+  background: rgba(255,255,255,.18); border-color: var(--_accent); box-shadow: 0 0 0 3px var(--_halo)
+}
+.blox-area[name="content"]{ min-height: 260px; resize:vertical }
+.blox-actions{ display:flex; justify-content:flex-end; margin-top:8px }
+
+/* ---------- Light theme ---------- */
+.home-page.light-theme .blox-heroCard,
+.home-page.light-theme .blox-card,
+.home-page.light-theme .blox-form{
+  background:#FFFFFF; border:1px solid #E9E9E9; box-shadow:0 10px 26px rgba(0,0,0,.08)
+}
+.home-page.light-theme .blox-title, 
+.home-page.light-theme .blox-cardTitle{ color:#121212 }
+.home-page.light-theme .blox-heroSub,
+.home-page.light-theme .blox-cardSub,
+.home-page.light-theme .blox-byline{ color:#555 }
+
+.home-page.light-theme .blox-input,
+.home-page.light-theme .blox-control,
+.home-page.light-theme .blox-area,
+.home-page.light-theme .blox-select{
+  background:#FFFFFF; color:#111; border:1px solid #DCDCDC;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1)
+}
+.home-page.light-theme .blox-input::placeholder,
+.home-page.light-theme .blox-control::placeholder,
+.home-page.light-theme .blox-area::placeholder{ color:#888 }
+
+.home-page.light-theme .blox-chip{ background:#F6F6F7; border:1px solid #E7E7EA; color:#333 }
+.home-page.light-theme .blox-heroImg{ box-shadow: 0 16px 36px rgba(0,0,0,.12) }
+/* ===========================
+   BLOX CMS — READABILITY BOOST
+   (Paste at end of blox-blog.css)
+   =========================== */
+
+/* Stronger, darker glass card */
+.blox-form{
+  background: rgba(15,15,18,0.72);          /* darker surface */
+  border: 1px solid rgba(255,255,255,0.24);  /* clearer edge */
+  box-shadow: 0 24px 48px rgba(0,0,0,0.45);  /* deeper shadow */
+  padding: 36px;
+  border-radius: 20px;
+}
+
+/* Labels: no fade, no uppercase thin look */
+.blox-label{
+  color: #fff;
+  opacity: 1;
+  text-transform: none;      /* easier to scan than all-caps */
+  letter-spacing: 0;
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+/* Inputs: solid readable background + bigger text */
+.blox-control,
+.blox-area,
+.blox-select{
+  background: rgba(255,255,255,0.14);        /* more solid than before */
+  border: 1px solid rgba(255,255,255,0.32);  /* stronger outline */
+  color: #fff;
+  font-size: 1.02rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Placeholder must be readable */
+.blox-control::placeholder,
+.blox-area::placeholder{
+  color: rgba(255,255,255,0.72);
+}
+
+/* Focus: obvious border + halo */
+.blox-control:focus,
+.blox-area:focus,
+.blox-select:focus{
+  background: rgba(255,255,255,0.18);
+  border-color: var(--color-accent, #C9A66B);
+  box-shadow: 0 0 0 4px rgba(201,166,107,0.22);
+  outline: none;
+}
+
+/* Grid spacing slightly bigger for air */
+.blox-grid2{ gap: 1.6rem; }
+
+/* Content field taller by default */
+.blox-area[name="content"]{ min-height: 320px; }
+
+/* Button row spacing */
+.blox-actions{ margin-top: 12px; }
+
+/* HERO: make copy stronger so page title doesn’t fade */
+.blox-heroCard{
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.24);
+}
+
+/* Light theme: proper dark text and solid whites */
+.home-page.light-theme .blox-form{
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.10);
+}
+.home-page.light-theme .blox-label{ color: #1b1b1f; }
+.home-page.light-theme .blox-control,
+.home-page.light-theme .blox-area,
+.home-page.light-theme .blox-select{
+  background: #ffffff;
+  color: #1b1b1f;
+  border: 1px solid #cfcfcf;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1);
+}
+.home-page.light-theme .blox-control::placeholder,
+.home-page.light-theme .blox-area::placeholder{ color: #6f6f6f; }
+.home-page.light-theme .blox-control:focus,
+.home-page.light-theme .blox-area:focus,
+.home-page.light-theme .blox-select:focus{
+  border-color: var(--color-accent, #C9A66B);
+  box-shadow: 0 0 0 4px rgba(201,166,107,0.20);
+}
+/* ================================
+   BLOX CMS — v2 Readability Polish
+   ================================ */
+
+/* Center + slightly wider form shell */
+.blox-cmsShell{ max-width: 980px; margin-inline: auto; }
+
+/* Panel: darker-but-clean glass, sharper edge, bigger padding */
+.blox-form{
+  background: linear-gradient(180deg, #2b2b30, #26262b);
+  border: 1px solid #3d3d44;
+  box-shadow: 0 30px 70px rgba(0,0,0,.55);
+  border-radius: 20px;
+  padding: 40px;
+  gap: 1.6rem;
+}
+
+/* Labels: strong, normal case, better size & spacing */
+.blox-field{ display:grid; gap:.6rem; }
+.blox-label{
+  color:#fff;
+  opacity:1;
+  text-transform:none;
+  letter-spacing:0;
+  font-weight:700;
+  font-size:1rem;
+  line-height:1.2;
+}
+
+/* Inputs: lighter than panel so they stand out */
+.blox-control,
+.blox-area,
+.blox-select{
+  background:#3a3a40;
+  color:#f6f7fb;
+  border:1px solid #57575f;
+  border-radius:14px;
+  padding:.95rem 1rem;
+  font-size:1.02rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.blox-control:hover,
+.blox-area:hover,
+.blox-select:hover{ border-color:#6b6b74; }
+
+.blox-control::placeholder,
+.blox-area::placeholder{ color:#b9bcc6; }
+
+/* Focus: crisp gold and slight raise */
+.blox-control:focus,
+.blox-area:focus,
+.blox-select:focus{
+  background:#414149;
+  border-color: var(--color-accent, #C9A66B);
+  box-shadow: 0 0 0 4px rgba(201,166,107,.22);
+  outline:none;
+}
+
+/* Select: custom arrow so it doesn't look disabled */
+.blox-select{
+  appearance:none;
+  padding-right:2.2rem;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat:no-repeat;
+  background-position: right 12px center;
+  background-size:16px;
+  cursor:pointer;
+}
+
+/* Room to breathe between columns and bigger content area */
+.blox-grid2{ gap:1.8rem; }
+.blox-area[name="content"]{ min-height:380px; }
+
+/* Buttons a bit larger to match control size */
+.blox-btn{ font-size:1rem; padding:.9rem 1.3rem; }
+
+/* Hero card edge stronger so title section doesn't fade */
+.blox-heroCard{
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+  border: 1px solid #3d3d44;
+}
+
+/* ---------- Light theme polish ---------- */
+.home-page.light-theme .blox-form{
+  background:#ffffff;
+  border:1px solid #e1e1e6;
+  box-shadow:0 18px 40px rgba(0,0,0,.10);
+}
+.home-page.light-theme .blox-label{ color:#1b1b1f; }
+.home-page.light-theme .blox-control,
+.home-page.light-theme .blox-area,
+.home-page.light-theme .blox-select{
+  background:#ffffff;
+  color:#111;
+  border:1px solid #cfd0d5;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1);
+}
+.home-page.light-theme .blox-control:hover,
+.home-page.light-theme .blox-area:hover,
+.home-page.light-theme .blox-select:hover{ border-color:#bdbec4; }
+.home-page.light-theme .blox-control:focus,
+.home-page.light-theme .blox-area:focus,
+.home-page.light-theme .blox-select:focus{
+  border-color: var(--color-accent, #C9A66B);
+  box-shadow: 0 0 0 4px rgba(201,166,107,.18);
+}
+.home-page.light-theme .blox-control::placeholder,
+.home-page.light-theme .blox-area::placeholder{ color:#6f6f6f; }
+/* ==========================================
+   BLOX LIST PAGE — HIGH READABILITY POLISH
+   (Paste at end of blox-blog.css)
+   ========================================== */
+
+/* ---------- HERO (title + search) ---------- */
+.blox-heroCard{
+  background: #F3EFEA;
+  border: 1px solid #FFFFFF;
+  box-shadow: 0 24px 56px rgba(0,0,0,.50);
+}
+.blox-title{
+  color:#111; letter-spacing:.2px; text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
+.blox-heroSub{ color:#111; }
+
+/* Search input more visible */
+.blox-input{
+  background:#ffffff;
+  border:1px solid #57575f;
+  color:#111;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+.blox-input::placeholder{ color:#b9bcc6; }
+.blox-input:focus{
+  background:#ffffff;
+  border-color: var(--color-accent, #C9A66B);
+  box-shadow: 0 0 0 4px rgba(201,166,107,.22);
+}
+
+/* Primary button variant for Search / Load more */
+.blox-btnAccent{
+  border: 1px solid var(--color-accent, #C9A66B);
+  background: #C9A66B;
+  color:#111; font-weight:800;
+  box-shadow: 0 12px 26px rgba(201,166,107,.35);
+}
+.blox-btnAccent:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(201,166,107,.45);
+}
+.blox-search .blox-btn{ /* make search primary */
+  composes: blox-btnAccent;
+  background-color: #FFFFFF;
+  color: #111;
+}
+
+/* ---------- GRID / CARD readability ---------- */
+.blox-grid{ gap: 24px; }
+
+/* stronger card surface */
+.blox-card{
+  background: #2c2c31;
+  border: 1px solid #3d3d44;
+  box-shadow: 0 18px 40px rgba(0,0,0,.50);
+  overflow: hidden;
+}
+
+/* image keeps rounded top */
+.blox-cardImg{ display:block; border-top-left-radius:18px; border-top-right-radius:18px; }
+
+/* readable body with subtle glass panel */
+.blox-cardBody{
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 16px 16px 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* title & subtitle contrast */
+.blox-cardTitle{
+  color:#fff;
+  font-size:1.14rem;
+  line-height:1.25;
+  margin-bottom:.35rem;
+}
+.blox-cardSub{
+  color:#e7e7ed;
+  opacity: .95;
+}
+
+/* tags cleaner */
+.blox-chip{
+  background:#3a3a40;
+  border:1px solid #57575f;
+  color:#f2f2f7;
+}
+.blox-chip:hover{
+  background:#414149;
+  border-color:#6b6b74;
+}
+
+/* Read more button sits nicely inside card */
+.blox-cardBody .blox-btn{
+  margin-top: 10px;
+}
+
+/* Load more = primary */
+.blox-loadWrap .blox-btn{ composes: blox-btnAccent; }
+
+/* ---------- Light theme tidy ---------- */
+.home-page.light-theme .blox-heroCard{
+  background:#fff; border:1px solid #e7e7ea; box-shadow:0 16px 34px rgba(0,0,0,.10);
+}
+.home-page.light-theme .blox-input{
+  background:#fff; color:#111; border:1px solid #d3d3d6;
+}
+.home-page.light-theme .blox-input::placeholder{ color:#7a7a7a; }
+.home-page.light-theme .blox-card{
+  background:#fff; border:1px solid #e7e7ea; box-shadow:0 14px 30px rgba(0,0,0,.10);
+}
+.home-page.light-theme .blox-cardBody{
+  background: linear-gradient(180deg, #fff, #fafafa);
+  border-top: 1px solid #f0f0f3;
+}
+.home-page.light-theme .blox-cardTitle{ color:#121212; }
+.home-page.light-theme .blox-cardSub{ color:#4a4a4a; }
+.home-page.light-theme .blox-chip{
+  background:#f6f6f7; border:1px solid #e7e7ea; color:#333;
+}
+/* =========================================
+   BLOX ARTICLE — HIGH READABILITY OVERRIDES
+   (Paste at end of blox-blog.css)
+   ========================================= */
+
+/* Make the page title/byline punchy on article pages */
+.blox-articleHead .blox-title{ color:#141313; text-shadow:0 1px 0 rgba(0,0,0,.25); }
+.blox-articleHead .blox-byline{ color:#090909; opacity:1; }
+
+/* Main content: dark glass panel so text never washes out */
+.blox-article{
+  color:#fff;
+  -webkit-font-smoothing: antialiased;
+  max-width: 980px;           /* comfortable reading width */
+  margin: 0 auto;             /* center inside .blox-shell */
+  padding: 28px 28px 34px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(18,18,22,.92), rgba(18,18,22,.86));
+  border: 1px solid #3c3c44;
+  box-shadow: 0 28px 60px rgba(0,0,0,.55);
+  line-height: 1.85;
+  font-size: 1.08rem;
+  letter-spacing: .1px;
+}
+
+/* Headings: high contrast, tighter spacing */
+.blox-article h1, 
+.blox-article h2, 
+.blox-article h3, 
+.blox-article h4 {
+  color:#fff;
+  margin: 1.1rem 0 .6rem;
+  line-height: 1.25;
+  text-shadow: none;
+}
+.blox-article h1{ font-size: 1.9rem; }
+.blox-article h2{ font-size: 1.55rem; border-left: 4px solid var(--color-accent, #C9A66B); padding-left: .6rem; }
+.blox-article h3{ font-size: 1.28rem; opacity: .98; }
+
+/* Paragraphs & emphasis */
+.blox-article p{ color:#f2f2f7; margin: .6rem 0 .95rem; }
+.blox-article strong{ color:#fff; font-weight: 800; }
+.blox-article em{ color:#f2f2f7; }
+
+/* Links: clear underline + accent on hover */
+.blox-article a{
+  color:#f4f4fa;
+  text-decoration: underline;
+  text-decoration-color: rgba(255,255,255,.35);
+  text-underline-offset: 3px;
+  transition: color .2s, text-decoration-color .2s;
+}
+.blox-article a:hover{
+  color: var(--color-accent, #C9A66B);
+  text-decoration-color: var(--color-accent, #C9A66B);
+}
+
+/* Lists: visible bullets + spacing */
+.blox-article ul,
+.blox-article ol{ margin: .4rem 0 1.1rem; padding-left: 1.2rem; }
+.blox-article ul li{ margin: .28rem 0; list-style: disc; color:#e9e9f2; }
+.blox-article ol li{ margin: .28rem 0; list-style: decimal; color:#e9e9f2; }
+
+/* Blockquote: distinct panel */
+.blox-quote,
+.blox-article blockquote{
+  margin: 1rem 0;
+  padding: .9rem 1.1rem;
+  background: rgba(255,255,255,.06);
+  border-left: 4px solid var(--color-accent, #C9A66B);
+  color: #f2f2f7;
+  border-radius: 10px;
+}
+
+/* Images: generous spacing & shadow */
+.blox-article img{
+  display:block;
+  max-width:100%;
+  height:auto;
+  border-radius:12px;
+  margin: .8rem auto 1.1rem;
+  box-shadow: 0 16px 36px rgba(0,0,0,.45);
+}
+
+/* Horizontal rule */
+.blox-article hr{
+  border:0;
+  border-top:1px solid rgba(255,255,255,.16);
+  margin: 1.2rem 0;
+}
+
+/* Light theme variant */
+.home-page.light-theme .blox-article{
+  background:#ffffff;
+  border:1px solid #e7e7ea;
+  box-shadow: 0 18px 40px rgba(0,0,0,.10);
+  color:#111;
+}
+.home-page.light-theme .blox-article p,
+.home-page.light-theme .blox-article li{ color:#2b2b2f; }
+.home-page.light-theme .blox-article h1,
+.home-page.light-theme .blox-article h2,
+.home-page.light-theme .blox-article h3{ color:#121212; }
+.home-page.light-theme .blox-article a{ color:#0f172a; text-decoration-color: rgba(0,0,0,.35); }
+.home-page.light-theme .blox-article a:hover{ color: var(--color-accent, #C9A66B); }
+/* =======================================
+   FULL WIDTH ARTICLE PAGE LAYOUT
+   ======================================= */
+
+.blox-article-shell {
+  width: 100%;
+  max-width: 1600px; /* Adjust if needed */
+  margin: 0 auto;
+  padding-inline: 0;
+}
+
+/* Hero image should touch edges */
+.blox-heroImg {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  border-radius: 0; /* remove rounded corners */
+  box-shadow: none;
+  margin: 0 0 40px 0;
+}
+
+/* Article body expands but still readable */
+.blox-article {
+  max-width: 1100px;
+  margin-inline: auto;
+  border-radius: 20px;
+  padding: 38px 42px;
+}
+
+/* Make title header full-width spacing */
+.blox-articleHead {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: 20px 42px 10px;
+}
+
+/* Improve large heading readability */
+.blox-articleHead .blox-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #111;
+}
+/* ===== React Quill dark glass look ===== */
+.blox-editor .ql-toolbar {
+  border: 1px solid #57575f !important;
+  border-radius: 12px 12px 0 0;
+  background: #f6f7fb;
+  color: #f6f7fb;
+}
+.blox-editor .ql-container {
+  border: 1px solid #57575f !important;
+  border-top: none !important;
+  border-radius: 0 0 12px 12px;
+  background: #2f2f35;
+  color: #f6f7fb;
+  min-height: 260px;
+}
+.blox-editor .ql-editor {
+  min-height: 200px;
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+.blox-editor .ql-picker, 
+.blox-editor .ql-stroke { color: #f6f7fb; stroke: #f6f7fb; }
+.blox-editor .ql-fill { fill: #f6f7fb; }
+.blox-editor .ql-picker-label:hover,
+.blox-editor .ql-toolbar button:hover { filter: brightness(1.1); }
+.blox-editor a { color: var(--color-accent, #C9A66B); }
+
+/* Light theme */
+.home-page.light-theme .blox-editor .ql-toolbar {
+  background: #fff; color: #111; border-color: #cfd0d5 !important;
+}
+.home-page.light-theme .blox-editor .ql-container {
+  background: #fff; color: #111; border-color: #cfd0d5 !important;
+}

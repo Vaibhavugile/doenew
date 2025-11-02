@@ -389,6 +389,10 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
           Franchise
           <span className="nav-link-underline"></span>
         </a>
+        <a href="/blog" className="nav-link group">
+  Blog
+  <span className="nav-link-underline"></span>
+</a>
         
         {/* NEW THEME TOGGLE BUTTON for Desktop */}
         <button
@@ -428,6 +432,8 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
         <li><a href="#stores-location" className="mobile-nav-item" onClick={toggleMobileMenu}>Our Stores Location</a></li>
         <li><a href="#contact" className="mobile-nav-item" onClick={toggleMobileMenu}>Contact Us</a></li>
         <li><a href="#franchise" className="mobile-nav-item" onClick={toggleMobileMenu}>Franchise Opportunities</a></li>
+        <li><a href="/blog" className="mobile-nav-item" onClick={toggleMobileMenu}>Blog</a></li>
+
 <li>
             <button
                 onClick={() => {
@@ -633,60 +639,7 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
       <CustomerReviewsSection />
       <CustomerReviewUpload onSubmitted={() => console.log("uploaded")} />
       
-      <section
-        id="about-us"
-        ref={aboutUsRef}
-        className={`section bg-neutral-100 ${aboutUsIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}
-        // SEO Change 1: Add Schema.org microdata for Organization to the section
-        itemScope
-        itemType="https://schema.org/Organization"
-      >
-        <div className="container max-width-3xl text-center">
-          {/* SEO Change 2: Enhanced H2 title with keywords */}
-          <h2 className="section-title">About DOR - Your Premier Dress Rental Destinations</h2>
-          <div className="container about-us-split-container">
-            <div className="about-us-split-image-wrapper">
-              {/* Images placed directly inside the wrapper */}
-              <img
-                src={aboutus1}
-                alt="Dress On Rent Image 1"
-                className="about-us-split-image"
-              />
-              <img
-                src={aboutus2}
-                alt="Dress On Rent Image 2"
-                className="about-us-split-image"
-              />
-            </div>
-            <div className="about-us-split-content-wrapper">
-              {/* Keeping as h2 as per original structure, but semantically h3 might be considered if the above is the primary h2 */}
-              <h2 className="section-title text-left mb-6">More Than Just Fashion: This is DOR - Dress On Rent</h2>
-              <p className="about-us-split-text" itemProp="description">
-                Welcome to DOR, your premier destination for luxury dress rentals in Pune and Nagpur. Founded in 2020 from a shared passion for sustainable fashion and making high-end style accessible, we embarked on a mission to redefine elegance for every special occasion. We believe that renting designer clothing like lehengas, sherwanis, gowns, and suits is more than just what you wear; it’s a form of expression, a statement of values, and a companion on your life’s most memorable journeys.                    </p>
-              <p className="about-us-split-text">
-                Our curated collections are born from a desire to blend timeless elegance with contemporary trends, featuring ethically sourced and meticulously crafted rental garments for both men and women. Each gown on rent, lehenga on rent, and suit on rent is thoughtfully selected and maintained. We are the best place to rent wedding gowns, mens formal wear rental options, and offer latest collection of gowns on rent for various events, including pre-wedding shoots, cocktail parties, and graduation ceremonies.                    </p>
-              {/* Optional: If you have a more detailed about page */}
-              {/* <Link to="/about-detailed" className="btn btn-primary mt-4">Discover Our Full Story</Link> */}
-              <div className="about-us-split-highlights">
-                <div className="highlight-item">
-                  <Sparkles size={28} className="highlight-icon text-pink-600" />
-                  <div>
-                    <h4 className="highlight-title">Quality First Rental Outfits</h4>
-                    <p className="highlight-text">Every gown, lehenga, and suit for rent is carefully curated for impeccable craftsmanship and premium materials.</p>
-                  </div>
-                </div>
-                <div className="highlight-item">
-                  <Wand2 size={28} className="highlight-icon text-pink-600" />
-                  <div>
-                    <h4 className="highlight-title">Sustainable Style through Dress Rental</h4>
-                    <p className="highlight-text">Promoting eco-friendly fashion by extending the life cycle of designer attire through rental, reducing waste in Pune and Nagpur.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* SEO Change 5: Add Organization Schema Markup using Helmet */}
       {/* This should be placed within your main <Helmet> component at the top of HomePage.js */}

@@ -168,7 +168,7 @@ html { box-sizing: border-box; }
 .hero-buttons-center { display: flex; flex-wrap: wrap; gap: 1.1rem; justify-content: center; }
 .hero-buttons--floatA { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(clamp(48px, 8vh, 96px) + env(safe-area-inset-bottom, 0px)); padding: 0 1rem; z-index: 2; animation: heroFloatY 5.2s ease-in-out infinite; will-change: transform; }
 @keyframes heroFloatY { 0%{ transform: translate(-50%, 0) } 50%{ transform: translate(-50%, -6px) } 100%{ transform: translate(-50%, 0) } }
-.cta-button.cta-glow{ position: relative; background: linear-gradient(135deg, #ff7ac0, #8c6cff); color: #111 !important; border: 0; padding: 0.9rem 1.9rem; border-radius: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 12px 28px rgba(140,108,255,.25); transition: transform .25s ease, box-shadow .25s ease; overflow: hidden; }
+.cta-button.cta-glow{ position: relative; background: #F2C4CE !important; color: #111 !important; border: 0; padding: 0.9rem 1.9rem; border-radius: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 12px 28px rgba(140,108,255,.25); transition: transform .25s ease, box-shadow .25s ease; overflow: hidden; }
 .cta-button.cta-glow::after{ content:""; position:absolute; inset:-140% -60% auto -60%; height: 300%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); transform: translateX(-60%) skewX(-20deg); animation: ctaSheen 3.2s ease-in-out infinite; pointer-events: none; }
 @keyframes ctaSheen{ 0%{ transform: translateX(-60%) skewX(-20deg); opacity:0 } 12%{ opacity:.9 } 35%,100%{ transform: translateX(60%) skewX(-20deg); opacity:0 } }
 .cta-button.cta-outline{ background: rgba(255,255,255,.10); border: 2px solid rgba(255,255,255,.85); color: #fff !important; padding: 0.9rem 1.9rem; border-radius: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 10px 22px rgba(0,0,0,.22); transition: transform .25s ease, background .25s ease, border-color .25s ease; }
@@ -486,10 +486,12 @@ address.address-text { font-style: normal; }
   color: var(--color-light);
   /* Soft blush + violet haze over charcoal (from CollaborationSection.css) */
   background:
-    radial-gradient(80% 140% at 50% 0%, rgba(242,196,206,.22) 0%, transparent 70%),
-    radial-gradient(80% 140% at 80% 90%, rgba(116,93,255,.18) 0%, transparent 70%),
-    radial-gradient(80% 140% at 20% 90%, rgba(255,171,202,.16) 0%, transparent 70%),
-    var(--color-dark);
+ 
+  radial-gradient(80% 140% at 50% 0%, rgba(255,229,191,0.12) 0%, transparent 70%),
+  radial-gradient(80% 140% at 80% 90%, rgba(163,120,70,0.10) 0%, transparent 70%),
+  radial-gradient(80% 140% at 20% 90%, rgba(255,215,165,0.10) 0%, transparent 70%),
+  var(--color-dark);
+
   overflow: clip;
 }
 

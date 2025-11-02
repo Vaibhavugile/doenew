@@ -85,10 +85,21 @@
     }
 }
 
+
+.light-theme .earn-modal-content {
+    /* Set base colors using variables. When the parent .home-page.light-theme
+       changes the variables, these styles will update automatically. */
+    background-color: #F3EFEA; /* Resolves to Dark BG in dark theme, and Light BG in light theme */
+    color: #F3EFEA;         /* Resolves to Light Text in dark theme, and Dark Text in light theme */
+
+    max-width: 900px !important;
+    width: 95%;
+    padding: 2.5rem;
+}
 /* Overrides to make steps look good in light mode */
 .light-theme .earn-step {
     /* Light Theme: Flat surface, using var(--color-mid) which should be a light gray */
-    background: var(--color-mid); 
+    background: #e9e9e9; 
     backdrop-filter: none;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
