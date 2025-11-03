@@ -265,29 +265,37 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             "name": "DOR - Dress On Rent",
-            "url": "https://www.yourdorwebsite.com/", // *** REPLACE with your actual website URL ***
+            "url": "https://www.dordressonrent.com/", // *** REPLACE with your actual website URL ***
             "image": "https://www.yourdorwebsite.com/logo.png", // *** REPLACE with your logo URL (e.g., a high-res logo) ***
             "description": "DOR offers premium lehengas, sherwanis, suits, gowns, and bridal wear on rent in Pune & Nagpur for weddings, parties, and special events. Find affordable, eco-friendly, and hassle-free dress rental services including designer outfits, maternity gowns, and specific occasion wear.",
             "address": [
               {
                 "@type": "PostalAddress",
-                "streetAddress": "Your Pune Street Address Here", // *** REPLACE with actual Pune address ***
+                "streetAddress": "Pudumjee Compound, 815/816, near Pudumjee Police Station, next to Smato, Camp, Bhawani Peth, Pune", // *** REPLACE with actual Pune address ***
                 "addressLocality": "Pune",
                 "addressRegion": "MH",
                 "postalCode": "411001", // *** REPLACE with actual Pune postal code ***
                 "addressCountry": "IN"
               },
-              {
+                {
                 "@type": "PostalAddress",
-                "streetAddress": "Your Nagpur Street Address Here", // *** REPLACE with actual Nagpur address ***
+                "streetAddress": "Mount Vert Society, Square, Hinjewadi, Hinjawadi - Aundh Rd, next to Yug Honda, Kaspate Wasti, Pimpri-Chinchwad", // *** REPLACE with actual Pune address ***
+                "addressLocality": "Pimpri-Chinchwad",
+                "addressRegion": "MH",
+                "postalCode": "411057", // *** REPLACE with actual Pune postal code ***
+                "addressCountry": "IN"
+              },
+              {
+                "@type": "PostalAddres",
+                "streetAddress": "BSGN SOCIETY, 7, above ANNA IDLI, Shyam Nagar, Manish Nagar, Somalwada, Nagpur", // *** REPLACE with actual Nagpur address ***
                 "addressLocality": "Nagpur",
                 "addressRegion": "MH",
-                "postalCode": "440001", // *** REPLACE with actual Nagpur postal code ***
+                "postalCode": "440037", // *** REPLACE with actual Nagpur postal code ***
                 "addressCountry": "IN"
               }
             ],
-            "telephone": "+919876543210", // *** REPLACE with your actual contact number (e.g., +919876543210) ***
-            "priceRange": "$$", // Indicative price range (e.g., $, $$, $$$)
+            "telephone": "+918698797007", // *** REPLACE with your actual contact number (e.g., +919876543210) ***
+            "priceRange": "500", // Indicative price range (e.g., $, $$, $$$)
             "openingHoursSpecification": [
               {
                 "@type": "OpeningHoursSpecification",
@@ -299,12 +307,12 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
               }
             ],
             "sameAs": [
-              "https://www.instagram.com/yourdorinstagram", // *** REPLACE with your Instagram URL ***
-              "https://www.facebook.com/yourdorfacebook", // *** REPLACE with your Facebook URL ***
-              "https://www.twitter.com/yourdortwitter" // *** REPLACE with your Twitter URL if applicable ***
+              "https://www.instagram.com/dor_designer?igsh=MWp4dmgyMWdibnMxcw==", // *** REPLACE with your Instagram URL ***
+              "https://www.facebook.com/share/1D8F1q6RRZ/?mibextid=wwXIfr", // *** REPLACE with your Facebook URL ***
+              "https://wa.me/918698797007?text=Hi%20DOR%20Wakad%2C%20I%27d%20like%20to%20rent%20an%20outfit" // *** REPLACE with your Twitter URL if applicable ***
             ]
           }
-        `}
+        `} 
         </script>
       </Helmet>
       {showStoreModal && (
