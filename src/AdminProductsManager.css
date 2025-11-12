@@ -55,3 +55,15 @@
 }
 
 .apm-ellipsis { max-width: 260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.move-progress {
+  margin-top: 4px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.move-progress > div {
+  height: 100%;
+  background: #3b82f6;
+  transition: width 0.2s;
+}

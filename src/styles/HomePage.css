@@ -144,18 +144,17 @@ html { box-sizing: border-box; }
 /* ==========================================================================
    STORE SELECTION MODAL
    ========================================================================== */
-.modal-overlay { position:fixed; inset:0; background: rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; z-index:110; }
-.modal-content { background: var(--color-dark); color: var(--color-light); padding:2rem; border-radius:1rem; width:min(720px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.45); text-align:center; }
-.modal-title { font-size:1.5rem; font-weight:800; margin-bottom:.5rem; }
-.modal-description { opacity:.9; margin-bottom:1rem; }
-.modal-store-options { display:flex; flex-direction:column; gap:1rem; align-items:center; }
-.modal-store-button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; padding:1rem; border-radius:1rem; font-weight:700; width:100%; max-width:420px; position:relative; overflow:hidden; }
-.modal-button-icon-bg { position:absolute; inset:auto auto 0 0; transform: translate(-25%, 25%); opacity:.35; transition: opacity .25s; }
-.modal-store-button:hover .modal-button-icon-bg { opacity:.5; }
-.modal-button-icon { color: var(--color-dark); }
-.modal-button-text { position:relative; z-index:10; color: var(--color-dark); font-weight:700; font-size:1.25rem; text-shadow:0 1px 2px rgba(0,0,0,.3); }
-.modal-close-button { background:none; border:2px solid #F58F7C; color:#F58F7C; padding:.75rem 1.5rem; font-size:1rem; font-weight:600; border-radius:.5rem; cursor:pointer; transition: background-color .3s, color .3s, transform .2s; margin-top:1rem; }
-.modal-close-button:hover { background-color:#2C2B30; color:#F58F7C; transform: translateY(-2px); }
+.modal7-overlay { position:fixed; inset:0;   display:flex; align-items:center; justify-content:center; z-index:110; }
+.modal7-content { background:#EDEDED; color:#111; padding:2rem; border-radius:1rem; width:min(720px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.45); text-align:center; }
+.modal7-title { font-size:1.5rem; font-weight:800; margin-bottom:.5rem; }
+.modal7-description { opacity:.9; margin-bottom:1rem; }
+.modal7-store-options { display:flex; flex-direction:column; gap:1rem; align-items:center; }
+.modal7-store-button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; padding:1rem; border-radius:1rem; font-weight:700; width:100%; max-width:420px; position:relative; overflow:hidden; }
+.modal7-button-icon-bg { position:absolute; inset:auto auto 0 0; transform: translate(-25%, 25%); opacity:.35; transition: opacity .25s; }
+.modal7-store-button:hover .modal7-button-icon-bg { opacity:.5; }
+.modal7-button-text { position:relative; z-index:10; font-weight:700; font-size:1.25rem; text-shadow:0 1px 2px rgba(0,0,0,.3); }
+.modal7-close-button { background:none; border:2px solid #F58F7C; color:#F58F7C; padding:.75rem 1.5rem; font-size:1rem; font-weight:600; border-radius:.5rem; cursor:pointer; transition: background-color .3s, color .3s, transform .2s; margin-top:1rem; }
+.modal7-close-button:hover { color:#F58F7C; transform: translateY(-2px); }
 
 /* ==========================================================================
    HERO — .hero-section-ultimate

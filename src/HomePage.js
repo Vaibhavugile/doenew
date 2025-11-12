@@ -195,7 +195,7 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
         const storesCollectionRef = collection(db, 'filterOptions', 'stores', 'list');
         const storeSnapshot = await getDocs(storesCollectionRef);
         // Assuming each store document has a 'name' field and potentially an 'image' field
-        const fetchedStores = storeSnapshot.docs.map(doc => ({ id: doc.id, name: doc.id, image: doc.data().imageUrl || `https://placehold.co/1200x600/404040/e0e0e0?text=${doc.id.replace(/\s/g, '+')}` }));
+        const fetchedStores = storeSnapshot.docs.map(doc => ({ id: doc.id, name: doc.id,Address: doc.data().Address ||'', image: doc.data().imageUrl || `https://placehold.co/1200x600/404040/e0e0e0?text=${doc.id.replace(/\s/g, '+')}` }));
         setStoreLocations(fetchedStores);
       } catch (error) {
         console.error("Error fetching store locations:", error);
@@ -316,30 +316,30 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
         </script>
       </Helmet>
       {showStoreModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2 className="modal-title">Welcome to Dress On Rent!</h2>
-            <p className="modal-description">Please select your preferred store location to start Browse our collections.</p>
+        <div className="modal7-overlay">
+          <div className="modal7-content">
+            <h2 className="modal7-title">Welcome to Dress On Rent!</h2>
+            <p className="modal7-description">Please select your preferred store location to start Browse our collections.</p>
             {loadingStores ? (
-              <div className="modal-loading">
+              <div className="modal7-loading">
                 <Loader2 size={32} className="animate-spin text-blue-500" />
                 <p className="message-text">Loading stores...</p>
               </div>
             ) : storeError ? (
-              <p className="modal-error">{storeError}</p>
+              <p className="modal7-error">{storeError}</p>
             ) : (
-              <div className="modal-store-options">
+              <div className="modal7-store-options">
                 {storeLocations.map((store) => (
                   <button
                     key={store.id}
-                    className="btn btn-primary modal-store-button"
+                    className="btn btn-primary modal7-store-button"
                     onClick={() => {
                       localStorage.setItem('selectedStore', store.name);
                       setShowStoreModal(false);
                     }}
                   >
                     
-                    <span className="modal-button-text">{store.name}</span>
+                    <span className="modal7-button-text">{store.name} , {store.Address}</span>
                   </button>
                 ))}
               </div>
@@ -544,7 +544,7 @@ const [showEarnModal, setShowEarnModal] = useState(false); // <--- ADD THIS
             {/* H3 tag is appropriate for individual store names */}
             <h3 className="card-title">{store.name} Store</h3>
             {/* If store.address is available, you might consider adding it here as well for local SEO */}
-            {/* {store.address && <p className="store-address">{store.address}</p>} */}
+            {store.Address && <p className="store-address">{store.Address}</p>}
           </div>
         ))}
       </div>

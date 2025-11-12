@@ -15,22 +15,22 @@ const EarnWithUsModal = ({ showEarnModal, setShowEarnModal, theme }) => {
 
     return (
         // 👇 FIX: Apply the theme class to the outer modal-overlay for variable inheritance
-        <div className={`modal-overlay animate-fade-in ${themeClass}`} onClick={() => setShowEarnModal(false)}>
+        <div className={`modal7-overlay animate-fade-in ${themeClass}`} onClick={() => setShowEarnModal(false)}>
             <div
                 // The content uses the base styles which pull from the now-themed parent
-                className={`modal-content earn-modal-content animate-pop-in`}
+                className={`modal7-content earn-modal7-content animate-pop-in`}
                 onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
             >
                 <button
-                    className="modal-close-button"
+                    className="modal7-close-button"
                     onClick={() => setShowEarnModal(false)}
                     aria-label="Close Earn with Us Modal"
                 >
                     <X size={24} />
                 </button>
 
-                <h2 className="modal-title">Earn with DOR: Our 3-Step Program</h2>
-                <p className="modal-description">Give your unused outfits a new life and earn store credit to refresh your wardrobe!</p>
+                <h2 className="modal7-title">Earn with DOR: Our 3-Step Program</h2>
+                <p className="modal7-description">Give your unused outfits a new life and earn store credit to refresh your wardrobe!</p>
 
                 <div className="earn-steps-container">
                     {/* Step 1: Give Your Outfit */}

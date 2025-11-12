@@ -5,7 +5,7 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import HomePage from './HomePage';
 import AdminPage from './AdminPage';
-
+import AdminHome from "./AdminHome";
 // ✅ import your new category page
 import CategoryPage from './components/CategoryPage';
 
@@ -17,7 +17,7 @@ import BlogRoutes from "./BlogModule";
 import BlogsPage from "./pages/BlogsPage";
 import { BlogDetails } from "./pages/BlogDetails";
 import { AddEditBlog } from "./pages/AddEditBlog";
-
+import AddProductPage from './AddProductPage';
 function App() {
   return (
     <Router>
@@ -29,7 +29,7 @@ function App() {
           <Route path="/categories" element={<CategoryPage />} />
 
           {/* Existing Admin Page */}
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<AdminHome />} />
 
           {/* Product Listing Page */}
           <Route path="/collection/:gender/:subcategoryName" element={<ProductsPage />} />
@@ -38,8 +38,8 @@ function App() {
           <Route path="/product/:gender/:subcategoryName/:productId" element={<ProductDetailPage />} />
           <Route path="/admin/bulk-products" element={<BulkProductsWizard />} />
           <Route path="/admin/products" element={<AdminProductsManager />} />
-
-                 <Route path="/blog" element={<BlogsPage/>} />
+         <Route path="/admin/add-product" element={<AddProductPage />} />
+        <Route path="/blog" element={<BlogsPage/>} />
         <Route path="/blog/new" element={<AddEditBlog/>} />
         <Route path="/blog/:slug" element={<BlogDetails/>} />
           {/* 404 Fallback */}

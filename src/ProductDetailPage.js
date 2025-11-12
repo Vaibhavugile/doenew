@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './ProductDetailPage.css';
-import { db} from './firebaseConfig';
+import { db } from './firebaseConfig';
 import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { IndianRupee, MessageSquare, Info, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, Ruler, Palette, ZoomIn, ZoomOut, Maximize2, MapPin, Clock } from 'lucide-react';
 
@@ -240,14 +240,14 @@ function ProductDetailPage() {
     }, [relatedProducts]);
 
     // Make sure body scroll is never stuck when this page loads
-useEffect(() => {
-  const unlock = () => {
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
-  };
-  unlock();           // on mount
-  return unlock;      // on unmount (safety)
-}, []);
+    useEffect(() => {
+        const unlock = () => {
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        };
+        unlock();           // on mount
+        return unlock;      // on unmount (safety)
+    }, []);
 
 
     const handleThumbnailClick = (index) => {
@@ -266,51 +266,51 @@ useEffect(() => {
         );
     };
 
-   
-    
 
-   const handleEnquire = async () => {
-  if (!product) {
-    setModalMessage('Product details are not available for inquiry.');
-    setModalType('error');
-    setShowModal(true);
-    return;
-  }
 
-  try {
-    const whatsappNumber = '+918446442204';
 
-    // ✅ Store name string (fallback if none exists)
-    const storeName = product?.availableStores?.length > 0 
-      ? product.availableStores.join(', ') 
-      : 'Store Info Not Available';
+    const handleEnquire = async () => {
+        if (!product) {
+            setModalMessage('Product details are not available for inquiry.');
+            setModalType('error');
+            setShowModal(true);
+            return;
+        }
 
-    // ✅ Current page link (auto)
-    const productPageLink = window.location.href;
+        try {
+            const whatsappNumber = '+918698797007';
 
-    const message =
-      `Hello, I'm interested in renting the product:\n` +
-      `*${product.name}*\n` +
-      `Product Code: ${product.productCode}\n` +
-      `Rent: ₹${product.rent?.toLocaleString('en-IN')} for 3 days\n\n` +
-      `*Available At:* ${storeName}\n\n` +
-      `Product Link:\n${productPageLink}\n\n` +
-      `Please provide more details.`;
 
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+            const storeName = product?.availableStores?.length > 0
+                ? product.availableStores.join(', ')
+                : 'Store Info Not Available';
 
-    window.open(whatsappUrl, '_blank');
-    setModalMessage(`Inquiry sent on WhatsApp! We will respond shortly.`);
-    setModalType('success');
-    setShowModal(true);
 
-  } catch (error) {
-    console.error("Error sending inquiry:", error);
-    setModalMessage('Failed to open WhatsApp. Please try again.');
-    setModalType('error');
-    setShowModal(true);
-  }
-};
+            const productPageLink = window.location.href;
+
+            const message =
+                `Hello, I'm interested in renting the product:\n` +
+                `*${product.name}*\n` +
+                `Product Code: ${product.productCode}\n` +
+                `Rent: ₹${product.rent?.toLocaleString('en-IN')} for 3 days\n\n` +
+                `*Available At:* ${storeName}\n\n` +
+                `Product Link:\n${productPageLink}\n\n` +
+                `Please provide more details.`;
+
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+            window.open(whatsappUrl, '_blank');
+            setModalMessage(`Inquiry sent on WhatsApp! We will respond shortly.`);
+            setModalType('success');
+            setShowModal(true);
+
+        } catch (error) {
+            console.error("Error sending inquiry:", error);
+            setModalMessage('Failed to open WhatsApp. Please try again.');
+            setModalType('error');
+            setShowModal(true);
+        }
+    };
 
     const closeModal = () => {
         setShowModal(false);
@@ -318,7 +318,7 @@ useEffect(() => {
         setModalType('');
     };
 
-   
+
 
     // --- New Zoom Modal Functions ---
     const openZoomModal = (imageUrl) => {
@@ -453,7 +453,7 @@ useEffect(() => {
 
                 <div className="product-details-column">
                     <h2 className="product-secondary-title">{product.name}</h2>
-                    <p className="product-code-display">Product Code: **{product.productCode}**</p>
+                    <p className="product-code-display">Product Code: {product.productCode}</p>
 
                     <div className="product-price-block">
                         <span className="rent-price-large"><IndianRupee size={30} className="inline-icon" />{product.rent.toLocaleString('en-IN')}</span> <span className="price-term">for 3 days</span>
@@ -463,10 +463,10 @@ useEffect(() => {
                         )}
                     </div>
 
-                    <div className="product-description-block animate-fade-in-up">
+                    {/* <div className="product-description-block animate-fade-in-up">
                         <h3 className="section-heading">Description</h3>
                         <p>{product.description || 'No detailed description available.'}</p>
-                    </div>
+                    </div> */}
 
                     <div className="product-options">
                         <div className="option-group">
@@ -514,9 +514,9 @@ useEffect(() => {
                         )}
                     </div>
 
-                    
 
-                    
+
+
 
                     {!isPanIndiaDelivery && (
                         <div className="action-area">
@@ -527,15 +527,15 @@ useEffect(() => {
                             >
                                 <MessageSquare size={20} className="icon-mr" /> Enquire Now (via WhatsApp)
                             </button>
-                           
+
                         </div>
                     )}
 
                     <div className="additional-info-block">
                         <h3 className="section-heading">Product Specifications:</h3>
                         <ul>
-                            <li><strong>Material:</strong> {product.material || 'Not specified'}</li>
-                            <li><strong>Care Instructions:</strong> {product.careInstructions || 'Dry clean only'}</li>
+                            {/* <li><strong>Material:</strong> {product.material || 'Not specified'}</li> */}
+                            {/* <li><strong>Care Instructions:</strong> {product.careInstructions || 'Dry clean only'}</li> */}
                             <li><strong>Available at:</strong> {product.availableStores ? product.availableStores.join(', ') : 'Check in-store'}</li>
                         </ul>
                     </div>

@@ -11,6 +11,8 @@ import {
   query,
   startAfter,
   updateDoc,
+  doc,
+  setDoc,
 } from "firebase/firestore";
 import {
   ref as storageRef,
@@ -18,11 +20,13 @@ import {
   getDownloadURL,
   listAll,
   deleteObject,
+  getBytes,
 } from "firebase/storage";
 import { db, storage } from "./firebaseConfig";
 import "./AdminProductsManager.css";
 
 const PAGE = 25;
+
 
 export default function AdminProductsManager() {
   const [gender, setGender] = useState("men");
@@ -34,6 +38,7 @@ export default function AdminProductsManager() {
   const [loading, setLoading] = useState(false);
   const [cursor, setCursor] = useState(null);
   const [atEnd, setAtEnd] = useState(false);
+const [moveProgress, setMoveProgress] = useState(0); // 0 → 100
 
   const [search, setSearch] = useState("");
   const [colorFilter, setColorFilter] = useState("");
@@ -44,6 +49,11 @@ export default function AdminProductsManager() {
 
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
+// Move-category inline UI state
+const [moveFor, setMoveFor] = useState(null);      // product object being moved
+const [moveOptions, setMoveOptions] = useState([]); // categories for that product's gender
+const [moveCatId, setMoveCatId] = useState("");     // selected target category id
+const [busyMove, setBusyMove] = useState(false);
 
   // Load categories for current gender
   useEffect(() => {
@@ -241,6 +251,185 @@ export default function AdminProductsManager() {
       setBusyEdit(false);
     }
   };
+const openMove = async (p) => {
+  try {
+    setBusyMove(true);
+    setMoveFor(p);
+    // Load categories for THIS product's gender
+    const col = p.gender === "men" ? "menCategories" : "womenCategories";
+    const snap = await getDocs(query(collection(db, col), orderBy("order")));
+    const opts = snap.docs.map(d => ({ id: d.id, name: d.data().name }));
+    setMoveOptions(opts);
+    setMoveCatId(p.categoryId || "");
+  } finally {
+    setBusyMove(false);
+  }
+};
+
+const closeMove = () => {
+  setMoveFor(null);
+  setMoveOptions([]);
+  setMoveCatId("");
+};
+// helper: count total files under a storage folder (recursive)
+// helper: count total files under a storage folder (recursive)
+async function countFiles(ref) {
+  const list = await listAll(ref);
+  let count = list.items.length;
+  for (const sub of list.prefixes) {
+    count += await countFiles(sub);
+  }
+  return count;
+}
+
+// helper: copy folder and report progress via callback
+async function copyFolder(srcRef, destRef, progressCallback) {
+  const list = await listAll(srcRef);
+
+  // copy files in this folder
+  for (const item of list.items) {
+    const bytes = await getBytes(item);
+    const target = storageRef(storage, destRef.fullPath + "/" + item.name);
+    await uploadBytes(target, bytes);
+    progressCallback?.(1); // one file done
+  }
+
+  // recurse into subfolders
+  for (const sub of list.prefixes) {
+    const destSub = storageRef(storage, destRef.fullPath + "/" + sub.name);
+    await copyFolder(sub, destSub, progressCallback);
+  }
+}
+
+// OPTIONAL: refresh thumb URLs at the new location if you store them
+async function refreshThumbUrls(baseRef, oldThumbs) {
+  const sizes = ["xs","sm","md","lg"];
+  const patched = {};
+  for (const k of sizes) {
+    try {
+      const r = storageRef(storage, `${baseRef.fullPath}/thumbs/${k}.jpg`);
+      const url = await getDownloadURL(r);
+      patched[k] = { ...(oldThumbs?.[k] || {}), url };
+    } catch { /* size might not exist; skip */ }
+  }
+  return Object.keys(patched).length ? patched : oldThumbs || null;
+}
+
+const moveNow = async () => {
+  if (!moveFor || !moveCatId || moveCatId === moveFor.categoryId) {
+    closeMove();
+    return;
+  }
+
+  setBusyMove(true);
+  setMoveProgress(0);
+  setMsg(""); setErr("");
+
+  try {
+    // Parse old path: ["menCategories", "{catId}", "products", "{productId}"]
+    const parts = moveFor._ref.path.split("/");
+    const oldGender = parts[0] === "menCategories" ? "men" : "women";
+    const oldCat = parts[1];
+    const productId = parts[3];
+
+    const newGenderCol = oldGender === "men" ? "menCategories" : "womenCategories";
+    const newDocRef = doc(db, `${newGenderCol}/${moveCatId}/products/${productId}`);
+
+    // Build payload from existing product object
+    const payload = {
+      productCode: moveFor.productCode || null,
+      name: moveFor.name || "",
+      description: moveFor.description || "",
+      rent: moveFor.rent ? Number(moveFor.rent) : 0,
+      originalPrice: moveFor.originalPrice ? Number(moveFor.originalPrice) : null,
+      color: moveFor.color || "",
+      sizes: normalizePipesOrArray(moveFor.sizes),
+      availableStores: normalizePipesOrArray(moveFor.availableStores),
+      material: moveFor.material || null,
+      careInstructions: moveFor.careInstructions || null,
+      imageUrl: moveFor.imageUrl || null,   // will refresh below
+      thumbs: moveFor.thumbs || null,       // may refresh below
+      addedDate: moveFor.addedDate || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // 1) Create new doc
+    await setDoc(newDocRef, payload);
+
+    // 2) Copy Storage folder with progress
+    const srcRef = storageRef(storage, `products/${oldGender}/${oldCat}/${productId}`);
+    const destRef = storageRef(storage, `products/${oldGender}/${moveCatId}/${productId}`);
+
+    const total = await countFiles(srcRef);
+    if (total === 0) {
+      setMoveProgress(100);
+    } else {
+      let done = 0;
+      await copyFolder(srcRef, destRef, () => {
+        done += 1;
+        const pct = Math.min(100, Math.round((done / total) * 100));
+        setMoveProgress(pct);
+      });
+    }
+
+    // 2.1) Refresh the main hero URL at the NEW path so ProductDetailPage can load it
+    let newHeroUrl = payload.imageUrl;
+    try {
+      const newHeroRef = storageRef(storage, `${destRef.fullPath}/hero.jpg`);
+      newHeroUrl = await getDownloadURL(newHeroRef);
+      await updateDoc(newDocRef, { imageUrl: newHeroUrl, updatedAt: new Date().toISOString() });
+    } catch (e) {
+      console.warn("Hero URL refresh failed (continuing):", e);
+    }
+
+    // 2.2) OPTIONAL: refresh thumb URLs if you store them
+    try {
+      const newThumbs = await refreshThumbUrls(destRef, moveFor.thumbs);
+      if (newThumbs !== moveFor.thumbs) {
+        await updateDoc(newDocRef, { thumbs: newThumbs, updatedAt: new Date().toISOString() });
+        payload.thumbs = newThumbs; // keep local payload in sync
+      }
+    } catch (e) {
+      console.warn("Thumb URL refresh failed (continuing):", e);
+    }
+
+    // 3) Delete old storage + old doc
+    await deleteFolderRecursive(srcRef);
+    await deleteDoc(moveFor._ref);
+
+    // 4) Update UI list (also sync imageUrl & thumbs in the UI)
+    setItems(prev => {
+      const without = prev.filter(x => x._ref.path !== moveFor._ref.path);
+      const shouldShow =
+        (gender === oldGender) && // top-level gender filter
+        (!categoryId || categoryId === moveCatId); // top-level category filter
+
+      if (shouldShow) {
+        return [
+          {
+            ...moveFor,
+            categoryId: moveCatId,
+            _ref: newDocRef,
+            imageUrl: newHeroUrl,
+            thumbs: payload.thumbs,
+            updatedAt: payload.updatedAt
+          },
+          ...without
+        ];
+      }
+      return without;
+    });
+
+    setMoveProgress(100);
+    setMsg("✅ Moved to selected category.");
+    closeMove();
+  } catch (e) {
+    console.error(e);
+    setErr(e.message || "Move failed");
+    setBusyMove(false);
+  }
+};
+
 
   // Replace hero image (uploads to canonical path; onProductImage regenerates thumbs)
   const onReplaceImage = async (file) => {
@@ -297,6 +486,7 @@ export default function AdminProductsManager() {
       <header className="apm-header">
         <h1>Products</h1>
         <div className="apm-actions">
+          <Link to="/admin/add-product" className="apm-btn">+ Add product</Link>
           <Link to="/admin/bulk-products" className="apm-btn primary">+ Bulk import</Link>
         </div>
       </header>
@@ -389,6 +579,25 @@ export default function AdminProductsManager() {
                     <td className="apm-actions-cell">
                       <button className="apm-btn ghost" onClick={() => openEdit(p)}>Edit</button>
                       <button className="apm-btn danger" onClick={() => onDelete(p)}>Delete</button>
+                      <button className="apm-btn ghost" onClick={() => openMove(p)}>Move</button>
+
+ {moveFor && moveFor._ref.path === p._ref.path && (
+   <div className="apm-move-inline">
+     <select
+       value={moveCatId}
+       onChange={(e)=> setMoveCatId(e.target.value)}       disabled={busyMove}
+    >
+       {moveOptions.map(c => (
+         <option key={c.id} value={c.id}>{c.name}</option>
+       ))}
+     </select>
+   <button className="apm-btn" onClick={moveNow} disabled={busyMove || !moveCatId || moveCatId === p.categoryId}>
+  {busyMove ? `Moving… ${moveProgress}%` : "Confirm"}
+</button>
+
+     <button className="apm-btn ghost" onClick={closeMove} disabled={busyMove}>Cancel</button>
+   </div>
+ )}
                     </td>
                   </tr>
                 ))}
